@@ -1,6 +1,6 @@
 namespace Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 
-public sealed class VostokApplicationIdentityConfigurationOptions
+public sealed class ApplicationIdentityConfigurationOptions
 {
     public string Project { get; set; }
     public string? Subproject { get; set; }

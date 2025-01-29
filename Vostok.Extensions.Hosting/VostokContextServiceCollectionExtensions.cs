@@ -5,10 +5,15 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class VostokContextServiceCollectionExtensions
 {
-    public static IVostokContextBuilder AddVostokContext(this IServiceCollection services)
+    public static IServiceCollection AddVostok(
+        this IServiceCollection services,
+        Action<IVostokContextBuilder> configureBuilder)
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        return new VostokContextBuilder(services);
+        var builder = new VostokContextBuilder(services);
+        configureBuilder(builder);
+
+        return services;
     }
 }
