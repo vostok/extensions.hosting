@@ -2,9 +2,16 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
+using Vostok.Clusterclient.Tracing;
+using Vostok.ClusterConfig.Client;
+using Vostok.ClusterConfig.Client.Abstractions;
+using Vostok.Configuration.Abstractions.Merging;
+using Vostok.Configuration.Sources.Json;
 using Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 using Vostok.Extensions.Hosting.Components.ApplicationReplicationInfo;
+using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
 using Vostok.Hosting.Abstractions;
+using Vostok.Logging.Abstractions;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Diagnostics;
 
@@ -20,7 +27,9 @@ internal sealed class VostokContextBuilder : IVostokContextBuilder
 
         AddApplicationIdentity(services);
         AddApplicationReplicationInfo(services);
+        AddClusterConfigClient(services);
         AddTracer(services);
+        AddLog(services);
 
         services.TryAddSingleton<IVostokContext, VostokContext>();
     }
@@ -41,9 +50,47 @@ internal sealed class VostokContextBuilder : IVostokContextBuilder
             return options.GetProvider();
         });
 
+    private static void AddClusterConfigClient(IServiceCollection services)
+    {
+        services.TryAddSingleton<IClusterConfigClient>(provider =>
+        {
+            var log = provider.GetRequiredService<ILog>();
+            var tracer = provider.GetRequiredService<ITracer>();
+            var options = provider.GetRequiredService<IOptions<ClusterConfigClientConfigurationOptions>>().Value;
+
+            var settings = new ClusterConfigClientSettings
+            {
+                Log = log,
+                AdditionalSetup = setup => setup.SetupDistributedTracing(tracer),
+                MergeOptions = new SettingsMergeOptions
+                {
+                    CustomMerge = (a, b) =>
+                    {
+                        var ok = JsonConfigurationMerger.TryMerge(a, b, out var merged);
+                        return (ok, merged);
+                    }
+                }
+            };
+
+            options.ApplyCustomizations(settings);
+            
+            if (settings is { EnableLocalSettings: false, EnableClusterSettings: false })
+            {
+                // todo
+                // context.LogDisabled("ClusterConfigClient", "explicit configuration");
+                return new DisabledClusterConfigClient();
+            }
+
+            return new ClusterConfigClient(settings);
+        });
+    }
+
     private static void AddTracer(IServiceCollection services)
     {
         var activitySourceTracer = new ActivitySourceTracer(new ActivitySourceTracerSettings());
         services.TryAddSingleton<ITracer>(activitySourceTracer);
     }
+
+    private static void AddLog(IServiceCollection services)
+        => services.TryAddSingleton<ILog>(new SilentLog());
 }
