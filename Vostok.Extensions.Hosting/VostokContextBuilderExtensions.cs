@@ -9,7 +9,7 @@ public static class VostokContextBuilderExtensions
 {
     public static IVostokContextBuilder ConfigureApplicationIdentity(
         this IVostokContextBuilder builder,
-        Action<ApplicationIdentityConfigurationOptions> configure)
+        Action<ApplicationIdentityOptions> configure)
     {
         builder.Services.Configure(configure);
 
