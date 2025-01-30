@@ -4,6 +4,7 @@ using Vostok.ClusterConfig.Client;
 using Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 using Vostok.Extensions.Hosting.Components.ApplicationReplicationInfo;
 using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
+using Vostok.Extensions.Hosting.Components.Datacenters;
 
 namespace Vostok.Extensions.Hosting;
 
@@ -33,6 +34,15 @@ public static class VostokContextBuilderExtensions
     {
         builder.Services.Configure<ClusterConfigClientConfigurationOptions>(
             options => options.AddCustomization(configure));
+
+        return builder;
+    }
+
+    public static IVostokContextBuilder ConfigureDatacenters(
+        this IVostokContextBuilder builder,
+        Action<DatacentersConfigurationOptions> configure)
+    {
+        builder.Services.Configure(configure);
 
         return builder;
     }

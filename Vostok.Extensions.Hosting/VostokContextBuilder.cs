@@ -7,9 +7,11 @@ using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Sources.Json;
+using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 using Vostok.Extensions.Hosting.Components.ApplicationReplicationInfo;
 using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
+using Vostok.Extensions.Hosting.Components.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Tracing.Abstractions;
@@ -28,6 +30,7 @@ internal sealed class VostokContextBuilder : IVostokContextBuilder
         AddApplicationIdentity(services);
         AddApplicationReplicationInfo(services);
         AddClusterConfigClient(services);
+        AddDatacenters(services);
         AddTracer(services);
         AddLog(services);
 
@@ -82,6 +85,26 @@ internal sealed class VostokContextBuilder : IVostokContextBuilder
             }
 
             return new ClusterConfigClient(settings);
+        });
+    }
+
+    private static void AddDatacenters(IServiceCollection services)
+    {
+        services.TryAddSingleton<IDatacenters>(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<DatacentersConfigurationOptions>>().Value;
+
+            if (options.DatacenterMapping is null || options.ActiveDatacentersProvider is null)
+                // todo: Logging
+                return new EmptyDatacenters();
+
+            var datacentersSettings = new DatacentersSettings(
+                options.DatacenterMapping,
+                options.ActiveDatacentersProvider);
+
+            options.ApplyCustomizations(datacentersSettings);
+
+            return new Datacenters.Datacenters(datacentersSettings);
         });
     }
 
