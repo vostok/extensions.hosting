@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 using Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 using Vostok.Extensions.Hosting.Components.ApplicationReplicationInfo;
 using Vostok.Hosting.Abstractions;
+using Vostok.Tracing.Abstractions;
+using Vostok.Tracing.Diagnostics;
 
 namespace Vostok.Extensions.Hosting;
 
@@ -18,6 +20,7 @@ internal sealed class VostokContextBuilder : IVostokContextBuilder
 
         AddApplicationIdentity(services);
         AddApplicationReplicationInfo(services);
+        AddTracer(services);
 
         services.TryAddSingleton<IVostokContext, VostokContext>();
     }
@@ -32,4 +35,10 @@ internal sealed class VostokContextBuilder : IVostokContextBuilder
 
             return options.GetProvider();
         });
+
+    private static void AddTracer(IServiceCollection services)
+    {
+        var activitySourceTracer = new ActivitySourceTracer(new ActivitySourceTracerSettings());
+        services.TryAddSingleton<ITracer>(activitySourceTracer);
+    }
 }
