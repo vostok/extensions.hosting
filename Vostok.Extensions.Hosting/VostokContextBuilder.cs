@@ -25,8 +25,13 @@ internal sealed class VostokContextBuilder : IVostokContextBuilder
         services.TryAddSingleton<IVostokContext, VostokContext>();
     }
 
-    private static void AddApplicationIdentity(IServiceCollection services) =>
+    private static void AddApplicationIdentity(IServiceCollection services)
+    {
+        services.AddOptionsWithValidateOnStart<ApplicationIdentityOptions>();
+        services.TryAddSingleton<IValidateOptions<ApplicationIdentityOptions>, ApplicationIdentityOptionsValidator>();
+
         services.TryAddSingleton<IVostokApplicationIdentity, VostokApplicationIdentity>();
+    }
 
     private static void AddApplicationReplicationInfo(IServiceCollection services) =>
         services.TryAddSingleton<Func<IVostokApplicationReplicationInfo>>(provider =>

@@ -16,26 +16,16 @@ internal sealed class VostokApplicationIdentity : IVostokApplicationIdentity
     {
         var identityOptions = options.Value;
 
-        var missingFields = new List<string>();
+        ArgumentException.ThrowIfNullOrWhiteSpace(identityOptions.Project);
+        ArgumentException.ThrowIfNullOrWhiteSpace(identityOptions.Environment);
+        ArgumentException.ThrowIfNullOrWhiteSpace(identityOptions.Application);
+        ArgumentException.ThrowIfNullOrWhiteSpace(identityOptions.Instance);
 
-        if (string.IsNullOrWhiteSpace(identityOptions.Project))
-            missingFields.Add(nameof(Project));
-        if (string.IsNullOrWhiteSpace(identityOptions.Environment))
-            missingFields.Add(nameof(Environment));
-        if (string.IsNullOrWhiteSpace(identityOptions.Application))
-            missingFields.Add(nameof(Application));
-        if (string.IsNullOrWhiteSpace(identityOptions.Instance))
-            missingFields.Add(nameof(Instance));
-
-        if (missingFields.Count != 0)
-            throw new ArgumentException(
-                $"Some of the Vostok application identity required fields have not been specified: '{string.Join(", ", missingFields)}'.");
-
-        Project = identityOptions.Project!;
+        Project = identityOptions.Project;
         Subproject = identityOptions.Subproject;
-        Environment = identityOptions.Environment!;
-        Application = identityOptions.Application!;
-        Instance = identityOptions.Instance!;
+        Environment = identityOptions.Environment;
+        Application = identityOptions.Application;
+        Instance = identityOptions.Instance;
     }
 
     public override string ToString()
