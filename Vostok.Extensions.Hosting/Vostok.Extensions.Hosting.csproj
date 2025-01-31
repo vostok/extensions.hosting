@@ -1,16 +1,64 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
+  <Import Project="..\..\vostok.devtools\git-commit-to-assembly-title\Vostok.Tools.GitCommit2AssemblyTitle.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.1" />
-    <PackageReference Include="Vostok.ClusterClient.Tracing" Version="0.1.9" />
-    <PackageReference Include="Vostok.ClusterConfig.Client" Version="0.2.27" />
-    <PackageReference Include="Vostok.Configuration.Sources.Json" Version="0.1.9" />
-    <PackageReference Include="Vostok.Hosting.Abstractions" Version="0.3.10" />
-    <PackageReference Include="Vostok.Tracing.Diagnostics" Version="0.1.2" />
+    <Reference Include="Vostok.ClusterClient.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterclient.core\Vostok.ClusterClient.Core\bin\Release\$(ReferencesFramework)\Vostok.ClusterClient.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterClient.Tracing">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterclient.tracing\Vostok.ClusterClient.Tracing\bin\Release\$(ReferencesFramework)\Vostok.ClusterClient.Tracing.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterConfig.Client">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterconfig.client\Vostok.ClusterConfig.Client\bin\Release\$(ReferencesFramework)\Vostok.ClusterConfig.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterConfig.Client.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterconfig.client.abstractions\Vostok.ClusterConfig.Client.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.ClusterConfig.Client.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.abstractions\Vostok.Configuration.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources\Vostok.Configuration.Sources\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources.Json">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.json\Vostok.Configuration.Sources.Json\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Datacenters">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.datacenters\Vostok.Datacenters\bin\Release\$(ReferencesFramework)\Vostok.Datacenters.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Hosting.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.hosting.abstractions\Vostok.Hosting.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Tracing.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing.abstractions\Vostok.Tracing.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Tracing.Diagnostics">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing.diagnostics\Vostok.Tracing.Diagnostics\bin\Release\net6.0\Vostok.Tracing.Diagnostics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
   </ItemGroup>
 
 </Project>
