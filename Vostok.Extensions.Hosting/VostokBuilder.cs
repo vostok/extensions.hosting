@@ -9,6 +9,7 @@ using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Sources.Json;
 using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.ApplicationIdentity;
+using Vostok.Extensions.Hosting.Components.ApplicationLimits;
 using Vostok.Extensions.Hosting.Components.ApplicationReplicationInfo;
 using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
 using Vostok.Extensions.Hosting.Components.Datacenters;
@@ -29,6 +30,7 @@ internal sealed class VostokBuilder : IVostokBuilder
 
         AddApplicationIdentity(services);
         AddApplicationReplicationInfo(services);
+        AddApplicationLimits(services);
         AddClusterConfigClient(services);
         AddDatacenters(services);
         AddTracer(services);
@@ -52,6 +54,9 @@ internal sealed class VostokBuilder : IVostokBuilder
 
             return options.GetProvider();
         });
+
+    private static void AddApplicationLimits(IServiceCollection services) =>
+        services.TryAddSingleton<IVostokApplicationLimits, ApplicationLimits>();
 
     private static void AddClusterConfigClient(IServiceCollection services)
     {
