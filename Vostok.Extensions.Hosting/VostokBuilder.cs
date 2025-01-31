@@ -44,7 +44,7 @@ internal sealed class VostokBuilder : IVostokBuilder
         services.AddOptionsWithValidateOnStart<ApplicationIdentityOptions>();
         services.TryAddSingleton<IValidateOptions<ApplicationIdentityOptions>, ApplicationIdentityOptionsValidator>();
 
-        services.TryAddSingleton<IVostokApplicationIdentity, VostokApplicationIdentity>();
+        services.TryAddSingleton<IVostokApplicationIdentity, ApplicationIdentity>();
     }
 
     private static void AddApplicationReplicationInfo(IServiceCollection services) =>

@@ -4,7 +4,7 @@ using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 
-internal sealed class VostokApplicationIdentity : IVostokApplicationIdentity
+internal sealed class ApplicationIdentity : IVostokApplicationIdentity
 {
     public string Project { get; }
     public string? Subproject { get; }
@@ -12,7 +12,7 @@ internal sealed class VostokApplicationIdentity : IVostokApplicationIdentity
     public string Application { get; }
     public string Instance { get; }
 
-    public VostokApplicationIdentity(IOptions<ApplicationIdentityOptions> options)
+    public ApplicationIdentity(IOptions<ApplicationIdentityOptions> options)
     {
         var identityOptions = options.Value;
 

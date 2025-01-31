@@ -5,11 +5,11 @@ namespace Vostok.Extensions.Hosting.Components.ApplicationReplicationInfo;
 public sealed class ApplicationReplicationInfoConfigurationOptions
 {
     private Func<IVostokApplicationReplicationInfo> _replicationInfoProvider =
-        () => new VostokApplicationReplicationInfo(0, 1);
+        () => new ApplicationReplicationInfo(0, 1);
 
     public void SetReplicationInfo(int instanceIndex, int instancesCount)
     {
-        var replicationInfo = new VostokApplicationReplicationInfo(instanceIndex, instancesCount);
+        var replicationInfo = new ApplicationReplicationInfo(instanceIndex, instancesCount);
 
         _replicationInfoProvider = () => replicationInfo;
     }
