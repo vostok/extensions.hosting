@@ -10,8 +10,8 @@ namespace Vostok.Extensions.Hosting;
 
 public static class VostokContextBuilderExtensions
 {
-    public static IVostokContextBuilder ConfigureApplicationIdentity(
-        this IVostokContextBuilder builder,
+    public static IVostokBuilder ConfigureApplicationIdentity(
+        this IVostokBuilder builder,
         Action<ApplicationIdentityOptions> configure)
     {
         builder.Services.Configure(configure);
@@ -19,8 +19,8 @@ public static class VostokContextBuilderExtensions
         return builder;
     }
     
-    public static IVostokContextBuilder ConfigureApplicationReplicationInfo(
-        this IVostokContextBuilder builder,
+    public static IVostokBuilder ConfigureApplicationReplicationInfo(
+        this IVostokBuilder builder,
         Action<ApplicationReplicationInfoConfigurationOptions> configure)
     {
         builder.Services.Configure(configure);
@@ -28,8 +28,8 @@ public static class VostokContextBuilderExtensions
         return builder;
     }
 
-    public static IVostokContextBuilder ConfigureClusterConfigClient(
-        this IVostokContextBuilder builder,
+    public static IVostokBuilder ConfigureClusterConfigClient(
+        this IVostokBuilder builder,
         Action<ClusterConfigClientSettings> configure)
     {
         builder.Services.Configure<ClusterConfigClientConfigurationOptions>(
@@ -38,8 +38,8 @@ public static class VostokContextBuilderExtensions
         return builder;
     }
 
-    public static IVostokContextBuilder ConfigureDatacenters(
-        this IVostokContextBuilder builder,
+    public static IVostokBuilder ConfigureDatacenters(
+        this IVostokBuilder builder,
         Action<DatacentersConfigurationOptions> configure)
     {
         builder.Services.Configure(configure);

@@ -2,7 +2,7 @@
 
 namespace Vostok.Extensions.Hosting;
 
-public interface IVostokContextBuilder
+public interface IVostokBuilder
 {
     IServiceCollection Services { get; }
 }

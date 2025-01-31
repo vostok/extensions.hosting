@@ -3,15 +3,15 @@
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class VostokContextServiceCollectionExtensions
+public static class VostokServiceCollectionExtensions
 {
     public static IServiceCollection AddVostok(
         this IServiceCollection services,
-        Action<IVostokContextBuilder> configureBuilder)
+        Action<IVostokBuilder> configureBuilder)
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        var builder = new VostokContextBuilder(services);
+        var builder = new VostokBuilder(services);
         configureBuilder(builder);
 
         return services;

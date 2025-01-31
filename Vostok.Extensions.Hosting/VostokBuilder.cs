@@ -19,11 +19,11 @@ using Vostok.Tracing.Diagnostics;
 
 namespace Vostok.Extensions.Hosting;
 
-internal sealed class VostokContextBuilder : IVostokContextBuilder
+internal sealed class VostokBuilder : IVostokBuilder
 {
     public IServiceCollection Services { get; }
 
-    public VostokContextBuilder(IServiceCollection services)
+    public VostokBuilder(IServiceCollection services)
     {
         Services = services;
 
