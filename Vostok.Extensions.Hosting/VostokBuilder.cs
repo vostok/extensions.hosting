@@ -95,7 +95,11 @@ internal sealed class VostokBuilder : IVostokBuilder
 
     private static void AddDatacenters(IServiceCollection services)
     {
-        services.TryAddSingleton<IDatacenters>(provider =>
+        services.TryAddSingleton<IDatacenters, SubstitutableDatacenters>();
+        services.AddOptionsWithValidateOnStart<DatacenterSubstitutionMarker>();
+        services.TryAddSingleton<IValidateOptions<DatacenterSubstitutionMarker>, DatacenterSubstitutionValidator>();
+
+        services.TryAddKeyedSingleton<IDatacenters>("_ActualDatacenters", (provider, _) =>
         {
             var options = provider.GetRequiredService<IOptions<DatacentersConfigurationOptions>>().Value;
 

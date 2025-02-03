@@ -15,7 +15,16 @@ public static class VostokContextBuilderExtensions
         this IVostokBuilder builder,
         Action<ApplicationIdentityOptions> configure)
     {
-        builder.Services.Configure(configure);
+        builder.ConfigureApplicationIdentity((options, _) => configure(options));
+
+        return builder;
+    }
+
+    public static IVostokBuilder ConfigureApplicationIdentity(
+        this IVostokBuilder builder,
+        Action<ApplicationIdentityOptions, IServiceProvider> configure)
+    {
+        builder.Services.AddOptions<ApplicationIdentityOptions>().Configure(configure);
 
         return builder;
     }
@@ -42,8 +51,20 @@ public static class VostokContextBuilderExtensions
         this IVostokBuilder builder,
         Action<ClusterConfigClientSettings> configure)
     {
-        builder.Services.Configure<ClusterConfigClientConfigurationOptions>(
-            options => options.AddCustomization(configure));
+        builder.ConfigureClusterConfigClient((settings, _) => configure(settings));
+
+        return builder;
+    }
+
+    public static IVostokBuilder ConfigureClusterConfigClient(
+        this IVostokBuilder builder,
+        Action<ClusterConfigClientSettings, IServiceProvider> configure)
+    {
+        builder.Services.AddOptions<ClusterConfigClientConfigurationOptions>()
+               .Configure<IServiceProvider>((options, provider) =>
+               {
+                   options.AddCustomization(settings => configure(settings, provider));
+               });
 
         return builder;
     }
@@ -52,7 +73,16 @@ public static class VostokContextBuilderExtensions
         this IVostokBuilder builder,
         Action<DatacentersConfigurationOptions> configure)
     {
-        builder.Services.Configure(configure);
+        builder.ConfigureDatacenters((options, _) => configure(options));
+
+        return builder;
+    }
+
+    public static IVostokBuilder ConfigureDatacenters(
+        this IVostokBuilder builder,
+        Action<DatacentersConfigurationOptions, IServiceProvider> configure)
+    {
+        builder.Services.AddOptions<DatacentersConfigurationOptions>().Configure(configure);
 
         return builder;
     }
