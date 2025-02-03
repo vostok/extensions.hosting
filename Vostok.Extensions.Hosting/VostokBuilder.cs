@@ -35,8 +35,6 @@ internal sealed class VostokBuilder : IVostokBuilder
         AddDatacenters(services);
         AddTracer(services);
         AddLog(services);
-
-        services.TryAddSingleton<IVostokContext, VostokContext>();
     }
 
     private static void AddApplicationIdentity(IServiceCollection services)
