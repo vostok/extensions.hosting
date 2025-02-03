@@ -6,7 +6,7 @@ internal sealed class ClusterConfigClientConfigurationOptions
 {
     private readonly List<Action<ClusterConfigClientSettings>> _customizations = [];
 
-    public void AddCustomization(Action<ClusterConfigClientSettings> customization)
+    public void CustomizeSettings(Action<ClusterConfigClientSettings> customization)
         => _customizations.Add(customization);
 
     public void ApplyCustomizations(ClusterConfigClientSettings settings) =>

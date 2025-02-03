@@ -11,7 +11,7 @@ public sealed class DatacentersConfigurationOptions
     public Func<IPAddress, string>? DatacenterMapping { get; set; }
     public Func<IReadOnlyCollection<string>>? ActiveDatacentersProvider { get; set; }
 
-    public void AddCustomization(Action<DatacentersSettings> customization)
+    public void CustomizeSettings(Action<DatacentersSettings> customization)
         => _customizations.Add(customization);
 
     internal void ApplyCustomizations(DatacentersSettings settings) =>

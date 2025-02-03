@@ -1,8 +1,12 @@
-﻿using Vostok.Extensions.Hosting;
+﻿using JetBrains.Annotations;
+
+using Vostok.Extensions.Hosting;
+using Vostok.Extensions.Hosting.Builder;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
+[PublicAPI]
 public static class VostokServiceCollectionExtensions
 {
     public static IServiceCollection AddVostok(
