@@ -5,7 +5,7 @@ using Vostok.Clusterclient.Topology.CC;
 using Vostok.Clusterclient.Topology.SD;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
-using Vostok.Extensions.Hosting.Components.ServiceLocator;
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 
