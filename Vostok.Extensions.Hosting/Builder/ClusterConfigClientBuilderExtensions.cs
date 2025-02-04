@@ -10,6 +10,7 @@ using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Sources.Json;
 using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
 using Vostok.Tracing.Abstractions;
 

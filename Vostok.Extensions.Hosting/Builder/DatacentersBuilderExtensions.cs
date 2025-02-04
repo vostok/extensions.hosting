@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 
 using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Datacenters;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Builder;
