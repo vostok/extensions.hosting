@@ -12,9 +12,9 @@ internal sealed class ApplicationIdentity : IVostokApplicationIdentity
     public string Application { get; }
     public string Instance { get; }
 
-    public ApplicationIdentity(IOptions<ApplicationIdentityOptions> options)
+    public ApplicationIdentity(IOptionsMonitor<ApplicationIdentityOptions> options)
     {
-        var identityOptions = options.Value;
+        var identityOptions = options.CurrentValue;
 
         ArgumentException.ThrowIfNullOrWhiteSpace(identityOptions.Project);
         ArgumentException.ThrowIfNullOrWhiteSpace(identityOptions.Environment);

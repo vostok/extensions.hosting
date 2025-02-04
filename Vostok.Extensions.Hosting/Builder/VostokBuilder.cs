@@ -20,6 +20,7 @@ internal sealed class VostokBuilder : IVostokBuilder
 
     private void AddCoreServices()
     {
+        // note: Order is important. Datacenters should be substituted first if present.
         this.PrepareDatacentersSubstitution();
 
         this.WithApplicationIdentity();

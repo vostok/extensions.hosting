@@ -1,7 +1,10 @@
-﻿using Vostok.Hosting.Abstractions;
+﻿using JetBrains.Annotations;
+
+using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ApplicationReplicationInfo;
 
+[PublicAPI]
 public sealed class ApplicationReplicationInfoConfigurationOptions
 {
     private Func<IVostokApplicationReplicationInfo> _replicationInfoProvider =
