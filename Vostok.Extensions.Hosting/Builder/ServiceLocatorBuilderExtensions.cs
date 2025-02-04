@@ -19,7 +19,7 @@ public static class ServiceLocatorBuilderExtensions
 
         return builder;
     }
-    
+
     public static IVostokBuilder WithServiceLocator(
         this IVostokBuilder builder,
         Action<ServiceLocatorSettings, IServiceProvider>? configure = null)
