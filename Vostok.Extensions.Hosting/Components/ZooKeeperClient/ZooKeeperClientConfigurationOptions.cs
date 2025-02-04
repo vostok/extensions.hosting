@@ -17,15 +17,19 @@ public sealed class ZooKeeperClientConfigurationOptions
     public void SetClusterProvider(IClusterProvider clusterProvider)
     {
         ConnectionString = null;
-        ClusterProviderBuilder =
-            ClusterProviderBuilder.FromValue(
-                clusterProvider ?? throw new ArgumentNullException(nameof(clusterProvider)));
+        ClusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider);
     }
 
     public void SetConnectionString(string connectionString)
     {
         ClusterProviderBuilder = null;
         ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+    }
+
+    public void SetClusterConfigTopology(string path)
+    {
+        ConnectionString = null;
+        ClusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);
     }
 
     public void CustomizeSettings(Action<ZooKeeperClientSettings> customization) =>
