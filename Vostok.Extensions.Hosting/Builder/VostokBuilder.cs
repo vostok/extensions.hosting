@@ -20,6 +20,8 @@ internal sealed class VostokBuilder : IVostokBuilder
 
     private void AddCoreServices()
     {
+        this.PrepareDatacentersSubstitution();
+
         this.WithApplicationIdentity();
         this.WithApplicationReplicationInfo();
         this.WithApplicationLimits();
