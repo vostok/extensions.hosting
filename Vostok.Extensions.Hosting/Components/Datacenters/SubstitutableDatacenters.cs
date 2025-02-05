@@ -32,26 +32,20 @@ internal sealed class SubstitutableDatacenters : IDatacenters
 
     public IDatacenters GetBase() =>
         _baseDatacenters;
+    
+    public sealed class SubstitutionMarker;
 }
 
-internal sealed class DatacenterSubstitutionMarker;
-
-internal sealed class DatacenterSubstitutionValidator : IValidateOptions<DatacenterSubstitutionMarker>
+internal sealed class DatacenterSubstitutionValidator(IServiceProvider provider)
+    : IValidateOptions<SubstitutableDatacenters.SubstitutionMarker>
 {
-    private readonly IDatacenters _substitutableDatacenters;
-    private readonly IDatacenters _actualDatacenters;
-
-    public DatacenterSubstitutionValidator(
-        IDatacenters substitutableDatacenters,
-        [FromKeyedServices(DatacentersBuilderExtensions.ActualDatacentersKey)] IDatacenters actualDatacenters)
+    public ValidateOptionsResult Validate(string? _, SubstitutableDatacenters.SubstitutionMarker __)
     {
-        _substitutableDatacenters = substitutableDatacenters;
-        _actualDatacenters = actualDatacenters;
-    }
+        var substitutableDatacenters = provider.GetService<IDatacenters>() as SubstitutableDatacenters;
+        var actualDatacenters = provider.GetKeyedService<IDatacenters>(DatacentersBuilderExtensions.ActualDatacentersKey);
 
-    public ValidateOptionsResult Validate(string? _, DatacenterSubstitutionMarker __)
-    {
-        ((SubstitutableDatacenters)_substitutableDatacenters).SubstituteWith(_actualDatacenters);
+        if (substitutableDatacenters is not null && actualDatacenters is not null)
+            substitutableDatacenters.SubstituteWith(actualDatacenters);
 
         return ValidateOptionsResult.Skip;
     }

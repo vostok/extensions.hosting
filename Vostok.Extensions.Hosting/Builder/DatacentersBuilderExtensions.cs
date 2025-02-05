@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 
 using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Datacenters;
-using Vostok.Logging.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -36,6 +35,12 @@ public static class DatacentersBuilderExtensions
         return builder;
     }
 
+    internal static void PrepareDatacentersSubstitution(this IVostokBuilder builder)
+    {
+        builder.Services.AddOptionsWithValidateOnStart<SubstitutableDatacenters.SubstitutionMarker>();
+        builder.Services.TryAddSingleton<IValidateOptions<SubstitutableDatacenters.SubstitutionMarker>, DatacenterSubstitutionValidator>();
+    }
+
     private static void AddDatacenters(this IServiceCollection services)
     {
         // Do not add services if custom IDatacenters already registered
@@ -46,35 +51,8 @@ public static class DatacentersBuilderExtensions
         }
 
         services.TryAddSingleton<IDatacenters, SubstitutableDatacenters>();
-        services.AddOptionsWithValidateOnStart<DatacenterSubstitutionMarker>();
-        services.TryAddSingleton<IValidateOptions<DatacenterSubstitutionMarker>, DatacenterSubstitutionValidator>();
-
-        services.TryAddKeyedSingleton<IDatacenters>(ActualDatacentersKey, (provider, _) => CreateDatacenters(provider));
-    }
-
-    private static IDatacenters CreateDatacenters(IServiceProvider provider)
-    {
-        var options = provider.GetRequiredService<IOptions<DatacentersConfigurationOptions>>().Value;
-        var log = provider.GetRequiredService<ILog>();
-
-        if (options.DatacenterMapping is null)
-        {
-            log.LogDisabled("Datacenters", "unconfigured mapping");
-            return new EmptyDatacenters();
-        }
-
-        if (options.ActiveDatacentersProvider is null)
-        {
-            log.LogDisabled("Datacenters", "unconfigured active datacenters provider");
-            return new EmptyDatacenters();
-        }
-
-        var datacentersSettings = new DatacentersSettings(
-            options.DatacenterMapping,
-            options.ActiveDatacentersProvider);
-
-        options.ApplyCustomizations(datacentersSettings);
-
-        return new Datacenters.Datacenters(datacentersSettings);
+        services.TryAddKeyedSingleton<IDatacenters>(
+            ActualDatacentersKey,
+            (provider, _) => DatacentersFactory.Create(provider));
     }
 }

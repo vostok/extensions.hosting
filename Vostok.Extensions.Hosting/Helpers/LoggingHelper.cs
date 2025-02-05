@@ -1,6 +1,7 @@
-﻿using Vostok.Logging.Abstractions;
+﻿using Vostok.Extensions.Hosting.Builder;
+using Vostok.Logging.Abstractions;
 
-namespace Vostok.Extensions.Hosting.Builder;
+namespace Vostok.Extensions.Hosting.Helpers;
 
 internal static class VostokBuilderLoggingHelper
 {
