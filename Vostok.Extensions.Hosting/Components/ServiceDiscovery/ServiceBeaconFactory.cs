@@ -57,6 +57,9 @@ internal static class ServiceBeaconFactory
             zooKeeperClient,
             s =>
             {
+                s.SetEnvironment(applicationIdentity.Environment);
+                s.SetApplication(applicationIdentity.FormatServiceName());
+
                 s.SetProperty(WellKnownApplicationIdentityProperties.Project, applicationIdentity.Project);
                 s.SetProperty(WellKnownApplicationIdentityProperties.Subproject, applicationIdentity.Subproject);
                 s.SetProperty(WellKnownApplicationIdentityProperties.Environment, applicationIdentity.Environment);

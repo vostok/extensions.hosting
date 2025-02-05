@@ -43,6 +43,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.datacenters\Vostok.Datacenters\bin\Release\$(ReferencesFramework)\Vostok.Datacenters.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Hercules.Client">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.hercules.client\Vostok.Hercules.Client\bin\Release\$(ReferencesFramework)\Vostok.Hercules.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Hercules.Client.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.hercules.client.abstractions\Vostok.Hercules.Client.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Hercules.Client.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Hosting.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.hosting.abstractions\Vostok.Hosting.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Hosting.Abstractions.dll</HintPath>
@@ -58,6 +66,10 @@
     <Reference Include="Vostok.Tracing.Diagnostics">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.tracing.diagnostics\Vostok.Tracing.Diagnostics\bin\Release\net6.0\Vostok.Tracing.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Tracing.Extensions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing.extensions\Vostok.Tracing.Extensions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ZooKeeper.Client">
       <SpecificVersion>False</SpecificVersion>
