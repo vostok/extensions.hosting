@@ -8,6 +8,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
+using Vostok.ServiceDiscovery.Telemetry;
 using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
@@ -37,10 +38,10 @@ internal static class ServiceBeaconFactory
         ILog log,
         IServiceProvider provider)
     {
+        var serviceDiscoveryEventsContext = provider.GetRequiredService<IServiceDiscoveryEventsContext>();
         var settings = new ServiceBeaconSettings
         {
-            // TODO: Add after ServiceDiscoveryEventsContext registration
-            //ServiceDiscoveryEventContext = context.ServiceDiscoveryEventsContext
+            ServiceDiscoveryEventContext = serviceDiscoveryEventsContext
         };
 
         if (options.RegistrationDeniedFromNonActiveDatacenters)

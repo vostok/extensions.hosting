@@ -69,6 +69,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.metrics.hercules\Vostok.Metrics.Hercules\bin\Release\$(ReferencesFramework)\Vostok.Metrics.Hercules.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.ServiceDiscovery.Telemetry">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.servicediscovery.telemetry\Vostok.ServiceDiscovery.Telemetry\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Telemetry.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ServiceDiscovery.Telemetry.Hercules">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.servicediscovery.telemetry.hercules\Vostok.ServiceDiscovery.Telemetry.Hercules\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Telemetry.Hercules.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Tracing.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.tracing.abstractions\Vostok.Tracing.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Abstractions.dll</HintPath>
@@ -112,7 +120,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston"/>
+    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston" />
   </ItemGroup>
 
 </Project>
