@@ -3,7 +3,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-using Vostok.ClusterConfig.Client;
 using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
 
 namespace Vostok.Extensions.Hosting.Builder;
@@ -13,7 +12,7 @@ public static class ClusterConfigClientBuilderExtensions
 {
     public static IVostokBuilder WithClusterConfigClient(
         this IVostokBuilder builder,
-        Action<ClusterConfigClientSettings> configure)
+        Action<ClusterConfigClientConfigurationOptions> configure)
     {
         builder.WithClusterConfigClient((options, _) => configure(options));
 
@@ -22,18 +21,12 @@ public static class ClusterConfigClientBuilderExtensions
 
     public static IVostokBuilder WithClusterConfigClient(
         this IVostokBuilder builder,
-        Action<ClusterConfigClientSettings, IServiceProvider>? configure = null)
+        Action<ClusterConfigClientConfigurationOptions, IServiceProvider>? configure = null)
     {
         builder.Services.AddClusterConfigClient();
 
         if (configure is not null)
-        {
-            builder.Services.AddOptions<ClusterConfigClientConfigurationOptions>()
-                   .Configure<IServiceProvider>((options, provider) =>
-                   {
-                       options.CustomizeSettings(settings => configure(settings, provider));
-                   });
-        }
+            builder.Services.AddOptions<ClusterConfigClientConfigurationOptions>().Configure(configure);
 
         return builder;
     }

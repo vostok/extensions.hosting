@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Vostok.Extensions.Hosting.Components.ServiceDiscovery;
-using Vostok.ServiceDiscovery;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -13,7 +12,7 @@ public static class ServiceLocatorBuilderExtensions
 {
     public static IVostokBuilder WithServiceLocator(
         this IVostokBuilder builder,
-        Action<ServiceLocatorSettings> configure)
+        Action<ServiceLocatorConfigurationOptions> configure)
     {
         builder.WithServiceLocator((settings, _) => configure(settings));
 
@@ -22,18 +21,12 @@ public static class ServiceLocatorBuilderExtensions
 
     public static IVostokBuilder WithServiceLocator(
         this IVostokBuilder builder,
-        Action<ServiceLocatorSettings, IServiceProvider>? configure = null)
+        Action<ServiceLocatorConfigurationOptions, IServiceProvider>? configure = null)
     {
         builder.Services.AddServiceLocator();
 
         if (configure is not null)
-        {
-            builder.Services.AddOptions<ServiceLocatorConfigurationOptions>()
-                   .Configure<IServiceProvider>((options, provider) =>
-                   {
-                       options.CustomizeSettings(settings => configure(settings, provider));
-                   });
-        }
+            builder.Services.AddOptions<ServiceLocatorConfigurationOptions>().Configure(configure);
 
         return builder;
     }
