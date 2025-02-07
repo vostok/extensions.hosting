@@ -28,7 +28,7 @@ public static class VostokMetricsBuilderExtensions
         return builder;
     }
 
-    public static IVostokMetricsBuilder AddMetricEventSender(
+    public static IVostokMetricsBuilder AddMetricSender(
         this IVostokMetricsBuilder builder,
         IMetricEventSender metricEventSender)
     {
@@ -36,21 +36,21 @@ public static class VostokMetricsBuilderExtensions
         return builder;
     }
 
-    public static IVostokMetricsBuilder AddLoggingMetricEventSender(this IVostokMetricsBuilder builder)
+    public static IVostokMetricsBuilder AddLoggingMetricSender(this IVostokMetricsBuilder builder)
     {
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricEventSender, LoggingMetricEventSender>());
         return builder;
     }
 
-    public static IVostokMetricsBuilder AddHerculesMetricEventSender(
+    public static IVostokMetricsBuilder AddHerculesMetricSender(
         this IVostokMetricsBuilder builder,
         Action<HerculesMetricsSenderConfigurationOptions> configure)
     {
-        builder.AddHerculesMetricEventSender((options, _) => configure(options));
+        builder.AddHerculesMetricSender((options, _) => configure(options));
         return builder;
     }
     
-    public static IVostokMetricsBuilder AddHerculesMetricEventSender(
+    public static IVostokMetricsBuilder AddHerculesMetricSender(
         this IVostokMetricsBuilder builder,
         Action<HerculesMetricsSenderConfigurationOptions, IServiceProvider>? configure = null)
     {
@@ -65,7 +65,7 @@ public static class VostokMetricsBuilderExtensions
         return builder;
     }
 
-    public static IVostokMetricsBuilder ClearMetricEventSenders(this IVostokMetricsBuilder builder)
+    public static IVostokMetricsBuilder ClearMetricSenders(this IVostokMetricsBuilder builder)
     {
         builder.Services.RemoveAll<IVostokMetricsBuilder>();
         return builder;
