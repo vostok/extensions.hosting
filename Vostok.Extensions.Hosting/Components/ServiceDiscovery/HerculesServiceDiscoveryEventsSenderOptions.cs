@@ -2,6 +2,7 @@
 
 public sealed class HerculesServiceDiscoveryEventsSenderOptions
 {
-    public string? StreamName { get; set; }
+    public bool Enabled { get; set; } = true;
+    public string? Stream { get; set; }
     public Func<string?> ApiKeyProvider { get; set; } = () => null;
 }

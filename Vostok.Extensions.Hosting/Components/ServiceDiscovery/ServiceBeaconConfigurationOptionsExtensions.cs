@@ -27,23 +27,29 @@ public static class ServiceBeaconConfigurationOptionsExtensions
 
         configure(options);
 
+        if (!options.Enabled)
+        {
+            log.LogDisabled(nameof(HerculesServiceDiscoveryEventsSender), "explicit disable");
+            return null;
+        }
+
         var sink = services.GetService<IHerculesSink>();
 
         if (sink == null)
         {
-            log.LogDisabled("HerculesServiceDiscoveryEventsSender", "disabled HerculesSink");
+            log.LogDisabled(nameof(HerculesServiceDiscoveryEventsSender), "disabled HerculesSink");
             return null;
         }
 
-        if (options.StreamName is null)
+        if (options.Stream is null)
         {
-            log.LogDisabled("HerculesServiceDiscoveryEventsSender", "not configured stream");
+            log.LogDisabled(nameof(HerculesServiceDiscoveryEventsSender), "not configured stream");
             return null;
         }
 
-        sink.ConfigureStream(options.StreamName, new StreamSettings { ApiKeyProvider = options.ApiKeyProvider });
+        sink.ConfigureStream(options.Stream, new StreamSettings { ApiKeyProvider = options.ApiKeyProvider });
 
-        var settings = new HerculesServiceDiscoveryEventsSenderSettings(sink, options.StreamName);
+        var settings = new HerculesServiceDiscoveryEventsSenderSettings(sink, options.Stream);
         return new HerculesServiceDiscoveryEventsSender(settings);
     }
 }
