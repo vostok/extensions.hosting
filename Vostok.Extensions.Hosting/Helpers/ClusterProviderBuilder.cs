@@ -26,12 +26,13 @@ internal sealed class ClusterProviderBuilder
     {
         return new ClusterProviderBuilder(GetProviderFactory);
 
-        IClusterProvider? GetProviderFactory(IServiceProvider provider)
+        IClusterProvider? GetProviderFactory(IServiceProvider services)
         {
-            var clusterConfigClient = provider.GetRequiredService<IClusterConfigClient>();
-            if (clusterConfigClient is DisabledClusterConfigClient) return null;
+            var clusterConfigClient = services.GetRequiredService<IClusterConfigClient>();
+            if (clusterConfigClient is DisabledClusterConfigClient)
+                return null;
 
-            var log = provider.GetRequiredService<ILog>();
+            var log = services.GetRequiredService<ILog>();
 
             return new ClusterConfigClusterProvider(clusterConfigClient, path, log);
         }
@@ -41,17 +42,17 @@ internal sealed class ClusterProviderBuilder
     {
         return new ClusterProviderBuilder(GetProviderFactory);
 
-        IClusterProvider? GetProviderFactory(IServiceProvider provider)
+        IClusterProvider? GetProviderFactory(IServiceProvider services)
         {
-            var serviceLocator = provider.GetRequiredService<IServiceLocator>();
+            var serviceLocator = services.GetRequiredService<IServiceLocator>();
             if (serviceLocator is DevNullServiceLocator)
                 return null;
 
-            var log = provider.GetRequiredService<ILog>();
+            var log = services.GetRequiredService<ILog>();
 
             return new ServiceDiscoveryClusterProvider(serviceLocator, environment, application, log);
         }
     }
 
-    public IClusterProvider? Build(IServiceProvider provider) => _providerFactory(provider);
+    public IClusterProvider? Build(IServiceProvider services) => _providerFactory(services);
 }

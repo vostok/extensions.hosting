@@ -6,14 +6,14 @@ namespace Vostok.Extensions.Hosting.Components.Metrics;
 
 internal sealed class VostokApplicationMetrics : IVostokApplicationMetrics, IDisposable
 {
-    private bool _disposed;
-
     public IMetricContext Root { get; }
     public IMetricContext Project { get; }
     public IMetricContext Subproject { get; }
     public IMetricContext Environment { get; }
     public IMetricContext Application { get; }
     public IMetricContext Instance { get; }
+
+    private bool _disposed;
 
     public VostokApplicationMetrics(IMetricContext root, IVostokApplicationIdentity identity)
     {
