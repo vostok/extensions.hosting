@@ -21,8 +21,8 @@ public class HerculesSinkConfigurationOptions
     public void SetExternalUrlTopology(string url) =>
         SetClusterProvider(new FixedClusterProvider(url));
 
-    public void SetClusterProvider(IClusterProvider clusterProvider) => ClusterProviderBuilder =
-        ClusterProviderBuilder.FromValue(clusterProvider);
+    public void SetClusterProvider(IClusterProvider clusterProvider) =>
+        ClusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider);
 
     public void SetServiceDiscoveryTopology(string environment, string application) =>
         ClusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(environment, application);
