@@ -19,6 +19,8 @@ internal static class ZooKeeperClientFactory
 
         ZooKeeperClientSettings? settings = null;
 
+        // todo: Enable/Disable
+
         if (options.ConnectionString is not null)
             settings = new ZooKeeperClientSettings(options.ConnectionString);
 
@@ -28,7 +30,7 @@ internal static class ZooKeeperClientFactory
 
         if (settings is null)
         {
-            log.LogDisabled("ZooKeeperClient", "unconfigured ZooKeeper topology");
+            log.LogDisabled("ZooKeeperClient", "not configured ZooKeeper topology");
             return new DevNullZooKeeperClient();
         }
 

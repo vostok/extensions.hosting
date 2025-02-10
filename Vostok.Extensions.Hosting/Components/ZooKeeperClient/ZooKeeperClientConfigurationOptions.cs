@@ -1,4 +1,6 @@
-﻿using Vostok.Clusterclient.Core.Topology;
+﻿using JetBrains.Annotations;
+
+using Vostok.Clusterclient.Core.Topology;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
@@ -6,6 +8,7 @@ using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 
 namespace Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 
+[PublicAPI]
 public sealed class ZooKeeperClientConfigurationOptions
 {
     internal string? ConnectionString { get; private set; }

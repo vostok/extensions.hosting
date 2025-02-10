@@ -31,6 +31,9 @@ public static class ServiceBeaconBuilderExtensions
         return builder;
     }
 
-    private static void AddServiceBeacon(this IServiceCollection services) =>
+    private static void AddServiceBeacon(this IServiceCollection services)
+    {
         services.TryAddSingleton(ServiceBeaconFactory.Create);
+        services.TryAddSingleton(ServiceDiscoveryEventsContextFactory.Create);
+    }
 }

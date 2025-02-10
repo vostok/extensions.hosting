@@ -24,8 +24,6 @@ internal sealed class VostokBuilder : IVostokBuilder
         this.PrepareDatacentersSubstitution();
 
         this.WithApplicationIdentity();
-        this.WithApplicationReplicationInfo();
-        this.WithApplicationLimits();
 
         AddTracer(Services);
         AddLog(Services);
