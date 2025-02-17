@@ -10,6 +10,7 @@
     <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Observable\CachingObservable.cs" Link="Commons\CachingObservable.cs" />
     <Compile Include="..\..\vostok.commons.environment\Vostok.Commons.Environment\EnvironmentInfo.cs" Link="Commons\EnvironmentInfo.cs" />
     <Compile Include="..\..\vostok.commons.environment\Vostok.Commons.Environment\RuntimeDetector.cs" Link="Commons\RuntimeDetector.cs" />
+    <Compile Include="..\..\vostok.commons.collections\Vostok.Commons.Collections\ConcurrentBoundedQueue.cs" Link="Commons\ConcurrentBoundedQueue.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +42,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.sources.json\Vostok.Configuration.Sources.Json\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Context">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.context\Vostok.Context\bin\Release\$(ReferencesFramework)\Vostok.Context.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Datacenters">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.datacenters\Vostok.Datacenters\bin\Release\$(ReferencesFramework)\Vostok.Datacenters.dll</HintPath>
@@ -60,6 +65,10 @@
     <Reference Include="Vostok.Logging.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging.Microsoft">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.microsoft\Vostok.Logging.Microsoft\bin\Release\$(ReferencesFramework)\Vostok.Logging.Microsoft.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Metrics">
       <SpecificVersion>False</SpecificVersion>
@@ -117,6 +126,8 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Telemetry" Version="9.1.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.1" />
   </ItemGroup>
   
   <ItemGroup>

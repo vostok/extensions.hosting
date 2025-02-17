@@ -1,10 +1,6 @@
 using System.Net;
 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-
 using Vostok.Datacenters;
-using Vostok.Extensions.Hosting.Builder;
 
 namespace Vostok.Extensions.Hosting.Components.Datacenters;
 
@@ -32,21 +28,4 @@ internal sealed class SubstitutableDatacenters : IDatacenters
 
     public IDatacenters GetBase() =>
         _baseDatacenters;
-    
-    public sealed class SubstitutionMarker;
-}
-
-internal sealed class DatacenterSubstitutionValidator(IServiceProvider provider)
-    : IValidateOptions<SubstitutableDatacenters.SubstitutionMarker>
-{
-    public ValidateOptionsResult Validate(string? _, SubstitutableDatacenters.SubstitutionMarker __)
-    {
-        var substitutableDatacenters = provider.GetService<IDatacenters>() as SubstitutableDatacenters;
-        var actualDatacenters = provider.GetKeyedService<IDatacenters>(DatacentersBuilderExtensions.ActualDatacentersKey);
-
-        if (substitutableDatacenters is not null && actualDatacenters is not null)
-            substitutableDatacenters.SubstituteWith(actualDatacenters);
-
-        return ValidateOptionsResult.Skip;
-    }
 }
