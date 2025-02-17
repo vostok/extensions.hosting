@@ -23,18 +23,7 @@ public static class DiagnosticsBuilderExtensions
 
     private static void AddDiagnostics(this IServiceCollection services)
     {
-        /*
-        if (!settings.DiagnosticMetricsEnabled)
-        {
-            services.TryAddSingleton<IVostokApplicationDiagnostics>(sp =>
-            {
-                var diagnosticInfo = new DiagnosticInfo();
-                return new DiagnosticsHub(diagnosticInfo);
-            });
-            
-            return;
-        }
-        */
+        // todo (bogdanov.n) 17.02.2025: A `DiagnosticMetricsEnabled` check could take place here
 
         services.AddOptionsWithValidateOnStart<DiagnosticsInfoOptions>();
 
