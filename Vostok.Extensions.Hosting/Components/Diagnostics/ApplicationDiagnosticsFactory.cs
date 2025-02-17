@@ -20,21 +20,20 @@ internal static class DiagnosticInfoFactory
 
         if (options.AddEnvironmentInfo)
         {
-            var datacenters = provider.GetRequiredService<IDatacenters>();
+            var environmentInfoProvider = provider.GetRequiredService<EnvironmentInfoProvider>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.EnvironmentInfo);
-            var environmentInfoProvider = new EnvironmentInfoProvider(datacenters);
             info.RegisterProvider(diagnosticEntry, environmentInfoProvider);
         }
 
         if (options.AddSystemMetricsInfo)
         {
-            // todo (bogdanov.n) 14.02.2025: requires `context.RegisterDisposable`
+            // todo (bogdanov.n) 17.02.2025: requires `SystemMetricsProvider`
             // info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics), context.RegisterDisposable(new SystemMetricsProvider()));
         }
 
         if (options.AddLoadedAssembliesInfo)
         {
-            var loadedAssembliesProvider = new LoadedAssembliesProvider();
+            var loadedAssembliesProvider = provider.GetRequiredService<LoadedAssembliesProvider>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.LoadedAssemblies);
             info.RegisterProvider(diagnosticEntry, loadedAssembliesProvider);
         }
@@ -72,13 +71,8 @@ internal static class DiagnosticInfoFactory
 
         if (options.AddApplicationInfo)
         {
-            var identity = provider.GetRequiredService<IVostokApplicationIdentity>();
-            var limits = provider.GetRequiredService<IVostokApplicationLimits>();
-            var replication = provider.GetRequiredService<Func<IVostokApplicationReplicationInfo>>();
-
-            var applicationInfoProvider = new ApplicationInfoProvider(identity, limits, replication);
+            var applicationInfoProvider = provider.GetRequiredService<ApplicationInfoProvider>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.ApplicationInfo);
-
             info.RegisterProvider(diagnosticEntry, applicationInfoProvider);
         }
 

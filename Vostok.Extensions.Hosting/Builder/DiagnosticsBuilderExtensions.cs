@@ -27,9 +27,16 @@ public static class DiagnosticsBuilderExtensions
 
         services.AddOptionsWithValidateOnStart<DiagnosticsInfoOptions>();
 
-        var metricsProvider = new ApplicationMetricsProvider();
-        services.TryAddSingleton(metricsProvider);
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricEventSender, ApplicationMetricsProvider>());
+        services.TryAddSingleton<ApplicationMetricsProvider>();
+        var descriptor = ServiceDescriptor.Describe(typeof(IMetricEventSender),
+            sp => sp.GetRequiredService<ApplicationMetricsProvider>(), ServiceLifetime.Singleton);
+        
+        services.TryAddEnumerable(descriptor);
+
+        services.TryAddSingleton<EnvironmentInfoProvider>();
+        services.TryAddSingleton<LoadedAssembliesProvider>();
+        services.TryAddSingleton<ApplicationMetricsProvider>();
+        services.TryAddSingleton<ApplicationInfoProvider>();
 
         services.TryAddSingleton<IVostokApplicationDiagnostics>(sp =>
         {
