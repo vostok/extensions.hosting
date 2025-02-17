@@ -7,10 +7,7 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 internal class DiagnosticInfo : IDiagnosticInfo
 {
-    private readonly ConcurrentDictionary<DiagnosticEntry, IDiagnosticInfoProvider> providers;
-
-    public DiagnosticInfo()
-        => providers = new ConcurrentDictionary<DiagnosticEntry, IDiagnosticInfoProvider>();
+    private readonly ConcurrentDictionary<DiagnosticEntry, IDiagnosticInfoProvider> providers = new();
 
     public IDisposable RegisterProvider(DiagnosticEntry entry, IDiagnosticInfoProvider provider)
     {
@@ -23,12 +20,12 @@ internal class DiagnosticInfo : IDiagnosticInfo
     public IReadOnlyList<DiagnosticEntry> ListAll()
         => providers.Select(pair => pair.Key).ToArray();
 
-    public bool TryQuery(DiagnosticEntry entry, out object info)
+    public bool TryQuery(DiagnosticEntry entry, out object? info)
     {
         var foundProvider = providers.TryGetValue(entry, out var provider);
 
-        info = foundProvider ? provider.QuerySafe() : null;
+        info = foundProvider ? provider?.QuerySafe() : null;
 
-        return foundProvider;
+        return info != null;
     }
 }

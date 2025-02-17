@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
+[PublicAPI]
 public sealed class DiagnosticsInfoOptions
 {
     public bool AddEnvironmentInfo { get; set; } = true;

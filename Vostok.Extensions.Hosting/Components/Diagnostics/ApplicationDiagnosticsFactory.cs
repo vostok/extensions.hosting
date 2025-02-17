@@ -1,11 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
-using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;

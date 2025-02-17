@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -8,6 +10,7 @@ using Vostok.Metrics;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
+[PublicAPI]
 public static class DiagnosticsBuilderExtensions
 {
     public static IVostokBuilder WithDiagnostics(this IVostokBuilder builder,
@@ -30,7 +33,7 @@ public static class DiagnosticsBuilderExtensions
         services.TryAddSingleton<ApplicationMetricsProvider>();
         var descriptor = ServiceDescriptor.Describe(typeof(IMetricEventSender),
             sp => sp.GetRequiredService<ApplicationMetricsProvider>(), ServiceLifetime.Singleton);
-        
+
         services.TryAddEnumerable(descriptor);
 
         services.TryAddSingleton<EnvironmentInfoProvider>();

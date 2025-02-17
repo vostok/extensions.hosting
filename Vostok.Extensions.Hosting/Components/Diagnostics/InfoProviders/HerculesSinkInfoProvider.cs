@@ -4,13 +4,8 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 
-internal class HerculesSinkInfoProvider : IDiagnosticInfoProvider
+internal class HerculesSinkInfoProvider(HerculesSink sink) : IDiagnosticInfoProvider
 {
-    private readonly HerculesSink sink;
-
-    public HerculesSinkInfoProvider(HerculesSink sink)
-        => this.sink = sink;
-
     public object Query()
     {
         var statistics = sink.GetStatistics();
@@ -24,7 +19,7 @@ internal class HerculesSinkInfoProvider : IDiagnosticInfoProvider
         };
     }
 
-    private object Convert(HerculesSinkCounters counters)
+    private static object Convert(HerculesSinkCounters counters)
         => new
         {
             SentRecords = $"{counters.SentRecords.Count} of {counters.SentRecords.Size.Bytes()}",
