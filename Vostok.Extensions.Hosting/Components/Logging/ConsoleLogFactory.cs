@@ -10,6 +10,8 @@ namespace Vostok.Extensions.Hosting.Components.Logging;
 
 internal static class ConsoleLogFactory
 {
+    private const string ConsoleLogName = "Console";
+
     public static LogRegistration Create(IServiceProvider provider)
     {
         var options = provider.GetRequiredService<IOptions<ConsoleLogOptions>>().Value;
@@ -26,7 +28,7 @@ internal static class ConsoleLogFactory
             log = log.WithMinimumLevel(options.MinLevelProvider);
 
         // todo: Customize log
-        
-        return new LogRegistration(log, new ActionDisposable(ConsoleLog.Flush));
+
+        return new LogRegistration(log, ConsoleLogName, new ActionDisposable(ConsoleLog.Flush));
     }
 }
