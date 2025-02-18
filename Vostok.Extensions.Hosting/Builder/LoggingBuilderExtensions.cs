@@ -3,13 +3,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 using Vostok.Extensions.Hosting.Components.Logging;
+using Vostok.Extensions.Hosting.Components.Logging.Builder;
 using Vostok.Extensions.Hosting.Components.Logging.Substitution;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Microsoft;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
-internal static class LoggingBuilderExtensions
+public static class LoggingBuilderExtensions
 {
     public const string ActualLogKey = "_ActualLog";
 
@@ -26,5 +27,14 @@ internal static class LoggingBuilderExtensions
 
         builder.Services.AddLogEnricher<OperationContextEnricher>();
         builder.Services.AddStaticLogEnricher<ApplicationInfoEnricher>();
+    }
+
+    public static void WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
+    {
+        var descriptor = ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
+        builder.Services.TryAddEnumerable(descriptor);
+
+        var vostokLogBuilder = new VostokLogBuilder(builder.Services);
+        configure(vostokLogBuilder);
     }
 }
