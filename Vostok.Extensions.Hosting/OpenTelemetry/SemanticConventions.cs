@@ -3,4 +3,5 @@
 internal static class SemanticConventions
 {
     public const string AttributeHostName = "host.name";
+    public const string AttributeDeploymentEnvironmentName = "deployment.environment.name";
 }

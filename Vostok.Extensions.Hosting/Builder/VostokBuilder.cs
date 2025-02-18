@@ -3,8 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Helpers;
-using Vostok.Tracing.Abstractions;
-using Vostok.Tracing.Diagnostics;
+using Vostok.Extensions.Hosting.OpenTelemetry;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -26,13 +25,9 @@ internal sealed class VostokBuilder : IVostokBuilder
         this.WithApplicationIdentity();
 
         this.WithLogging();
-        AddTracer(Services);
-    }
+        this.AddTracing();
 
-    private static void AddTracer(IServiceCollection services)
-    {
-        var activitySourceTracer = new ActivitySourceTracer(new ActivitySourceTracerSettings());
-        services.TryAddSingleton<ITracer>(activitySourceTracer);
+        Services.ConfigureOpenTelemetryForVostok();
     }
 
     private static void PrepareSubstitutions(IServiceCollection services)
