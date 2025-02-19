@@ -34,7 +34,7 @@ internal sealed class LevelCountingLog : ILog, ILogLevelCountersCollector
         }
     }
 
-    public bool IsEnabledFor(LogLevel level) => false;
+    public bool IsEnabledFor(LogLevel level) => true;
     public ILog ForContext(string context) => this;
 
     public LogLevelCounters Collect() =>
