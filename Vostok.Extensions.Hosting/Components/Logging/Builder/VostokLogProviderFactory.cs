@@ -11,18 +11,17 @@ internal static class VostokLogProviderFactory
     public static VostokLoggerProvider Create(IServiceProvider provider)
     {
         var logs = provider.GetServices<LogRegistration>().Where(r => r.IsEnabled).ToArray();
+        var rules = provider.GetServices<LogConfigurationRule>().ToArray();
 
         var configurableLogBuilder = new ConfigurableLogBuilder();
 
         foreach (var log in logs)
             configurableLogBuilder.AddLog(log.Name, log.Log);
 
-        // todo: Set rules after configuration implementation.
-        // configurableLogBuilder.SetRules();
+        // todo: Set rules sources after configuration implementation.
+        configurableLogBuilder.SetRules(rules);
 
         ILog compositeLog = configurableLogBuilder.Build();
-
-        // var compositeLog = new CompositeLog(logs);
 
         return new VostokLoggerProvider(compositeLog);
     }

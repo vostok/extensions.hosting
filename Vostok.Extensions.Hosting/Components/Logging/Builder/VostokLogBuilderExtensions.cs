@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Vostok.Extensions.Hosting.Components.Logging.LevelCounter;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 
 namespace Vostok.Extensions.Hosting.Components.Logging.Builder;
 
@@ -44,6 +45,12 @@ public static class VostokLogBuilderExtensions
     public static IVostokLogBuilder ClearLogs(this IVostokLogBuilder builder)
     {
         builder.Services.RemoveAll<LogRegistration>();
+        return builder;
+    }
+
+    public static IVostokLogBuilder AddRule(this IVostokLogBuilder builder, LogConfigurationRule rule)
+    {
+        builder.Services.AddSingleton(rule);
         return builder;
     }
 

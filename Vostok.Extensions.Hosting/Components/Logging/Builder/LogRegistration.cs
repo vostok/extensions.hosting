@@ -21,7 +21,7 @@ internal sealed class LogRegistration : IDisposable
         _log = log;
 
         _name = name;
-        if (name is null && _log is not null)
+        if (_name is null && _log is not null)
             _name = $"{_log.GetType().Name}-{Interlocked.Increment(ref _unnamedLogsCounter)}";
 
         _logDisposing = logDisposing;
