@@ -28,7 +28,7 @@ public static class DiagnosticsBuilderExtensions
     {
         // todo (bogdanov.n) 17.02.2025: A `DiagnosticMetricsEnabled` check could take place here
 
-        services.AddOptionsWithValidateOnStart<DiagnosticsInfoOptions>();
+        services.AddOptions<DiagnosticsInfoOptions>();
 
         services.TryAddSingleton<ApplicationMetricsProvider>();
         var descriptor = ServiceDescriptor.Describe(typeof(IMetricEventSender),
@@ -38,7 +38,6 @@ public static class DiagnosticsBuilderExtensions
 
         services.TryAddSingleton<EnvironmentInfoProvider>();
         services.TryAddSingleton<LoadedAssembliesProvider>();
-        services.TryAddSingleton<ApplicationMetricsProvider>();
         services.TryAddSingleton<ApplicationInfoProvider>();
 
         services.TryAddSingleton<IVostokApplicationDiagnostics>(sp =>
