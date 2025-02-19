@@ -3,16 +3,11 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
-internal class DiagnosticsHub(IDiagnosticInfo info) : IVostokApplicationDiagnostics, IDisposable
+internal class DiagnosticsHub(IDiagnosticInfo info, IHealthTracker healthTracker) : IVostokApplicationDiagnostics
 {
     public IDiagnosticInfo Info { get; } = info;
-    /*public HealthTracker HealthTracker { get; } = HealthTracker;*/
-    
-    public void Dispose()
-    {
-        /* HealthTracker.Dispose(); */
-    }
+    public IHealthTracker HealthTracker { get; } = healthTracker;
 
     IDiagnosticInfo IVostokApplicationDiagnostics.Info => Info;
-    IHealthTracker IVostokApplicationDiagnostics.HealthTracker => null!;
+    IHealthTracker IVostokApplicationDiagnostics.HealthTracker => HealthTracker;
 }
