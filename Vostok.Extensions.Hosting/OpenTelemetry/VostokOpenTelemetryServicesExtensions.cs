@@ -27,7 +27,11 @@ internal static class VostokOpenTelemetryServicesExtensions
                .ConfigureResource(ConfigureMetricsResource);
 
     private static void Configure(LoggerProviderBuilder logging) =>
-        logging.ConfigureResource(ConfigureLoggingResource);
+        logging.ConfigureServices(services => services.Configure<OpenTelemetryLoggerOptions>(options =>
+               {
+                   options.IncludeFormattedMessage = true;
+               }))
+               .ConfigureResource(ConfigureLoggingResource);
 
     private static void ConfigureTracingResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear()
