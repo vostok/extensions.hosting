@@ -9,15 +9,13 @@ public class SubstitutableLog : ILog
 
     public bool IsBuffering => _baseLog is BufferedLog;
 
-    public void Log(LogEvent @event) => _baseLog.Log(@event);
+    public void Log(LogEvent? @event) => _baseLog.Log(@event);
 
     public bool IsEnabledFor(LogLevel level) => _baseLog.IsEnabledFor(level);
 
     public ILog ForContext(string context)
     {
-        if (context == null)
-            throw new ArgumentNullException(nameof(context));
-
+        ArgumentNullException.ThrowIfNull(context);
         return new SourceContextWrapper(this, context);
     }
 

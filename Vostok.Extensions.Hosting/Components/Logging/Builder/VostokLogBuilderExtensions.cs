@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
+using Vostok.Extensions.Hosting.Components.Logging.LevelCounter;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.Logging.Builder;
@@ -44,5 +45,15 @@ public static class VostokLogBuilderExtensions
     {
         builder.Services.RemoveAll<LogRegistration>();
         return builder;
+    }
+
+    internal static void AddLogLevelCounting(this IServiceCollection services)
+    {
+        services.TryAddSingleton<LogLevelMetrics>();
+
+        var levelCountingLog = new LevelCountingLog();
+        services.TryAddSingleton<ILogLevelCountersCollector>(levelCountingLog);
+
+        services.AddSingleton(new LogRegistration(levelCountingLog, "_CounterLog"));
     }
 }

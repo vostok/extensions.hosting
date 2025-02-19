@@ -9,16 +9,19 @@ internal class BufferedLog : ILog
     private const int Capacity = 1_000;
     private readonly ConcurrentBoundedQueue<LogEvent> _queue = new(Capacity);
 
-    public void Log(LogEvent @event)
-        => _queue.TryAdd(@event);
+    public void Log(LogEvent? @event)
+    {
+        if (@event is null)
+            return;
+
+        _queue.TryAdd(@event);
+    }
 
     public bool IsEnabledFor(LogLevel level) => true;
 
     public ILog ForContext(string context)
     {
-        if (context == null)
-            throw new ArgumentNullException(nameof(context));
-
+        ArgumentNullException.ThrowIfNull(context);
         return new SourceContextWrapper(this, context);
     }
 

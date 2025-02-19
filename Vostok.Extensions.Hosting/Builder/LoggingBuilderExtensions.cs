@@ -27,6 +27,9 @@ public static class LoggingBuilderExtensions
 
         builder.Services.AddLogEnricher<OperationContextEnricher>();
         builder.Services.AddStaticLogEnricher<ApplicationInfoEnricher>();
+
+        // todo: protect from multiple invocation
+        builder.Services.AddLogLevelCounting();
     }
 
     public static void WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
