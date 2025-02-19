@@ -1,15 +1,16 @@
 using System.Diagnostics.Metrics;
 
+using Vostok.Extensions.Hosting.OpenTelemetry;
 using Vostok.Metrics;
 
 namespace Vostok.Extensions.Hosting.Components.Logging.LevelCounter;
 
 internal sealed class LogLevelMetrics(ILogLevelCountersCollector logLevelCountersCollector, IMeterFactory meterFactory)
 {
-    public const string MeterName = "VostokLog";
-
     private readonly Meter _meter =
-        meterFactory.Create(MeterName, tags: [KeyValuePair.Create(WellKnownTagKeys.Component, (object?)MeterName)]);
+        meterFactory.Create(
+            TelemetryConstants.VostokLogMeterName,
+            tags: [KeyValuePair.Create(WellKnownTagKeys.Component, (object?)TelemetryConstants.VostokLogMeterName)]);
 
     public void StartCollectingMetrics() =>
         _meter.CreateObservableCounter(

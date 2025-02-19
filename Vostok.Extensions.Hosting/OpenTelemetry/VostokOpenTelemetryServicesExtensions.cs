@@ -6,7 +6,6 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-using Vostok.Extensions.Hosting.Builder;
 using Vostok.Extensions.Hosting.OpenTelemetry.ResourceDetectors;
 
 namespace Vostok.Extensions.Hosting.OpenTelemetry;
@@ -19,12 +18,13 @@ internal static class VostokOpenTelemetryServicesExtensions
                 .ConfigureOpenTelemetryLoggerProvider(Configure);
 
     private static void Configure(TracerProviderBuilder tracing) =>
-        tracing.AddSource(TracingBuilderExtensions.ActivitySourceName)
+        tracing.AddSource(TelemetryConstants.VostokTracerActivitySourceName)
                .SetSampler(new AlwaysOnSampler())
                .ConfigureResource(ConfigureTracingResource);
 
     private static void Configure(MeterProviderBuilder metrics) =>
-        metrics.ConfigureResource(ConfigureMetricsResource);
+        metrics.AddMeter(TelemetryConstants.VostokLogMeterName)
+               .ConfigureResource(ConfigureMetricsResource);
 
     private static void Configure(LoggerProviderBuilder logging) =>
         logging.ConfigureResource(ConfigureLoggingResource);
