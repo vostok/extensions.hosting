@@ -4,8 +4,9 @@ using Vostok.Context;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Abstractions.Values;
 
-namespace Vostok.Extensions.Hosting.Components.Logging;
+namespace Vostok.Extensions.Hosting.Components.Logging.Enrichment;
 
+// todo: Use?
 internal sealed class OperationContextEnricher : ILogEnricher
 {
     public void Enrich(IEnrichmentTagCollector collector)

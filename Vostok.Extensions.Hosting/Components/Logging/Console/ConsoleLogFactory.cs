@@ -6,7 +6,7 @@ using Vostok.Extensions.Hosting.Components.Logging.Builder;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 
-namespace Vostok.Extensions.Hosting.Components.Logging;
+namespace Vostok.Extensions.Hosting.Components.Logging.Console;
 
 internal static class ConsoleLogFactory
 {

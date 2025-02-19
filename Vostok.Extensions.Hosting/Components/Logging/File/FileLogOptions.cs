@@ -3,7 +3,7 @@
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.File.Configuration;
 
-namespace Vostok.Extensions.Hosting.Components.Logging;
+namespace Vostok.Extensions.Hosting.Components.Logging.File;
 
 [PublicAPI]
 public sealed class FileLogOptions

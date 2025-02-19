@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
@@ -10,6 +11,7 @@ internal static class VostokLogProviderFactory
 {
     public static VostokLoggerProvider Create(IServiceProvider provider)
     {
+        var options = provider.GetRequiredService<IOptions<LogConfigurationOptions>>().Value;
         var logs = provider.GetServices<LogRegistration>().Where(r => r.IsEnabled).ToArray();
         var rules = provider.GetServices<LogConfigurationRule>().ToArray();
 
@@ -22,6 +24,7 @@ internal static class VostokLogProviderFactory
         configurableLogBuilder.SetRules(rules);
 
         ILog compositeLog = configurableLogBuilder.Build();
+        compositeLog = options.ApplyLogCustomizations(compositeLog);
 
         return new VostokLoggerProvider(compositeLog);
     }

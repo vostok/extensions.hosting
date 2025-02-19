@@ -75,6 +75,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.console\Vostok.Logging.Console\bin\Release\$(ReferencesFramework)\Vostok.Logging.Console.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Logging.Context">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.context\Vostok.Logging.Context\bin\Release\$(ReferencesFramework)\Vostok.Logging.Context.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Logging.File">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.file\Vostok.Logging.File\bin\Release\$(ReferencesFramework)\Vostok.Logging.File.dll</HintPath>
@@ -82,6 +86,10 @@
     <Reference Include="Vostok.Logging.Microsoft">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.microsoft\Vostok.Logging.Microsoft\bin\Release\$(ReferencesFramework)\Vostok.Logging.Microsoft.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging.Tracing">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.tracing\Vostok.Logging.Tracing\bin\Release\$(ReferencesFramework)\Vostok.Logging.Tracing.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Metrics">
       <SpecificVersion>False</SpecificVersion>

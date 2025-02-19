@@ -6,7 +6,7 @@ using Vostok.Logging.Abstractions;
 using Vostok.Logging.File;
 using Vostok.Logging.File.Configuration;
 
-namespace Vostok.Extensions.Hosting.Components.Logging;
+namespace Vostok.Extensions.Hosting.Components.Logging.File;
 
 internal static class FileLogFactory
 {

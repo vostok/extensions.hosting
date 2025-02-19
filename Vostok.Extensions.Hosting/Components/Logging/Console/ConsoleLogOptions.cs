@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 
-namespace Vostok.Extensions.Hosting.Components.Logging;
+namespace Vostok.Extensions.Hosting.Components.Logging.Console;
 
 [PublicAPI]
 public sealed class ConsoleLogOptions

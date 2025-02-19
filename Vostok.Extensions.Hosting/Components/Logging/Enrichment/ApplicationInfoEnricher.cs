@@ -4,8 +4,9 @@ using Vostok.Commons.Environment;
 using Vostok.Extensions.Hosting.OpenTelemetry;
 using Vostok.Hosting.Abstractions;
 
-namespace Vostok.Extensions.Hosting.Components.Logging;
+namespace Vostok.Extensions.Hosting.Components.Logging.Enrichment;
 
+// todo: Use?
 internal sealed class ApplicationInfoEnricher(IVostokApplicationIdentity identity) : IStaticLogEnricher
 {
     public void Enrich(IEnrichmentTagCollector collector)

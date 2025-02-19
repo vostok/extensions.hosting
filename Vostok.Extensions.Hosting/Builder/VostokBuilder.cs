@@ -24,10 +24,10 @@ internal sealed class VostokBuilder : IVostokBuilder
 
         this.WithApplicationIdentity();
 
-        this.WithLogging();
+        this.AddLogging();
         this.AddTracing();
 
-        Services.ConfigureOpenTelemetryForVostok();
+        this.ConfigureOpenTelemetryForVostok();
     }
 
     private static void PrepareSubstitutions(IServiceCollection services)
