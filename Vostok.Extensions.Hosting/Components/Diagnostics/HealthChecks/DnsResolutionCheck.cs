@@ -12,18 +12,22 @@ public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>
 
     private static readonly TimeSpan Period = TimeSpan.FromMinutes(5);
 
-    private readonly CurrentProcessMonitor monitor = new CurrentProcessMonitor();
+    private readonly CurrentProcessMonitor monitor = new();
     private readonly IDisposable subscription;
 
     private DnsStatistics dnsStatistics;
 
-    public DnsResolutionCheck() =>
-        subscription = monitor.ObserveMetrics(Period).Subscribe(this);
+    public DnsResolutionCheck() => subscription = monitor.ObserveMetrics(Period).Subscribe(this);
 
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {
         if (dnsStatistics.FailedLookupsFraction > FailedLookupsThreshold)
-            return Task.FromResult(HealthCheckResult.Degraded($"Percentage of failed DNS lookups exceeded: {dnsStatistics.FailedLookupsFraction * 100} %"));
+        {
+            var healthCheckResult = HealthCheckResult.Degraded(
+                $"Percentage of failed DNS lookups exceeded: {dnsStatistics.FailedLookupsFraction * 100} %");
+            
+            return Task.FromResult(healthCheckResult);
+        }
 
         return Task.FromResult(HealthCheckResult.Healthy());
     }
@@ -47,17 +51,8 @@ public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>
         monitor?.Dispose();
     }
 
-    private struct DnsStatistics
+    private struct DnsStatistics(int failedLookupsCount, int lookupsCount)
     {
-        private readonly int failedLookupsCount;
-        private readonly int lookupsCount;
-
-        public DnsStatistics(int failedLookupsCount, int lookupsCount)
-        {
-            this.failedLookupsCount = failedLookupsCount;
-            this.lookupsCount = lookupsCount;
-        }
-
         public double FailedLookupsFraction => lookupsCount != 0 ? (double)failedLookupsCount / lookupsCount : 0;
     }
 }

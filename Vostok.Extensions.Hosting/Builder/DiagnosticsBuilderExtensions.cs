@@ -32,31 +32,29 @@ public static class DiagnosticsBuilderExtensions
 
     private static void AddDiagnostics(this IServiceCollection services)
     {
-
         services.AddOptions<DiagnosticsInfoOptions>();
 
-        services.TryAddSingleton<ApplicationMetricsProvider>();
         var descriptor = ServiceDescriptor.Describe(typeof(IMetricEventSender),
             sp => sp.GetRequiredService<ApplicationMetricsProvider>(), ServiceLifetime.Singleton);
-
         services.TryAddEnumerable(descriptor);
 
+        services.TryAddSingleton<ApplicationMetricsProvider>();
         services.TryAddSingleton<EnvironmentInfoProvider>();
         services.TryAddSingleton<LoadedAssembliesProvider>();
         services.TryAddSingleton<ApplicationInfoProvider>();
-        
+
         services.TryAddSingleton<IDiagnosticInfo>(DiagnosticInfoFactory.Create);
     }
-    
+
     private static void AddHealthTracker(this IServiceCollection services)
     {
         services.AddOptions<HealthTrackerOptions>();
-        
+
         services.TryAddSingleton<DatacenterWhitelistCheck>();
         services.TryAddSingleton<ThreadPoolStarvationCheck>();
         services.TryAddSingleton<DnsResolutionCheck>();
         services.TryAddSingleton<ZooKeeperConnectionCheck>();
-        
+
         services.TryAddSingleton<IHealthTracker>(HealthTrackerFactory.Create);
     }
 }

@@ -7,13 +7,9 @@ using Vostok.ZooKeeper.Client.Abstractions.Model;
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
 [PublicAPI]
-public class ZooKeeperConnectionCheck : IHealthCheck
+public class ZooKeeperConnectionCheck(IZooKeeperClient client) : IHealthCheck
 {
-    private readonly IZooKeeperClient client;
     private volatile bool warmedUp;
-
-    public ZooKeeperConnectionCheck(IZooKeeperClient client)
-        => this.client = client;
 
     public async Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {
@@ -28,7 +24,8 @@ public class ZooKeeperConnectionCheck : IHealthCheck
                 return HealthCheckResult.Healthy();
 
             default:
-                return HealthCheckResult.Degraded($"ZooKeeper client is not connected. Current connection state = '{currentConnectionState}'.");
+                return HealthCheckResult.Degraded($"ZooKeeper client is not connected. " +
+                                                  $"Current connection state = '{currentConnectionState}'.");
         }
     }
 

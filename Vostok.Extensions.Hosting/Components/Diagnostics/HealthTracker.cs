@@ -25,7 +25,7 @@ internal class HealthTracker : IHealthTracker, IDisposable
     private readonly CancellationTokenSource cancellation;
 
     private volatile HealthReport currentReport;
-    private volatile Task checkerTask;
+    private volatile Task? checkerTask;
     private volatile TaskCompletionSource<bool> checkerSignal;
 
     public HealthTracker(TimeSpan checkPeriod, ILog log)
@@ -33,7 +33,8 @@ internal class HealthTracker : IHealthTracker, IDisposable
         this.checkPeriod = checkPeriod;
         this.log = log.ForContext<HealthTracker>();
 
-        currentReport = new HealthReport(HealthStatus.Healthy, TimeSpan.Zero, DateTimeOffset.UtcNow, new Dictionary<string, HealthCheckResult>());
+        var results = new Dictionary<string, HealthCheckResult>();
+        currentReport = new HealthReport(HealthStatus.Healthy, TimeSpan.Zero, DateTimeOffset.UtcNow, results);
         statusObservable = new CachingObservable<HealthStatus>(currentReport.Status);
         reportsObservable = new CachingObservable<HealthReport>(currentReport);
         statusChangesObservable = new CachingObservable<(HealthStatus previous, HealthStatus current)>();
@@ -70,7 +71,7 @@ internal class HealthTracker : IHealthTracker, IDisposable
         cancellation.Cancel();
 
         if (checkerTask != null)
-            checkerTask.ContinueWith(_ => {}).GetAwaiter().GetResult();
+            checkerTask.ContinueWith(_ => { }).GetAwaiter().GetResult();
     }
 
     public void LaunchPeriodicalChecks(CancellationToken externalToken)
@@ -103,7 +104,8 @@ internal class HealthTracker : IHealthTracker, IDisposable
 
     private void ForceNextIteration()
         => Interlocked
-            .Exchange(ref checkerSignal, new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously))
+            .Exchange(ref checkerSignal,
+                new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously))
             .TrySetResult(true);
 
     private async Task RunPeriodicallyAsync(CancellationToken cancellationToken)
@@ -116,11 +118,12 @@ internal class HealthTracker : IHealthTracker, IDisposable
 
             HandleReport(report);
 
-            await Task.WhenAny(Task.Delay(budget.Remaining, cancellationToken), checkerSignal.Task).ConfigureAwait(false);
+            await Task.WhenAny(Task.Delay(budget.Remaining, cancellationToken), checkerSignal.Task)
+                .ConfigureAwait(false);
         }
     }
 
-    private HealthStatus SelectStatus(IEnumerable<HealthCheckResult> results)
+    private HealthStatus SelectStatus(IReadOnlyCollection<HealthCheckResult> results)
     {
         if (results.Any(r => r.Status == HealthStatus.Failing))
             return HealthStatus.Failing;

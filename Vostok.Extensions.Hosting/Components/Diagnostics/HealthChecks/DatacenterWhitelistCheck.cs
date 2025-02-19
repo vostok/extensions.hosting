@@ -6,13 +6,8 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
 [PublicAPI]
-public class DatacenterWhitelistCheck : IHealthCheck
+public class DatacenterWhitelistCheck(IDatacenters datacenters) : IHealthCheck
 {
-    private readonly IDatacenters datacenters;
-
-    public DatacenterWhitelistCheck(IDatacenters datacenters)
-        => this.datacenters = datacenters;
-
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {
         var localDatacenter = datacenters.GetLocalDatacenter();
@@ -24,6 +19,7 @@ public class DatacenterWhitelistCheck : IHealthCheck
             return Task.FromResult(HealthCheckResult.Healthy());
 
         return Task.FromResult(HealthCheckResult.Failing(
-            $"Local datacenter '{localDatacenter}' is not among active datacenters ({string.Join(", ", activeDatacenters.Select(d => $"'{d}'"))})."));
+            $"Local datacenter '{localDatacenter}' is not among active datacenters " +
+            $"({string.Join(", ", activeDatacenters.Select(d => $"'{d}'"))})."));
     }
 }
