@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vostok.Extensions.Hosting.Components.Diagnostics;
 using Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Metrics;
 
 namespace Vostok.Extensions.Hosting.Builder;
@@ -39,11 +40,8 @@ public static class DiagnosticsBuilderExtensions
         services.TryAddSingleton<EnvironmentInfoProvider>();
         services.TryAddSingleton<LoadedAssembliesProvider>();
         services.TryAddSingleton<ApplicationInfoProvider>();
-
-        services.TryAddSingleton<IVostokApplicationDiagnostics>(sp =>
-        {
-            var diagnosticInfo = DiagnosticInfoFactory.Create(sp);
-            return new DiagnosticsHub(diagnosticInfo);
-        });
+        
+        services.TryAddSingleton<IDiagnosticInfo>(DiagnosticInfoFactory.Create);
+        services.TryAddSingleton<IVostokApplicationDiagnostics, DiagnosticsHub>();
     }
 }
