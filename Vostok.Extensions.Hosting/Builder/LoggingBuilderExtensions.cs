@@ -59,6 +59,8 @@ public static class LoggingBuilderExtensions
         var levelCountingLog = new LevelCountingLog();
         services.AddSingleton(new LogRegistration(levelCountingLog, "_CounterLog"));
         services.TryAddSingleton<ILogLevelCountersCollector>(levelCountingLog);
-        services.AddHostedService<LogLevelMetricsHostedService>();
+
+        // todo: Enable later
+        // services.AddHostedService<LogLevelMetricsHostedService>();
     }
 }
