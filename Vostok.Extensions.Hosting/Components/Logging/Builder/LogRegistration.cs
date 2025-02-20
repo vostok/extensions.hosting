@@ -1,34 +1,38 @@
-using Vostok.Logging.Abstractions;
+﻿namespace Vostok.Extensions.Hosting.Components.Logging.Builder;
 
-namespace Vostok.Extensions.Hosting.Components.Logging.Builder;
-
-internal sealed class LogRegistration : IDisposable
+internal sealed class LogRegistration
 {
-    private readonly ILog? _log;
-    private readonly string? _name;
-    private readonly IDisposable? _logDisposing;
+    private readonly string? _key;
 
-    public ILog Log => _log ?? throw new InvalidOperationException("Log is null");
-    public string Name => _name ?? throw new InvalidOperationException("Name is null");
+    public static readonly LogRegistration All = new();
+    public static readonly LogRegistration Unnamed = For("_Unnamed");
+    public static LogRegistration For(string key) => new(key);
 
-    public bool IsEnabled => _log is not null && _name is not null;
+    private LogRegistration(string? key = null) => _key = key;
 
-    public static readonly LogRegistration NullRegistration = new(null);
-    private static int _unnamedLogsCounter;
-
-    public LogRegistration(ILog? log, string? name = null, IDisposable? logDisposing = null)
+    private bool Equals(LogRegistration? other)
     {
-        _log = log;
+        if (other is null)
+            return false;
+        if (ReferenceEquals(this, other))
+            return true;
 
-        _name = name;
-        if (_name is null && _log is not null)
-            _name = $"{_log.GetType().Name}-{Interlocked.Increment(ref _unnamedLogsCounter)}";
-
-        _logDisposing = logDisposing;
-
-        if (_logDisposing is null && _log is IDisposable disposableLog)
-            _logDisposing = disposableLog;
+        if (_key is null || other._key is null)
+            return true;
+        return _key == other._key;
     }
 
-    public void Dispose() => _logDisposing?.Dispose();
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj.GetType() != GetType())
+            return false;
+        return Equals((LogRegistration)obj);
+    }
+
+    public override int GetHashCode() =>
+        _key is null ? 0 : _key.GetHashCode();
 }

@@ -28,7 +28,12 @@ public static class LoggingBuilderExtensions
             return vostokLogAdapter.WithOperationContext();
         });
 
-        ConfigureVostokDefaults(builder);
+        builder.WithLogging(logBuilder =>
+        {
+            // todo: protect from multiple invocation
+            logBuilder.AddLogLevelCounting();
+            logBuilder.CustomizeLog((log, provider) => log.WithVostokSpecificProperties(provider));
+        });
     }
 
     public static void WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
@@ -40,25 +45,13 @@ public static class LoggingBuilderExtensions
         configure(vostokLogBuilder);
     }
 
-    private static void ConfigureVostokDefaults(IVostokBuilder builder)
+    private static void AddLogLevelCounting(this IVostokLogBuilder logBuilder)
     {
-        // todo: protect from multiple invocation
-        builder.Services.AddLogLevelCounting();
-
-        builder.Services.AddOptions<LogConfigurationOptions>()
-               .Configure<IServiceProvider>((options, provider) =>
-               {
-                   options.CustomizeFinalLog(log => log.WithVostokSpecificProperties(provider));
-               });
-    }
-
-    private static void AddLogLevelCounting(this IServiceCollection services)
-    {
-        services.TryAddSingleton<LogLevelMetrics>();
+        logBuilder.Services.TryAddSingleton<LogLevelMetrics>();
 
         var levelCountingLog = new LevelCountingLog();
-        services.AddSingleton(new LogRegistration(levelCountingLog, "_CounterLog"));
-        services.TryAddSingleton<ILogLevelCountersCollector>(levelCountingLog);
+        logBuilder.AddLog(levelCountingLog);
+        logBuilder.Services.TryAddSingleton<ILogLevelCountersCollector>(levelCountingLog);
 
         // todo: Enable later
         // services.AddHostedService<LogLevelMetricsHostedService>();

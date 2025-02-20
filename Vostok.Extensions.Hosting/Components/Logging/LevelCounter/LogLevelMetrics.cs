@@ -17,7 +17,7 @@ internal sealed class LogLevelMetrics(ILogLevelCountersCollector logLevelCounter
             "EventsByLevel",
             ProvideMeasurements,
             null,
-            "Count of events with each Vostok LogLevel.");
+            "Number of events with each Vostok log level.");
 
     private IEnumerable<Measurement<int>> ProvideMeasurements()
     {

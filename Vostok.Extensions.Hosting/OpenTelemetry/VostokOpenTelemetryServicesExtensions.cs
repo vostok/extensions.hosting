@@ -31,6 +31,7 @@ internal static class VostokOpenTelemetryServicesExtensions
         logging.ConfigureServices(services => services.Configure<OpenTelemetryLoggerOptions>(options =>
                {
                    options.IncludeFormattedMessage = true;
+                   options.IncludeScopes = true;
                }))
                .ConfigureResource(ConfigureLoggingResource);
 

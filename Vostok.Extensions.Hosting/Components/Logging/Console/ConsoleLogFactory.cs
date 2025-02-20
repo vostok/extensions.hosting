@@ -10,25 +10,18 @@ namespace Vostok.Extensions.Hosting.Components.Logging.Console;
 
 internal static class ConsoleLogFactory
 {
-    private const string ConsoleLogName = "Console";
+    public const string LogName = "Console";
 
-    public static LogRegistration Create(IServiceProvider provider)
+    public static ILog Create(IServiceProvider provider, object? _)
     {
-        var options = provider.GetRequiredService<IOptions<ConsoleLogOptions>>().Value;
+        var settings = provider.GetRequiredService<IOptions<ConsoleLogSettings>>().Value;
+        var customizations = provider.GetKeyedServices<LogCustomization>(LogName);
 
-        if (!options.Enabled)
-            return LogRegistration.NullRegistration;
+        ILog log = new ConsoleLog(settings);
 
-        var settings = new ConsoleLogSettings { ColorsEnabled = true };
-        options.ApplyCustomizations(settings);
+        foreach (var customization in customizations)
+            log = customization(log, provider);
 
-        ILog log = options.Synchronous ? new SynchronousConsoleLog(settings) : new ConsoleLog(settings);
-
-        if (options.MinLevelProvider is not null)
-            log = log.WithMinimumLevel(options.MinLevelProvider);
-
-        // todo: Customize log
-
-        return new LogRegistration(log, ConsoleLogName, new ActionDisposable(ConsoleLog.Flush));
+        return new DisposableLogWrapper(log, new ActionDisposable(ConsoleLog.Flush));
     }
 }

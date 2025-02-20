@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Vostok.Commons.Helpers.Disposable;
 using Vostok.Extensions.Hosting.Components.Logging.Builder;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.File;
@@ -10,26 +11,22 @@ namespace Vostok.Extensions.Hosting.Components.Logging.File;
 
 internal static class FileLogFactory
 {
-    private const string FileLogName = "File";
+    public const string LogName = "File";
 
-    public static LogRegistration Create(IServiceProvider provider)
+    public static ILog Create(IServiceProvider provider, object? _)
     {
-        var options = provider.GetRequiredService<IOptions<FileLogOptions>>().Value;
+        var settingsMonitor = provider.GetRequiredService<IOptionsMonitor<FileLogSettings>>();
+        var customizations = provider.GetKeyedServices<LogCustomization>(LogName);
 
-        if (!options.Enabled)
-            return LogRegistration.NullRegistration;
+        var log = new FileLog(() => settingsMonitor.CurrentValue);
 
-        var settings = new FileLogSettings();
-        options.ApplyCustomizations(settings);
+        ILog finalLog = log;
+        foreach (var customization in customizations)
+            finalLog = customization(finalLog, provider);
 
-        ILog log = new FileLog(() => settings);
+        if (ReferenceEquals(log, finalLog))
+            return log;
 
-        if (options.MinLevelProvider is not null)
-            log = log.WithMinimumLevel(options.MinLevelProvider);
-
-        // todo: Customize log
-        // todo: Log directory
-
-        return new LogRegistration(log, FileLogName);
+        return new DisposableLogWrapper(finalLog, new ActionDisposable(log.Dispose));
     }
 }
