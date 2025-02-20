@@ -34,11 +34,10 @@ public static class DiagnosticsBuilderExtensions
     {
         services.AddOptions<DiagnosticsInfoOptions>();
 
-        var descriptor = ServiceDescriptor.Describe(typeof(IMetricEventSender),
-            sp => sp.GetRequiredService<ApplicationMetricsProvider>(), ServiceLifetime.Singleton);
-        services.TryAddEnumerable(descriptor);
-
         services.TryAddSingleton<ApplicationMetricsProvider>();
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<IMetricEventSender, ApplicationMetricsProvider>(x =>
+                x.GetRequiredService<ApplicationMetricsProvider>()));
         services.TryAddSingleton<EnvironmentInfoProvider>();
         services.TryAddSingleton<LoadedAssembliesProvider>();
         services.TryAddSingleton<ApplicationInfoProvider>();
