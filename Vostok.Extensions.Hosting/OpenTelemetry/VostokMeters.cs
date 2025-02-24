@@ -28,7 +28,7 @@ public sealed class VostokMeters
         ProjectTags = [new(WellKnownApplicationIdentityProperties.Project, identity.Project)];
         SubprojectTags = identity.Subproject is null
             ? ProjectTags
-            : [..ProjectTags, new(WellKnownApplicationIdentityProperties.Project, identity.Subproject)];
+            : [..ProjectTags, new(WellKnownApplicationIdentityProperties.Subproject, identity.Subproject)];
         EnvironmentTags = [..SubprojectTags, new(WellKnownApplicationIdentityProperties.Environment, identity.Environment)];
         ApplicationTags = [..EnvironmentTags, new(WellKnownApplicationIdentityProperties.Application, identity.Application)];
         InstanceTags = [..ApplicationTags, new(WellKnownApplicationIdentityProperties.Instance, identity.Instance)];
