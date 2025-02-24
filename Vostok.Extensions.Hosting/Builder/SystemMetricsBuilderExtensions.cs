@@ -41,6 +41,6 @@ public static class SystemMetricsBuilderExtensions
         services.TryAddSingleton(SystemMetricsFactory.CreateProcessMonitor);
         services.TryAddSingleton(SystemMetricsFactory.CreateHostMonitor);
 
-        services.AddHostedService<SystemMetricHostedService>();
+        services.AddHostedService<SystemMetricsHostedService>();
     }
 }

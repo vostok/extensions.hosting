@@ -11,7 +11,7 @@ using Vostok.Metrics.System.Process;
 
 namespace Vostok.Extensions.Hosting.Components.SystemMetrics;
 
-internal sealed class SystemMetricHostedService(
+internal sealed class SystemMetricsHostedService(
     GarbageCollectionMonitor gcMonitor,
     DnsMonitor dnsMonitor,
     CurrentProcessMonitor currentProcessMonitor,
@@ -44,7 +44,7 @@ internal sealed class SystemMetricHostedService(
     private void RegisterGcMonitoring(SystemMetricsOptions options, IMetricContext metricContext)
     {
         if (options.EnableGcEventsLogging)
-            AddDisposable(gcMonitor.ReportMetrics(metricContext, options.GcMinimumDurationForLogging));
+            AddDisposable(gcMonitor.LogCollections(log, gc => gc.Duration >= options.GcMinimumDurationForLogging));
         if (options.EnableGcEventsMetrics)
             AddDisposable(gcMonitor.ReportMetrics(metricContext, options.ProcessMetricsReportingPeriod));
     }
