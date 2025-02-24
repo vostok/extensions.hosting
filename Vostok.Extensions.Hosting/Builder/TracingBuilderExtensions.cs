@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-using Vostok.Extensions.Hosting.OpenTelemetry;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Diagnostics;
 
@@ -14,7 +13,7 @@ internal static class TracingBuilderExtensions
     {
         var settings = new ActivitySourceTracerSettings
         {
-            ActivitySource = new ActivitySource(TelemetryConstants.VostokTracerActivitySourceName)
+            ActivitySource = new ActivitySource(TracingConstants.VostokTracerActivitySourceName)
         };
 
         var activitySourceTracer = new ActivitySourceTracer(settings);

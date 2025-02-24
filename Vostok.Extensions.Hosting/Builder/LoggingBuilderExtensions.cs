@@ -49,13 +49,12 @@ public static class LoggingBuilderExtensions
 
     private static void AddLogLevelCounting(this IVostokLogBuilder logBuilder)
     {
-        logBuilder.Services.TryAddSingleton<LogLevelMetrics>();
+        logBuilder.Services.TryAddSingleton<LogLevelMetricsHostedService>();
 
         var levelCountingLog = new LevelCountingLog();
         logBuilder.AddLog(levelCountingLog);
         logBuilder.Services.TryAddSingleton<ILogLevelCountersCollector>(levelCountingLog);
 
-        // todo: Enable later
-        // services.AddHostedService<LogLevelMetricsHostedService>();
+        logBuilder.Services.AddHostedService<LogLevelMetricsHostedService>();
     }
 }

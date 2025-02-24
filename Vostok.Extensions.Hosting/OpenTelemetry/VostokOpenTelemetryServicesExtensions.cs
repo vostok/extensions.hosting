@@ -7,6 +7,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 using Vostok.Extensions.Hosting.OpenTelemetry.ResourceDetectors;
+using Vostok.Tracing.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.OpenTelemetry;
 
@@ -19,7 +20,7 @@ internal static class VostokOpenTelemetryServicesExtensions
                .ConfigureOpenTelemetryLoggerProvider(Configure);
 
     private static void Configure(TracerProviderBuilder tracing) =>
-        tracing.AddSource(TelemetryConstants.VostokTracerActivitySourceName)
+        tracing.AddSource(TracingConstants.VostokTracerActivitySourceName)
                .SetSampler(new AlwaysOnSampler())
                .ConfigureResource(ConfigureTracingResource);
 
