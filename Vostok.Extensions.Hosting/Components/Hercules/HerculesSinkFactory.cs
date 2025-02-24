@@ -21,7 +21,11 @@ internal static class HerculesSinkFactory
         var log = provider.GetRequiredService<ILog>();
         var options = provider.GetRequiredService<IOptions<HerculesSinkConfigurationOptions>>().Value;
 
-        // todo: Enable/Disable
+        if (!options.Enabled)
+        {
+            log.LogDisabled("HerculesSink", "explicit disable");
+            return new DevNullHerculesSink();
+        }
 
         if (!options.VerboseLogging)
             log = log.WithMinimumLevel(LogLevel.Warn);
