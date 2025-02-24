@@ -36,13 +36,15 @@ public static class LoggingBuilderExtensions
         });
     }
 
-    public static void WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
+    public static IVostokBuilder WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
     {
         var descriptor = ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
         builder.Services.TryAddEnumerable(descriptor);
 
         var vostokLogBuilder = new VostokLogBuilder(builder.Services);
         configure(vostokLogBuilder);
+
+        return builder;
     }
 
     private static void AddLogLevelCounting(this IVostokLogBuilder logBuilder)

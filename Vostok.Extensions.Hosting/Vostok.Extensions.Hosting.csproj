@@ -95,6 +95,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.metrics\Vostok.Metrics\bin\Release\$(ReferencesFramework)\Vostok.Metrics.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Metrics.System">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.metrics.system\Vostok.Metrics.System\bin\Release\$(ReferencesFramework)\Vostok.Metrics.System.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Metrics.Hercules">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.metrics.hercules\Vostok.Metrics.Hercules\bin\Release\$(ReferencesFramework)\Vostok.Metrics.Hercules.dll</HintPath>
