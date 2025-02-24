@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -24,7 +24,8 @@ internal static class VostokOpenTelemetryServicesExtensions
                .ConfigureResource(ConfigureTracingResource);
 
     private static void Configure(MeterProviderBuilder metrics) =>
-        metrics.AddMeter(TelemetryConstants.VostokLogMeterName)
+        metrics.ConfigureServices(services => services.TryAddSingleton<VostokMeters>())
+               .AddMeter("Vostok.Metrics.*")
                .ConfigureResource(ConfigureMetricsResource);
 
     private static void Configure(LoggerProviderBuilder logging) =>
@@ -40,26 +41,8 @@ internal static class VostokOpenTelemetryServicesExtensions
                        .AddTelemetrySdk()
                        .AddDetector(provider => new ServiceResourceDetector(provider));
 
-    private static void ConfigureMetricsResource(ResourceBuilder resourceBuilder)
-    {
-        resourceBuilder.Clear()
-                       .AddDetector(provider =>
-                       {
-                           var options = provider.GetRequiredService<IOptions<VostokOpenTelemetryMeterResourceOptions>>();
-                           return new VostokIdentityResourceDetector(provider, ToDetectorOptions(options.Value));
-                       });
-        return;
-
-        static VostokIdentityResourceDetector.AttributesOptions ToDetectorOptions(VostokOpenTelemetryMeterResourceOptions options) =>
-            new()
-            {
-                AddProject = options.AddProject,
-                AddSubproject = options.AddSubproject,
-                AddEnvironment = options.AddEnvironment,
-                AddApplication = options.AddApplication,
-                AddInstance = options.AddInstance
-            };
-    }
+    private static void ConfigureMetricsResource(ResourceBuilder resourceBuilder) =>
+        resourceBuilder.Clear();
 
     private static void ConfigureLoggingResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear()
