@@ -28,6 +28,7 @@ public static class LoggingBuilderExtensions
             return vostokLogAdapter.WithOperationContext();
         });
 
+        builder.Services.RemoveAll<ILoggerProvider>();
         builder.WithLogging(logBuilder =>
         {
             // todo: protect from multiple invocation
