@@ -2,14 +2,10 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.SystemMetrics;
-using Vostok.Hosting.Abstractions;
 using Vostok.Metrics.System.Dns;
 using Vostok.Metrics.System.Gc;
-using Vostok.Metrics.System.Host;
-using Vostok.Metrics.System.Process;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -42,25 +38,8 @@ public static class SystemMetricsBuilderExtensions
 
         services.TryAddSingleton<GarbageCollectionMonitor>();
         services.TryAddSingleton<DnsMonitor>();
-        services.TryAddSingleton<CurrentProcessMonitor>(provider =>
-        {
-            var options = provider.GetRequiredService<IOptions<SystemMetricsOptions>>().Value;
-            var applicationLimits = provider.GetRequiredService<IVostokApplicationLimits>();
-            
-            var settings = new CurrentProcessMetricsSettings
-            {
-                CpuCoresLimitProvider = () => applicationLimits.CpuUnits,
-                MemoryBytesLimitProvider = () => applicationLimits.MemoryBytes,
-                LinuxSettings = options.LinuxProcessMetricsSettings
-            };
-            
-            return new CurrentProcessMonitor(settings);
-        });
-        services.TryAddSingleton<HostMonitor>(provider =>
-        {
-            var options = provider.GetRequiredService<IOptions<SystemMetricsOptions>>().Value;
-            return new HostMonitor(options.HostMetricsSettings);
-        });
+        services.TryAddSingleton(SystemMetricsFactory.CreateProcessMonitor);
+        services.TryAddSingleton(SystemMetricsFactory.CreateHostMonitor);
 
         services.AddHostedService<SystemMetricHostedService>();
     }
