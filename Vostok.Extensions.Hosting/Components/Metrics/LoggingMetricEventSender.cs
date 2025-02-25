@@ -1,16 +1,18 @@
-﻿using Vostok.Logging.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
 
 namespace Vostok.Extensions.Hosting.Components.Metrics;
 
-internal class LoggingMetricEventSender(ILog log) : IMetricEventSender, IAnnotationEventSender
+internal class LoggingMetricEventSender(ILoggerFactory loggerFactory)
+    : IMetricEventSender, IAnnotationEventSender
 {
-    private readonly ILog _log = log.ForContext("Metrics");
+    private readonly ILogger _logger = loggerFactory.CreateLogger("Vostok.Metrics");
 
     public void Send(MetricEvent @event)
-        => _log.Debug("Metric event: {MetricEvent}", @event);
+        => _logger.LogDebug("Metric event: {MetricEvent}", @event);
 
     public void Send(AnnotationEvent @event)
-        => _log.Debug("Annotation event: {AnnotationEvent}", @event);
+        => _logger.LogDebug("Annotation event: {AnnotationEvent}", @event);
 }
