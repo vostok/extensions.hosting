@@ -77,8 +77,8 @@ public static class VostokLogBuilderExtensions
 
         if (name is null)
             builder.Services.AddSingleton(customization);
-
-        builder.Services.AddKeyedSingleton(name, customization);
+        else
+            builder.Services.AddKeyedSingleton(name, customization);
 
         return builder;
     }
