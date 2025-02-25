@@ -18,7 +18,7 @@ internal static class LogCustomizationExtensions
 
         return log.WithApplicationIdentityProperties(applicationIdentity)
                   .WithTracingProperties(tracer)
-                  .WithProperty(SemanticConventions.AttributeHostName, EnvironmentInfo.Host);
+                  .WithProperty(VostokSemanticConventions.AttributeHostName, EnvironmentInfo.Host);
     }
 
     private static ILog WithApplicationIdentityProperties(this ILog log, IVostokApplicationIdentity applicationIdentity)

@@ -18,6 +18,6 @@ internal sealed class ApplicationInfoEnricher(IVostokApplicationIdentity identit
         collector.Add(WellKnownApplicationIdentityProperties.Application, identity.Application);
         collector.Add(WellKnownApplicationIdentityProperties.Instance, identity.Instance);
 
-        collector.Add(SemanticConventions.AttributeHostName, EnvironmentInfo.Host);
+        collector.Add(VostokSemanticConventions.AttributeHostName, EnvironmentInfo.Host);
     }
 }

@@ -29,6 +29,9 @@ public static class LoggingBuilderExtensions
         });
 
         builder.Services.RemoveAll<ILoggerProvider>();
+        builder.Services.Configure<LoggerFactoryOptions>(options =>
+            options.ActivityTrackingOptions = ActivityTrackingOptions.None);
+
         builder.WithLogging(logBuilder =>
         {
             // todo: protect from multiple invocation
