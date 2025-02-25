@@ -15,6 +15,9 @@
     <Compile Include="..\..\vostok.commons.environment\Vostok.Commons.Environment\AssemblyCommitHashExtractor.cs" Link="Commons\AssemblyCommitHashExtractor.cs" />
     <Compile Include="..\..\vostok.commons.environment\Vostok.Commons.Environment\AssemblyBuildTimeExtractor.cs" Link="Commons\AssemblyBuildTimeExtractor.cs" />
     <Compile Include="..\..\vostok.commons.environment\Vostok.Commons.Environment\AssemblyTitleParser.cs" Link="Commons\AssemblyTitleParser.cs" />
+    <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeBudget.cs" Link="Commons\TimeBudget.cs" />
+    <Compile Include="..\..\vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolState.cs" Link="Commons\ThreadPoolState.cs" />
+    <Compile Include="..\..\vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolUtility.cs" Link="Commons\ThreadPoolUtility.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,6 +76,10 @@
     <Reference Include="Vostok.Metrics">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.metrics\Vostok.Metrics\bin\Release\$(ReferencesFramework)\Vostok.Metrics.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Metrics.System">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.metrics.system\Vostok.Metrics.System\bin\Release\$(ReferencesFramework)\Vostok.Metrics.System.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Metrics.Hercules">
       <SpecificVersion>False</SpecificVersion>
