@@ -3,13 +3,14 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
+using Vostok.Extensions.Hosting.Components.Logging.Builder;
 using Vostok.Extensions.Hosting.Components.Logging.Console;
 using Vostok.Extensions.Hosting.Components.Logging.File;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 using Vostok.Logging.File.Configuration;
 
-namespace Vostok.Extensions.Hosting.Components.Logging.Builder;
+namespace Vostok.Extensions.Hosting.Components.Logging;
 
 [PublicAPI]
 public static class VostokLogBuilderExtensions
