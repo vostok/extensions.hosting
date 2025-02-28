@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Datacenters;
@@ -33,12 +32,6 @@ public static class DatacentersBuilderExtensions
             builder.Services.AddOptions<DatacentersConfigurationOptions>().Configure(configure);
 
         return builder;
-    }
-
-    internal static void PrepareDatacentersSubstitution(this IVostokBuilder builder)
-    {
-        builder.Services.AddOptionsWithValidateOnStart<SubstitutableDatacenters.SubstitutionMarker>();
-        builder.Services.TryAddSingleton<IValidateOptions<SubstitutableDatacenters.SubstitutionMarker>, DatacenterSubstitutionValidator>();
     }
 
     private static void AddDatacenters(this IServiceCollection services)

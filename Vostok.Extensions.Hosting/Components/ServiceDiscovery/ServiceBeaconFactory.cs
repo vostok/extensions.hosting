@@ -6,6 +6,7 @@ using Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.File.Configuration;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ServiceDiscovery.Telemetry;
@@ -54,6 +55,9 @@ internal static class ServiceBeaconFactory
 
         var applicationIdentity = provider.GetRequiredService<IVostokApplicationIdentity>();
 
+        // todo: What if file log disabled?
+        var fileLogSettings = provider.GetRequiredService<IOptions<FileLogSettings>>().Value;
+
         return new ServiceBeacon(
             zooKeeperClient,
             s =>
@@ -67,8 +71,7 @@ internal static class ServiceBeaconFactory
                 s.SetProperty(WellKnownApplicationIdentityProperties.Application, applicationIdentity.Application);
                 s.SetProperty(WellKnownApplicationIdentityProperties.Instance, applicationIdentity.Instance);
 
-                // TODO: Add after File log registration
-                // s.SetProperty("logsDirectory", context.LogsDirectory);
+                s.SetProperty("logsDirectory", GetLogsDirectory(fileLogSettings));
 
                 options.ApplyReplicaInfoCustomizations(s);
             },
@@ -81,4 +84,17 @@ internal static class ServiceBeaconFactory
         ILog log,
         IServiceProvider provider)
         => CreateBeacon(options, new DevNullZooKeeperClient(), log, provider).ReplicaInfo;
+
+    private static string? GetLogsDirectory(FileLogSettings fileLogSettings)
+    {
+        try
+        {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileLogSettings.FilePath);
+            return Path.GetDirectoryName(path);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 }

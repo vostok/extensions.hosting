@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
-using Vostok.Logging.Abstractions;
-using Vostok.Tracing.Abstractions;
-using Vostok.Tracing.Diagnostics;
+using Vostok.Extensions.Hosting.Helpers;
+using Vostok.Extensions.Hosting.OpenTelemetry;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -20,21 +20,19 @@ internal sealed class VostokBuilder : IVostokBuilder
 
     private void AddCoreServices()
     {
-        // note: Order is important. Datacenters should be substituted first if present.
-        this.PrepareDatacentersSubstitution();
+        PrepareSubstitutions(Services);
 
         this.WithApplicationIdentity();
 
-        AddTracer(Services);
-        AddLog(Services);
+        this.EnableOuterVostokLog();
+        this.AddTracing();
+
+        this.ConfigureOpenTelemetryForVostok();
     }
 
-    private static void AddTracer(IServiceCollection services)
+    private static void PrepareSubstitutions(IServiceCollection services)
     {
-        var activitySourceTracer = new ActivitySourceTracer(new ActivitySourceTracerSettings());
-        services.TryAddSingleton<ITracer>(activitySourceTracer);
+        services.AddOptionsWithValidateOnStart<SubstitutionsValidator.SubstitutionMarker>();
+        services.TryAddSingleton<IValidateOptions<SubstitutionsValidator.SubstitutionMarker>, SubstitutionsValidator>();
     }
-
-    private static void AddLog(IServiceCollection services)
-        => services.TryAddSingleton<ILog>(new SilentLog());
 }

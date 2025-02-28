@@ -67,7 +67,7 @@ public static class VostokMetricsBuilderExtensions
 
     public static IVostokMetricsBuilder ClearMetricSenders(this IVostokMetricsBuilder builder)
     {
-        builder.Services.RemoveAll<IVostokMetricsBuilder>();
+        builder.Services.RemoveAll<IMetricEventSender>();
         return builder;
     }
 }

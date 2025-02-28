@@ -9,6 +9,7 @@ namespace Vostok.Extensions.Hosting.Components.Hercules;
 [PublicAPI]
 public class HerculesSinkConfigurationOptions
 {
+    public bool Enabled { get; set; } = true;
     public Func<string?> ApiKeyProvider { get; set; } = () => null;
     public bool VerboseLogging { get; set; }
     internal ClusterProviderBuilder? ClusterProviderBuilder { get; private set; }
