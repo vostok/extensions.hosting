@@ -14,7 +14,7 @@ public static class ApplicationReplicationBuilderExtensions
 {
     public static IVostokBuilder WithApplicationReplicationInfo(
         this IVostokBuilder builder,
-        Action<ApplicationReplicationInfoConfigurationOptions> configure)
+        Action<ApplicationReplicationOptions> configure)
     {
         builder.WithApplicationReplicationInfo((options, _) => configure(options));
 
@@ -23,21 +23,16 @@ public static class ApplicationReplicationBuilderExtensions
 
     public static IVostokBuilder WithApplicationReplicationInfo(
         this IVostokBuilder builder,
-        Action<ApplicationReplicationInfoConfigurationOptions, IServiceProvider>? configure = null)
+        Action<ApplicationReplicationOptions, IServiceProvider>? configure = null)
     {
         builder.Services.AddApplicationReplication();
 
         if (configure is not null)
-            builder.Services.AddOptions<ApplicationReplicationInfoConfigurationOptions>().Configure(configure);
+            builder.Services.AddOptions<ApplicationReplicationOptions>().Configure(configure);
 
         return builder;
     }
 
     private static void AddApplicationReplication(this IServiceCollection services) =>
-        services.TryAddSingleton<Func<IVostokApplicationReplicationInfo>>(provider =>
-        {
-            var options = provider.GetRequiredService<IOptions<ApplicationReplicationInfoConfigurationOptions>>().Value;
-
-            return options.GetProvider();
-        });
+        services.TryAddSingleton<IVostokApplicationReplicationInfo, ApplicationReplicationInfo>();
 }
