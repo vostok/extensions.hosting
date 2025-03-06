@@ -22,7 +22,11 @@ internal static class ServiceBeaconFactory
         var log = provider.GetRequiredService<ILog>();
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
 
-        // todo: Enabled/Disabled
+        if (!options.Enabled)
+        {
+            log.LogDisabled("ServiceBeacon", "explicit disable");
+            return new DevNullServiceBeacon(CreateDevNullReplicaInfo(options, log, provider));
+        }
 
         if (zooKeeperClient is null or DevNullZooKeeperClient)
         {

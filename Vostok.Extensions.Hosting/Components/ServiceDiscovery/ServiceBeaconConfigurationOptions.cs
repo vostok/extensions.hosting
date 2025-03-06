@@ -9,6 +9,8 @@ namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 [PublicAPI]
 public sealed class ServiceBeaconConfigurationOptions
 {
+    public bool Enabled { get; set; } = true;
+
     public bool RegistrationDeniedFromNonActiveDatacenters { get; set; }
 
     /// <summary>
