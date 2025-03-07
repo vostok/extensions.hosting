@@ -4,8 +4,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Vostok.Extensions.AspNetCore.Builder;
 using Vostok.Extensions.AspNetCore.Middlewares;
+using Vostok.Extensions.AspNetCore.Middlewares.DatacentersAwareness;
+using Vostok.Extensions.AspNetCore.Middlewares.DiagnosticApi;
+using Vostok.Extensions.AspNetCore.Middlewares.DistributedContext;
+using Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
+using Vostok.Extensions.AspNetCore.Middlewares.HttpContextTweak;
+using Vostok.Extensions.AspNetCore.Middlewares.Logging;
+using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
+using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
+using Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore;
@@ -21,7 +29,7 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
     /// <inheritdoc cref="VostokMiddlewaresApplicationBuilderExtensions"/>
     public static IApplicationBuilder UseVostokMiddlewares(this IApplicationBuilder applicationBuilder)
     {
-        var settings = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresConfiguration>>().Value;
+        var settings = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresOptions>>().Value;
         settings.MiddlewaresAdded = true;
 
         var middlewares = new List<Type>();

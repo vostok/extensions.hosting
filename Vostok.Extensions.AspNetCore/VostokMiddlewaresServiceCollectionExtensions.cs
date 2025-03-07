@@ -7,10 +7,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Vostok.Commons.Environment;
-using Vostok.Extensions.AspNetCore.Builder;
 using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Helpers;
 using Vostok.Extensions.AspNetCore.Middlewares;
+using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
+using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
+using Vostok.Extensions.AspNetCore.Throttling;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Throttling;
