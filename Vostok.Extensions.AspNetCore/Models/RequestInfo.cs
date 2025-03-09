@@ -5,7 +5,7 @@ using Vostok.Commons.Time;
 
 namespace Vostok.Extensions.AspNetCore.Models;
 
-internal class RequestInfo : IRequestInfo
+internal sealed class RequestInfo : IRequestInfo
 {
     public RequestInfo(
         TimeSpan requestTimeout,

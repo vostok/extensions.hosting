@@ -57,9 +57,7 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
                 middlewares.AddRange(injected);
 
             if (settings.IsEnabled<TMiddleware>())
-            {
                 middlewares.Add(typeof(TMiddleware));
-            }
         }
     }
 

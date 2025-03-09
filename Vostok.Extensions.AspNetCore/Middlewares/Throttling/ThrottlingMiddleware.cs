@@ -17,7 +17,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.Throttling;
 /// Limits request parallelism. See <see cref="IThrottlingProvider"/> for more info.
 /// </summary>
 [PublicAPI]
-public class ThrottlingMiddleware(
+public sealed class ThrottlingMiddleware(
     RequestDelegate next,
     IOptions<ThrottlingSettings> settings,
     IThrottlingProvider provider,

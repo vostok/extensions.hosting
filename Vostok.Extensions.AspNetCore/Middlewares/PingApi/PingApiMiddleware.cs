@@ -13,7 +13,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 /// Handles diagnostic <c>/_status/ping</c> and <c>/_status/version</c> requests.
 /// </summary>
 [PublicAPI]
-public class PingApiMiddleware(RequestDelegate next, IOptions<PingApiSettings> settings)
+public sealed class PingApiMiddleware(RequestDelegate next, IOptions<PingApiSettings> settings)
 {
     private readonly string _commitHash =
         settings.Value.CommitHashProvider?.Invoke() ?? AssemblyCommitHashExtractor.ExtractFromEntryAssembly();

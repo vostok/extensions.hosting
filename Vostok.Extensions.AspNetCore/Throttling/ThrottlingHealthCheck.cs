@@ -1,9 +1,9 @@
 ﻿using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Throttling;
 
-namespace Vostok.Extensions.AspNetCore.Diagnostics;
+namespace Vostok.Extensions.AspNetCore.Throttling;
 
-public class ThrottlingHealthCheck(ThrottlingProvider throttlingProvider) : IHealthCheck
+public sealed class ThrottlingHealthCheck(ThrottlingProvider throttlingProvider) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {

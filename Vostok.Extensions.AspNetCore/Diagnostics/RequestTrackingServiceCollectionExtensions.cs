@@ -8,7 +8,7 @@ namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
 internal static class RequestTrackingServiceCollectionExtensions
 {
-    public static IServiceCollection AddRequestTrackingDefaults(this IServiceCollection serviceCollection) =>
+    public static void AddRequestTrackingDefaults(this IServiceCollection serviceCollection) =>
         serviceCollection.AddSingleton<IRequestTracker>(services =>
         {
             var settings = services.GetRequiredService<IOptions<DiagnosticFeaturesSettings>>().Value;

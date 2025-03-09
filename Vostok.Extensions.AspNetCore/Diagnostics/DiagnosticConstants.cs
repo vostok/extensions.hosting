@@ -1,6 +1,6 @@
 ﻿namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
-public static class DiagnosticConstants
+internal static class DiagnosticConstants
 {
     public const string Component = "aspnetcore";
     public const string RequestThrottlingEntry = "request-throttling";

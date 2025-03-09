@@ -2,7 +2,6 @@
 
 using JetBrains.Annotations;
 
-using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore.Middlewares.PingApi;
@@ -11,11 +10,10 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 /// Represents configuration of <see cref="PingApiMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public class PingApiSettings
+public sealed class PingApiSettings
 {
     /// <summary>
     /// <para>An optional delegate that returns <c>true</c> if the application is already initialized or <c>false</c> if warmup is still in progress.</para>
-    /// <para>By default, starts to return <c>true</c> after <see cref="IVostokApplication.InitializeAsync"/> method completes.</para>
     /// </summary>
     public Func<bool>? InitializationCheck { get; set; }
 

@@ -12,7 +12,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.HttpContextTweak;
 /// Applies performance tweaks to <see cref="HttpContext"/>.
 /// </summary>
 [PublicAPI]
-public class HttpContextTweakMiddleware(
+public sealed class HttpContextTweakMiddleware(
     RequestDelegate next,
     IOptions<HttpContextTweakSettings> options,
     ILogger<HttpContextTweakMiddleware> log)

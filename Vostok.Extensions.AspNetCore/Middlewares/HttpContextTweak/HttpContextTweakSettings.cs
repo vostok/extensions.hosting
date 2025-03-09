@@ -8,7 +8,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.HttpContextTweak;
 /// Represents configuration of <see cref="HttpContextTweakMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public class HttpContextTweakSettings
+public sealed class HttpContextTweakSettings
 {
     /// <summary>
     /// <para>If enabled, splits single large writes to response <see cref="HttpResponse.Body"/> stream into multiple smaller ones.</para>

@@ -24,7 +24,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
 /// <see href="https://github.com/dotnet/aspnetcore/blob/v8.0.0/src/Middleware/Diagnostics/src/DeveloperExceptionPage/DeveloperExceptionPageMiddlewareImpl.cs"/>
 /// </remarks>
 [PublicAPI]
-public class UnhandledExceptionMiddleware(
+public sealed class UnhandledExceptionMiddleware(
     RequestDelegate next,
     IOptions<UnhandledExceptionSettings> settings,
     ILogger<UnhandledExceptionMiddleware> logger)

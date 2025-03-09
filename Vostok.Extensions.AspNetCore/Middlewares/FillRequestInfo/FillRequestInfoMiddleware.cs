@@ -17,7 +17,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 /// Populates an <see cref="IRequestInfo"/> object from request properties and stores as a <see cref="FlowingContext"/> global for the lifetime of the request.
 /// </summary>
 [PublicAPI]
-public class FillRequestInfoMiddleware(
+public sealed class FillRequestInfoMiddleware(
     RequestDelegate next,
     IOptions<FillRequestInfoSettings> options,
     IRequestTracker tracker)

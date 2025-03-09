@@ -8,7 +8,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
 /// Represents configuration of <see cref="UnhandledExceptionMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public class UnhandledExceptionSettings
+public sealed class UnhandledExceptionSettings
 {
     /// <summary>
     /// Error response code to be used when an unhandled exception is observed.
@@ -18,10 +18,10 @@ public class UnhandledExceptionSettings
     /// <summary>
     /// List of exceptions to be ignored
     /// </summary>
-    public List<Type> ExceptionsToIgnore = new() 
-    {
-        typeof(TaskCanceledException), 
-        typeof(OperationCanceledException), 
+    public List<Type> ExceptionsToIgnore =
+    [
+        typeof(TaskCanceledException),
+        typeof(OperationCanceledException),
         typeof(ConnectionResetException)
-    };
+    ];
 }

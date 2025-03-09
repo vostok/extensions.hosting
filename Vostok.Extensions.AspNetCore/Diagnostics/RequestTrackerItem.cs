@@ -2,7 +2,7 @@
 
 namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
-public class RequestTrackerItem
+internal sealed class RequestTrackerItem
 {
     internal RequestTrackerItem(string path, IRequestInfo info)
     {

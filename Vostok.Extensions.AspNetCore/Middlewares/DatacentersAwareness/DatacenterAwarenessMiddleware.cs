@@ -12,7 +12,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.DatacentersAwareness;
 /// Rejects incoming requests when local datacenter is not active.
 /// </summary>
 [PublicAPI]
-public class DatacenterAwarenessMiddleware(
+public sealed class DatacenterAwarenessMiddleware(
     RequestDelegate next,
     IOptions<DatacenterAwarenessSettings> options,
     IDatacenters datacenters,
