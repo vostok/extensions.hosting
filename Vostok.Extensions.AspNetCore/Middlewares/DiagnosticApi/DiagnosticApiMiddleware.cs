@@ -23,7 +23,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.DiagnosticApi;
 public sealed class DiagnosticApiMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly DiagnosticApiSettings _options;
+    private readonly DiagnosticApiMiddlewareOptions _options;
     private readonly ILogger<DiagnosticApiMiddleware> _logger;
     private readonly IVostokApplicationDiagnostics? _diagnostics;
 
@@ -31,7 +31,7 @@ public sealed class DiagnosticApiMiddleware
 
     public DiagnosticApiMiddleware(
         RequestDelegate next,
-        IOptions<DiagnosticApiSettings> options,
+        IOptions<DiagnosticApiMiddlewareOptions> options,
         ILogger<DiagnosticApiMiddleware> logger,
         IServiceProvider serviceProvider)
     {

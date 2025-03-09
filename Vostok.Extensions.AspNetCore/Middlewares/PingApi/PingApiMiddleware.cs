@@ -13,10 +13,10 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 /// Handles diagnostic <c>/_status/ping</c> and <c>/_status/version</c> requests.
 /// </summary>
 [PublicAPI]
-public sealed class PingApiMiddleware(RequestDelegate next, IOptions<PingApiSettings> settings)
+public sealed class PingApiMiddleware(RequestDelegate next, IOptions<PingApiMiddlewareOptions> options)
 {
     private readonly string _commitHash =
-        settings.Value.CommitHashProvider?.Invoke() ?? AssemblyCommitHashExtractor.ExtractFromEntryAssembly();
+        options.Value.CommitHashProvider?.Invoke() ?? AssemblyCommitHashExtractor.ExtractFromEntryAssembly();
 
     public Task InvokeAsync(HttpContext context)
     {
@@ -58,11 +58,11 @@ public sealed class PingApiMiddleware(RequestDelegate next, IOptions<PingApiSett
 
     private string GetHealthStatus()
     {
-        var settingsValue = settings.Value;
+        var optionsValue = options.Value;
 
-        var isInitialized = settingsValue.InitializationCheck?.Invoke() ?? true;
+        var isInitialized = optionsValue.InitializationCheck?.Invoke() ?? true;
         if (isInitialized)
-            return settingsValue.HealthCheck?.Invoke() ?? true ? "Ok" : "Warn";
+            return optionsValue.HealthCheck?.Invoke() ?? true ? "Ok" : "Warn";
 
         return "Init";
     }

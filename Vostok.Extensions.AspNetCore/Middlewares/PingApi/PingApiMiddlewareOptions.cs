@@ -10,7 +10,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 /// Represents configuration of <see cref="PingApiMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public sealed class PingApiSettings
+public sealed class PingApiMiddlewareOptions
 {
     /// <summary>
     /// <para>An optional delegate that returns <c>true</c> if the application is already initialized or <c>false</c> if warmup is still in progress.</para>

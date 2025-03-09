@@ -24,17 +24,17 @@ public interface IVostokMiddlewaresBuilder
     /// <summary>
     /// Customizes built-in <see cref="HttpContextTweakMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureHttpContextTweaks(Action<HttpContextTweakSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureHttpContextTweaks(Action<HttpContextTweakMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="FillRequestInfoMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureRequestInfoFilling(Action<FillRequestInfoSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureRequestInfoFilling(Action<FillRequestInfoMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="DistributedContextMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDistributedContext(Action<DistributedContextSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureDistributedContext(Action<DistributedContextMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="ThrottlingMiddleware"/>.
@@ -44,27 +44,27 @@ public interface IVostokMiddlewaresBuilder
     /// <summary>
     /// Customizes built-in <see cref="LoggingMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureLogging(Action<LoggingSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureLogging(Action<LoggingMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="DatacenterAwarenessMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDatacenterAwareness(Action<DatacenterAwarenessSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureDatacenterAwareness(Action<DatacenterAwarenessMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="UnhandledExceptionMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureUnhandledExceptions(Action<UnhandledExceptionSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureUnhandledExceptions(Action<UnhandledExceptionMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="PingApiMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigurePingApi(Action<PingApiSettings> configure);
+    IVostokMiddlewaresBuilder ConfigurePingApi(Action<PingApiMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="DiagnosticApiMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDiagnosticApi(Action<DiagnosticApiSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureDiagnosticApi(Action<DiagnosticApiMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in diagnostic features (info providers and health checks).
@@ -74,5 +74,5 @@ public interface IVostokMiddlewaresBuilder
     /// <summary>
     /// Allows to customize <see cref="VostokMiddlewaresOptions"/>.
     /// </summary>
-    internal IVostokMiddlewaresBuilder ConfigureOptions(Action<VostokMiddlewaresOptions> configure);
+    internal IVostokMiddlewaresBuilder Configure(Action<VostokMiddlewaresOptions> configure);
 }

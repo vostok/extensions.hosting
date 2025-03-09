@@ -20,7 +20,7 @@ public interface IVostokThrottlingBuilder
     /// <summary>
     /// Allows to customize advanced settings pertinent to internal middleware responsible for request throttling.
     /// </summary>
-    IVostokThrottlingBuilder ConfigureMiddleware(Action<ThrottlingSettings> configure);
+    IVostokThrottlingBuilder ConfigureMiddleware(Action<ThrottlingMiddlewareOptions> configure);
 
     /// <summary>
     /// Allows to customize <see cref="ThrottlingConfigurationBuilder"/>.

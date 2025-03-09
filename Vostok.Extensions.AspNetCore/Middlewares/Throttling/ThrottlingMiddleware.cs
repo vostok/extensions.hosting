@@ -19,14 +19,14 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.Throttling;
 [PublicAPI]
 public sealed class ThrottlingMiddleware(
     RequestDelegate next,
-    IOptions<ThrottlingSettings> settings,
+    IOptions<ThrottlingMiddlewareOptions> settings,
     IThrottlingProvider provider,
     ILogger<ThrottlingMiddleware> logger)
 {
     private const long LargeRequestBodySize = 256 * 1024;
     private static readonly TimeSpan LongThrottlingWaitTime = TimeSpan.FromMilliseconds(500);
 
-    private readonly ThrottlingSettings _settings = settings.Value;
+    private readonly ThrottlingMiddlewareOptions _options = settings.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -66,7 +66,7 @@ public sealed class ThrottlingMiddleware(
         }
         else
         {
-            context.Response.StatusCode = _settings.RejectionResponseCode;
+            context.Response.StatusCode = _options.RejectionResponseCode;
             context.Response.Headers.ContentLength = 0L;
         }
     }
@@ -90,29 +90,29 @@ public sealed class ThrottlingMiddleware(
 
     private bool IsDisabled(HttpContext context)
     {
-        if (_settings.DisableForWebSockets && context.WebSockets.IsWebSocketRequest)
+        if (_options.DisableForWebSockets && context.WebSockets.IsWebSocketRequest)
             return true;
 
-        return _settings.Enabled != null && !_settings.Enabled(context);
+        return _options.Enabled != null && !_options.Enabled(context);
     }
 
     private IReadOnlyDictionary<string, string> BuildThrottlingProperties(HttpContext context, IRequestInfo? info)
     {
         var builder = new ThrottlingPropertiesBuilder();
 
-        if (_settings.AddConsumerProperty)
+        if (_options.AddConsumerProperty)
             builder.AddConsumer(info?.ClientApplicationIdentity);
 
-        if (_settings.AddPriorityProperty)
+        if (_options.AddPriorityProperty)
             builder.AddPriority(info?.Priority.ToString());
 
-        if (_settings.AddMethodProperty)
+        if (_options.AddMethodProperty)
             builder.AddMethod(context.Request.Method);
 
-        if (_settings.AddUrlProperty)
+        if (_options.AddUrlProperty)
             builder.AddUrl(UrlNormalizer.NormalizePath(context.Request.Path));
 
-        foreach (var additionalProperty in _settings.AdditionalProperties)
+        foreach (var additionalProperty in _options.AdditionalProperties)
         {
             var (propertyName, propertyValue) = additionalProperty(context);
             builder.AddProperty(propertyName, propertyValue);

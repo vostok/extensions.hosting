@@ -31,7 +31,7 @@ public static class VostokMiddlewaresBuilderExtensions
     /// </list>
     /// </summary>
     public static IVostokMiddlewaresBuilder DisableVostokMiddleware<TMiddleware>(this IVostokMiddlewaresBuilder configurator) =>
-        configurator.ConfigureOptions(options => options.MiddlewareDisabled[typeof(TMiddleware)] = true);
+        configurator.Configure(options => options.MiddlewareDisabled[typeof(TMiddleware)] = true);
 
     /// <summary>
     /// <para>Enables the built-in Vostok middleware of given type <typeparamref name="TMiddleware"></typeparamref>.</para>
@@ -50,7 +50,7 @@ public static class VostokMiddlewaresBuilderExtensions
     /// </list>
     /// </summary>
     public static IVostokMiddlewaresBuilder EnableVostokMiddleware<TMiddleware>(this IVostokMiddlewaresBuilder configurator) =>
-        configurator.ConfigureOptions(options => options.MiddlewareDisabled[typeof(TMiddleware)] = false);
+        configurator.Configure(options => options.MiddlewareDisabled[typeof(TMiddleware)] = false);
 
     /// <summary>
     /// Injects a singleton middleware of type <typeparamref name="TMiddleware"/> before the earliest Vostok middleware.
@@ -62,7 +62,7 @@ public static class VostokMiddlewaresBuilderExtensions
     /// Injects a singleton middleware of type <typeparamref name="TMiddleware"/> before Vostok middleware of type <typeparamref name="TBefore"/>.
     /// </summary>
     public static IVostokMiddlewaresBuilder InjectPreVostokMiddleware<TMiddleware, TBefore>(this IVostokMiddlewaresBuilder configurator) =>
-        configurator.ConfigureOptions(options =>
+        configurator.Configure(options =>
         {
             if (!options.PreVostokMiddlewares.TryGetValue(typeof(TBefore), out var injected))
                 options.PreVostokMiddlewares[typeof(TBefore)] = injected = [];

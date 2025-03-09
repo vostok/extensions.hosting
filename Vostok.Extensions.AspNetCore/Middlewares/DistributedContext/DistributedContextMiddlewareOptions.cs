@@ -8,7 +8,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.DistributedContext;
 /// Represents configuration of <see cref="DistributedContextMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public sealed class DistributedContextSettings
+public sealed class DistributedContextMiddlewareOptions
 {
     /// <summary>
     /// Additional actions that will be executed during distributed context restoring.

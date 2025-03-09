@@ -21,11 +21,11 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.Logging;
 /// Logs incoming requests and outgoing responses.
 /// </summary>
 [PublicAPI]
-public sealed class LoggingMiddleware(RequestDelegate next, IOptions<LoggingSettings> options, ILog log)
+public sealed class LoggingMiddleware(RequestDelegate next, IOptions<LoggingMiddlewareOptions> options, ILog log)
 {
     private const int StringBuilderCapacity = 256;
 
-    private readonly LoggingSettings _options = options.Value;
+    private readonly LoggingMiddlewareOptions _options = options.Value;
     private readonly ILog _log = log.ForContext<LoggingMiddleware>();
 
     public async Task InvokeAsync(HttpContext context)
@@ -161,7 +161,7 @@ public sealed class LoggingMiddleware(RequestDelegate next, IOptions<LoggingSett
 
     private static string FormatPath(StringBuilder builder,
         HttpRequest request,
-        LoggingCollectionSettings querySettings)
+        LoggingCollectionOptions queryOptions)
     {
         return FormatAndRollback(
             builder,
@@ -171,9 +171,9 @@ public sealed class LoggingMiddleware(RequestDelegate next, IOptions<LoggingSett
                 b.Append(" ");
                 b.Append(request.Path);
 
-                if (querySettings.IsEnabledForRequest(request))
+                if (queryOptions.IsEnabledForRequest(request))
                 {
-                    if (querySettings.IsEnabledForAllKeys())
+                    if (queryOptions.IsEnabledForAllKeys())
                     {
                         b.Append(request.QueryString);
                     }
@@ -181,7 +181,7 @@ public sealed class LoggingMiddleware(RequestDelegate next, IOptions<LoggingSett
                     {
                         var writtenFirst = false;
 
-                        foreach (var pair in request.Query.Where(kvp => querySettings.IsEnabledForKey(kvp.Key)))
+                        foreach (var pair in request.Query.Where(kvp => queryOptions.IsEnabledForKey(kvp.Key)))
                         {
                             if (!writtenFirst)
                             {
@@ -196,7 +196,7 @@ public sealed class LoggingMiddleware(RequestDelegate next, IOptions<LoggingSett
             });
     }
 
-    private static string FormatHeaders(StringBuilder builder, IHeaderDictionary headers, LoggingCollectionSettings settings)
+    private static string FormatHeaders(StringBuilder builder, IHeaderDictionary headers, LoggingCollectionOptions options)
     {
         return FormatAndRollback(
             builder,
@@ -204,7 +204,7 @@ public sealed class LoggingMiddleware(RequestDelegate next, IOptions<LoggingSett
             {
                 foreach (var pair in headers)
                 {
-                    if (!settings.IsEnabledForKey(pair.Key))
+                    if (!options.IsEnabledForKey(pair.Key))
                         continue;
 
                     b.AppendLine();

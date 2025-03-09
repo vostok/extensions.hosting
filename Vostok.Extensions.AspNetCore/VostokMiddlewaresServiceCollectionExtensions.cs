@@ -33,7 +33,7 @@ public static class VostokMiddlewaresServiceCollectionExtensions
         services.AddThrottlingDefaults();
         services.AddVostokHealthChecks();
 
-        services.AddOptions<PingApiSettings>()
+        services.AddOptions<PingApiMiddlewareOptions>()
                 .Configure<IServiceProvider, InitializedFlag>((settings, provider, initFlag) =>
                 {
                     settings.CommitHashProvider = AssemblyCommitHashExtractor.ExtractFromEntryAssembly;

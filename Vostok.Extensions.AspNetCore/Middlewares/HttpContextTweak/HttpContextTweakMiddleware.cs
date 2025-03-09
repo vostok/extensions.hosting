@@ -14,7 +14,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.HttpContextTweak;
 [PublicAPI]
 public sealed class HttpContextTweakMiddleware(
     RequestDelegate next,
-    IOptions<HttpContextTweakSettings> options,
+    IOptions<HttpContextTweakMiddlewareOptions> options,
     ILogger<HttpContextTweakMiddleware> log)
 {
     public Task InvokeAsync(HttpContext context)

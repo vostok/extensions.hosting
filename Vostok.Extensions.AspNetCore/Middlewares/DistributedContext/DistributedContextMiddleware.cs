@@ -14,7 +14,9 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.DistributedContext;
 /// Restores distributed context from request headers and ensures request priority is in <see cref="FlowingContext"/>.
 /// </summary>
 [PublicAPI]
-public sealed class DistributedContextMiddleware(RequestDelegate next, IOptions<DistributedContextSettings> settings)
+public sealed class DistributedContextMiddleware(
+    RequestDelegate next,
+    IOptions<DistributedContextMiddlewareOptions> options)
 {
     static DistributedContextMiddleware()
         => FlowingContext.Configuration.RegisterDistributedGlobal(DistributedContextConstants.RequestPriorityGlobalName, new RequestPrioritySerializer());
@@ -32,7 +34,7 @@ public sealed class DistributedContextMiddleware(RequestDelegate next, IOptions<
             FlowingContext.Globals.Set(priority);
         }
 
-        foreach (var action in settings.Value.AdditionalActions)
+        foreach (var action in options.Value.AdditionalActions)
             action(context.Request);
 
         await next(context);

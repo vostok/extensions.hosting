@@ -11,7 +11,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.Throttling;
 /// Represents configuration of <see cref="ThrottlingMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public sealed class ThrottlingSettings
+public sealed class ThrottlingMiddlewareOptions
 {
     /// <summary>
     /// <para>HTTP code to respond with when a request fails to pass throttling.</para>

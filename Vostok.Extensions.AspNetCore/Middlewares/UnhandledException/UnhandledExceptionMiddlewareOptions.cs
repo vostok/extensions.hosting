@@ -8,7 +8,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
 /// Represents configuration of <see cref="UnhandledExceptionMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public sealed class UnhandledExceptionSettings
+public sealed class UnhandledExceptionMiddlewareOptions
 {
     /// <summary>
     /// Error response code to be used when an unhandled exception is observed.

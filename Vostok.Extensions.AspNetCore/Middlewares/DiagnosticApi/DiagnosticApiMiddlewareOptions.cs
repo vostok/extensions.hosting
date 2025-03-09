@@ -6,7 +6,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.DiagnosticApi;
 /// Represents configuration of <see cref="DiagnosticApiMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public sealed class DiagnosticApiSettings
+public sealed class DiagnosticApiMiddlewareOptions
 {
     /// <summary>
     /// Url prefix for diagnostic middleware to listen to.

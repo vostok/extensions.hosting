@@ -14,11 +14,11 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.DatacentersAwareness;
 [PublicAPI]
 public sealed class DatacenterAwarenessMiddleware(
     RequestDelegate next,
-    IOptions<DatacenterAwarenessSettings> options,
+    IOptions<DatacenterAwarenessMiddlewareOptions> options,
     IDatacenters datacenters,
     ILogger<DatacenterAwarenessMiddleware> logger)
 {
-    private readonly DatacenterAwarenessSettings _options = options.Value;
+    private readonly DatacenterAwarenessMiddlewareOptions _options = options.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {

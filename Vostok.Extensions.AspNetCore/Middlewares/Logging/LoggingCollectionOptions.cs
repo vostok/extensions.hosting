@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Http;
 namespace Vostok.Extensions.AspNetCore.Middlewares.Logging;
 
 /// <summary>
-/// Configuration of the <see cref="LoggingSettings.LogQueryString"/>, <see cref="LoggingSettings.LogRequestHeaders"/> and <see cref="LoggingSettings.LogResponseHeaders"/>.
+/// Configuration of the <see cref="LoggingMidLoggingMiddlewareOptionstring"/>, <see cref="LoggingMidLoggingMiddlewareOptionstHeaders"/> and <see cref="LoggingMidLoggingMiddlewareOptionsseHeaders"/>.
 /// </summary>
 [PublicAPI]
-public sealed class LoggingCollectionSettings
+public sealed class LoggingCollectionOptions
 {
-    public LoggingCollectionSettings(Func<HttpRequest, bool> enabled) =>
+    public LoggingCollectionOptions(Func<HttpRequest, bool> enabled) =>
         Enabled = enabled ?? throw new ArgumentNullException(nameof(enabled));
 
-    public LoggingCollectionSettings(bool enabled)
+    public LoggingCollectionOptions(bool enabled)
         : this(_ => enabled)
     {
     }
@@ -36,5 +36,5 @@ public sealed class LoggingCollectionSettings
     /// </summary>
     public IReadOnlyCollection<string>? Blacklist { get; set; }
 
-    public static implicit operator LoggingCollectionSettings(bool enabled) => new(enabled);
+    public static implicit operator LoggingCollectionOptions(bool enabled) => new(enabled);
 }

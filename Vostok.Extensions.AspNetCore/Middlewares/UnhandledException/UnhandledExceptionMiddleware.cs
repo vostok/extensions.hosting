@@ -26,10 +26,10 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
 [PublicAPI]
 public sealed class UnhandledExceptionMiddleware(
     RequestDelegate next,
-    IOptions<UnhandledExceptionSettings> settings,
+    IOptions<UnhandledExceptionMiddlewareOptions> settings,
     ILogger<UnhandledExceptionMiddleware> logger)
 {
-    private readonly UnhandledExceptionSettings _settings = settings.Value;
+    private readonly UnhandledExceptionMiddlewareOptions _options = settings.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -57,7 +57,7 @@ public sealed class UnhandledExceptionMiddleware(
                     throw;
 
                 context.Response.Clear();
-                context.Response.StatusCode = _settings.ErrorResponseCode;
+                context.Response.StatusCode = _options.ErrorResponseCode;
             }
         }
     }
@@ -65,6 +65,6 @@ public sealed class UnhandledExceptionMiddleware(
     private bool ShouldIgnoreError(Exception error)
     {
         var errorType = error.GetType();
-        return _settings.ExceptionsToIgnore.Any(x => x.IsAssignableFrom(errorType));
+        return _options.ExceptionsToIgnore.Any(x => x.IsAssignableFrom(errorType));
     }
 }

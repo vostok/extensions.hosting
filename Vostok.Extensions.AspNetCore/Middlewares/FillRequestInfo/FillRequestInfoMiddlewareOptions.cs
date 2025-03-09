@@ -11,7 +11,7 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 /// Represents configuration of <see cref="FillRequestInfoMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public sealed class FillRequestInfoSettings
+public sealed class FillRequestInfoMiddlewareOptions
 {
     /// <summary>
     /// <para>A delegate that provides a default value for <see cref="Timeout"/>.</para>

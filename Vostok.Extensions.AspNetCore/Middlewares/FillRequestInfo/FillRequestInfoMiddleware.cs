@@ -19,10 +19,10 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 [PublicAPI]
 public sealed class FillRequestInfoMiddleware(
     RequestDelegate next,
-    IOptions<FillRequestInfoSettings> options,
+    IOptions<FillRequestInfoMiddlewareOptions> options,
     IRequestTracker tracker)
 {
-    private readonly FillRequestInfoSettings _options = options.Value;
+    private readonly FillRequestInfoMiddlewareOptions _options = options.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {

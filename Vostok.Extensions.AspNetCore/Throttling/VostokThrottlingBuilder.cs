@@ -11,7 +11,7 @@ internal sealed class VostokThrottlingBuilder(IServiceCollection services) : IVo
     public IVostokThrottlingBuilder ConfigureMetrics(Action<ThrottlingMetricsOptions> configure) =>
         Configure(configure);
 
-    public IVostokThrottlingBuilder ConfigureMiddleware(Action<ThrottlingSettings> configure) =>
+    public IVostokThrottlingBuilder ConfigureMiddleware(Action<ThrottlingMiddlewareOptions> configure) =>
         Configure(configure);
 
     public IVostokThrottlingBuilder ConfigureBuilder(Action<ThrottlingConfigurationBuilder> configure) =>

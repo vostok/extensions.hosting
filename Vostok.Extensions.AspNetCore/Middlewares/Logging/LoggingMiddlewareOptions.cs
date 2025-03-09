@@ -6,11 +6,11 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.Logging;
 /// Represents configuration of <see cref="LoggingMiddleware"/>.
 /// </summary>
 [PublicAPI]
-public sealed class LoggingSettings
+public sealed class LoggingMiddlewareOptions
 {
-    private LoggingCollectionSettings _logQueryString = false;
-    private LoggingCollectionSettings _logRequestHeaders = false;
-    private LoggingCollectionSettings _logResponseHeaders = false;
+    private LoggingCollectionOptions _logQueryString = false;
+    private LoggingCollectionOptions _logRequestHeaders = false;
+    private LoggingCollectionOptions _logResponseHeaders = false;
 
     /// <summary>
     /// Determines whether to log incoming requests.
@@ -36,7 +36,7 @@ public sealed class LoggingSettings
     /// <para>Request query parameters logging options.</para>
     /// <para>By default, query parameters are not logged at all.</para>
     /// </summary>
-    public LoggingCollectionSettings LogQueryString
+    public LoggingCollectionOptions LogQueryString
     {
         get => _logQueryString;
         set => _logQueryString = value.ToCaseInsensitive() ?? throw new ArgumentNullException(nameof(LogQueryString));
@@ -46,7 +46,7 @@ public sealed class LoggingSettings
     /// <para>Request headers logging options.</para>
     /// <para>By default, request headers are not logged at all.</para>
     /// </summary>
-    public LoggingCollectionSettings LogRequestHeaders
+    public LoggingCollectionOptions LogRequestHeaders
     {
         get => _logRequestHeaders;
         set => _logRequestHeaders = value.ToCaseInsensitive() ?? throw new ArgumentNullException(nameof(LogRequestHeaders));
@@ -56,7 +56,7 @@ public sealed class LoggingSettings
     /// <para>Response headers logging options.</para>
     /// <para>By default, response headers are not logged at all.</para>
     /// </summary>
-    public LoggingCollectionSettings LogResponseHeaders
+    public LoggingCollectionOptions LogResponseHeaders
     {
         get => _logResponseHeaders;
         set => _logResponseHeaders = value.ToCaseInsensitive() ?? throw new ArgumentNullException(nameof(LogResponseHeaders));
