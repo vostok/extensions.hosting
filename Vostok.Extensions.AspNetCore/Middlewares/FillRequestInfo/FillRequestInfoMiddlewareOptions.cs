@@ -3,7 +3,6 @@
 using Microsoft.AspNetCore.Http;
 
 using Vostok.Clusterclient.Core.Model;
-using Vostok.Extensions.AspNetCore.Models;
 
 namespace Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 

@@ -2,8 +2,6 @@
 
 using Microsoft.AspNetCore.Http;
 
-using Vostok.Extensions.AspNetCore.Models;
-
 namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
 [PublicAPI]

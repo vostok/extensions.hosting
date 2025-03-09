@@ -9,7 +9,6 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Helpers;
 using Vostok.Context;
 using Vostok.Extensions.AspNetCore.Diagnostics;
-using Vostok.Extensions.AspNetCore.Models;
 
 namespace Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 

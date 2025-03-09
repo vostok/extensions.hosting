@@ -8,7 +8,6 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Helpers.Url;
 using Vostok.Commons.Time;
 using Vostok.Context;
-using Vostok.Extensions.AspNetCore.Models;
 using Vostok.Throttling;
 
 namespace Vostok.Extensions.AspNetCore.Middlewares.Throttling;

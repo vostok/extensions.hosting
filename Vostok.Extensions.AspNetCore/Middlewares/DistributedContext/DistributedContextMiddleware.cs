@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Vostok.Clusterclient.Context;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Context;
-using Vostok.Extensions.AspNetCore.Models;
 
 namespace Vostok.Extensions.AspNetCore.Middlewares.DistributedContext;
 

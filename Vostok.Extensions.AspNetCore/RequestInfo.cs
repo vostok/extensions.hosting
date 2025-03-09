@@ -3,7 +3,7 @@ using System.Net;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Time;
 
-namespace Vostok.Extensions.AspNetCore.Models;
+namespace Vostok.Extensions.AspNetCore;
 
 internal sealed class RequestInfo : IRequestInfo
 {

@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 using Vostok.Clusterclient.Core.Model;
 
-namespace Vostok.Extensions.AspNetCore.Models;
+namespace Vostok.Extensions.AspNetCore;
 
 /// <summary>
 /// Represents an incoming HTTP request information.

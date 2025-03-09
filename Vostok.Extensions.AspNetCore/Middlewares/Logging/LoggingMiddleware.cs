@@ -10,7 +10,6 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Formatting;
 using Vostok.Commons.Time;
 using Vostok.Context;
-using Vostok.Extensions.AspNetCore.Models;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Abstractions.Values;
 using Vostok.Tracing.Abstractions;

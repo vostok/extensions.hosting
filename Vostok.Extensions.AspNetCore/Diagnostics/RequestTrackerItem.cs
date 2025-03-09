@@ -1,6 +1,4 @@
-﻿using Vostok.Extensions.AspNetCore.Models;
-
-namespace Vostok.Extensions.AspNetCore.Diagnostics;
+﻿namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
 internal sealed class RequestTrackerItem
 {

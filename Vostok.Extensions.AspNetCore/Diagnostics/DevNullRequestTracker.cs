@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 using Vostok.Commons.Helpers.Disposable;
-using Vostok.Extensions.AspNetCore.Models;
 
 namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
