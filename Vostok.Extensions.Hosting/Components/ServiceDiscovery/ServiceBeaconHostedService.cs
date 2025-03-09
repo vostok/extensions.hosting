@@ -10,45 +10,46 @@ namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 internal sealed class ServiceBeaconHostedService(
     IServiceBeacon serviceBeacon,
     IOptions<ServiceBeaconConfigurationOptions> options,
-    ILogger<ServiceBeaconHostedService> logger) : IHostedLifecycleService
+    IHostApplicationLifetime applicationLifetime,
+    ILogger<ServiceBeaconHostedService> logger) : IHostedService
 {
-    private readonly ServiceBeaconConfigurationOptions _options = options.Value;
-
-    public Task StartingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-    // Called after Kestrel started.
-    public Task StartedAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Starting..");
-
-        serviceBeacon.Start();
-        WaitForServiceBeaconRegistration();
-
-        return Task.CompletedTask;
-    }
-
-    // Called before Kestrel stopped
-    public Task StoppingAsync(CancellationToken cancellationToken)
-    {
-        logger.LogInformation("Stopping..");
-
-        serviceBeacon.Stop();
+        applicationLifetime.ApplicationStarted.Register(StartBeacon);
+        applicationLifetime.ApplicationStopping.Register(StopBeacon);
 
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    // Called after Kestrel started (if enabled).
+    private void StartBeacon()
+    {
+        logger.LogInformation("Starting..");
+
+        serviceBeacon.Start();
+        WaitForServiceBeaconRegistration();
+    }
+
+    // Called before Kestrel stopped (if enabled).
+    private void StopBeacon()
+    {
+        logger.LogInformation("Stopping..");
+
+        serviceBeacon.Stop();
+    }
 
     private void WaitForServiceBeaconRegistration()
     {
-        if (!_options.WaitRegistration)
+        var optionsValue = options.Value;
+
+        if (!optionsValue.WaitRegistration)
             return;
         if (serviceBeacon is not ServiceBeacon actualBeacon)
             return;
 
-        if (!actualBeacon.WaitForInitialRegistrationAsync().Wait(_options.RegistrationWaitTimeout))
-            throw new Exception($"Service beacon hasn't registered in '{_options.RegistrationWaitTimeout}'.");
+        if (!actualBeacon.WaitForInitialRegistrationAsync().Wait(optionsValue.RegistrationWaitTimeout))
+            throw new Exception($"Service beacon hasn't registered in '{optionsValue.RegistrationWaitTimeout}'.");
     }
 }

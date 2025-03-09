@@ -3,10 +3,12 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 using Vostok.Commons.Environment;
 using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Helpers;
+using Vostok.Extensions.AspNetCore.HostedServices;
 using Vostok.Extensions.AspNetCore.Middlewares;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Extensions.AspNetCore.Throttling;
@@ -26,6 +28,7 @@ public static class VostokMiddlewaresServiceCollectionExtensions
     /// <inheritdoc cref="VostokMiddlewaresServiceCollectionExtensions"/>
     public static IVostokMiddlewaresBuilder AddVostokMiddlewares(this IServiceCollection services)
     {
+        services.AddHostedService<VostokAspNetCoreHostedService>();
         services.TryAddSingleton<VostokDisposables>(); // todo: move to better place
 
         services.ConfigureKestrelDefaults();
@@ -34,10 +37,10 @@ public static class VostokMiddlewaresServiceCollectionExtensions
         services.AddVostokHealthChecks();
 
         services.AddOptions<PingApiMiddlewareOptions>()
-                .Configure<IServiceProvider, InitializedFlag>((options, provider, initFlag) =>
+                .Configure<IServiceProvider, IHostApplicationLifetime>((options, provider, lifetime) =>
                 {
                     options.CommitHashProvider = AssemblyCommitHashExtractor.ExtractFromEntryAssembly;
-                    options.InitializationCheck = () => initFlag.Value;
+                    options.InitializationCheck = () => lifetime.ApplicationStarted.IsCancellationRequested;
 
                     var diagnostics = provider.GetService<IVostokApplicationDiagnostics>();
                     if (diagnostics is not null)

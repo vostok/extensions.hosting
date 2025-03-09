@@ -27,6 +27,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="Vostok.ClusterClient.Transport">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterclient.transport\Vostok.ClusterClient.Transport\bin\Release\$(ReferencesFramework)\Vostok.ClusterClient.Transport.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Hosting.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.hosting.abstractions\Vostok.Hosting.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Hosting.Abstractions.dll</HintPath>
