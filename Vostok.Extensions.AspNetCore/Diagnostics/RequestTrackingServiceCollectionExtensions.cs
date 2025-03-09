@@ -11,9 +11,9 @@ internal static class RequestTrackingServiceCollectionExtensions
     public static void AddRequestTrackingDefaults(this IServiceCollection serviceCollection) =>
         serviceCollection.AddSingleton<IRequestTracker>(services =>
         {
-            var settings = services.GetRequiredService<IOptions<DiagnosticFeaturesSettings>>().Value;
+            var options = services.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
 
-            if (!settings.AddCurrentRequestsInfoProvider)
+            if (!options.AddCurrentRequestsInfoProvider)
                 return new DevNullRequestTracker();
 
             var requestTracker = new RequestTracker();

@@ -18,14 +18,14 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.Throttling;
 [PublicAPI]
 public sealed class ThrottlingMiddleware(
     RequestDelegate next,
-    IOptions<ThrottlingMiddlewareOptions> settings,
+    IOptions<ThrottlingMiddlewareOptions> options,
     IThrottlingProvider provider,
     ILogger<ThrottlingMiddleware> logger)
 {
     private const long LargeRequestBodySize = 256 * 1024;
     private static readonly TimeSpan LongThrottlingWaitTime = TimeSpan.FromMilliseconds(500);
 
-    private readonly ThrottlingMiddlewareOptions _options = settings.Value;
+    private readonly ThrottlingMiddlewareOptions _options = options.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {

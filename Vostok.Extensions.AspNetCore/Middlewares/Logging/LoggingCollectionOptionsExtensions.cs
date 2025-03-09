@@ -18,12 +18,12 @@ internal static class LoggingCollectionOptionsExtensions
         return options.Whitelist.Contains(key);
     }
 
-    public static LoggingCollectionOptions? ToCaseInsensitive(this LoggingCollectionOptions? settings)
-        => settings == null
+    public static LoggingCollectionOptions? ToCaseInsensitive(this LoggingCollectionOptions? options)
+        => options == null
             ? null
-            : new LoggingCollectionOptions(settings.Enabled)
+            : new LoggingCollectionOptions(options.Enabled)
             {
-                Whitelist = settings.Whitelist == null ? null : new HashSet<string>(settings.Whitelist, StringComparer.OrdinalIgnoreCase),
-                Blacklist = settings.Blacklist == null ? null : new HashSet<string>(settings.Blacklist, StringComparer.OrdinalIgnoreCase)
+                Whitelist = options.Whitelist == null ? null : new HashSet<string>(options.Whitelist, StringComparer.OrdinalIgnoreCase),
+                Blacklist = options.Blacklist == null ? null : new HashSet<string>(options.Blacklist, StringComparer.OrdinalIgnoreCase)
             };
 }

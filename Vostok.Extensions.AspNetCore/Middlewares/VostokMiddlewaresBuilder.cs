@@ -45,7 +45,7 @@ internal sealed class VostokMiddlewaresBuilder(IServiceCollection services) : IV
     public IVostokMiddlewaresBuilder ConfigureDiagnosticApi(Action<DiagnosticApiMiddlewareOptions> configure) =>
         Configure(configure);
 
-    public IVostokMiddlewaresBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesSettings> configure) =>
+    public IVostokMiddlewaresBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesOptions> configure) =>
         Configure(configure);
 
     public IVostokMiddlewaresBuilder Configure(Action<VostokMiddlewaresOptions> configure) =>

@@ -6,7 +6,7 @@ namespace Vostok.Extensions.AspNetCore.Diagnostics;
 /// Configuration of built-in diagnostic info providers and health checks.
 /// </summary>
 [PublicAPI]
-public sealed class DiagnosticFeaturesSettings
+public sealed class DiagnosticFeaturesOptions
 {
     public bool AddThrottlingInfoProvider { get; set; } = true;
     public bool AddThrottlingHealthCheck { get; set; } = true;

@@ -34,14 +34,14 @@ public static class VostokMiddlewaresServiceCollectionExtensions
         services.AddVostokHealthChecks();
 
         services.AddOptions<PingApiMiddlewareOptions>()
-                .Configure<IServiceProvider, InitializedFlag>((settings, provider, initFlag) =>
+                .Configure<IServiceProvider, InitializedFlag>((options, provider, initFlag) =>
                 {
-                    settings.CommitHashProvider = AssemblyCommitHashExtractor.ExtractFromEntryAssembly;
-                    settings.InitializationCheck = () => initFlag.Value;
+                    options.CommitHashProvider = AssemblyCommitHashExtractor.ExtractFromEntryAssembly;
+                    options.InitializationCheck = () => initFlag.Value;
 
                     var diagnostics = provider.GetService<IVostokApplicationDiagnostics>();
                     if (diagnostics is not null)
-                        settings.HealthCheck = () => diagnostics.HealthTracker.CurrentStatus == HealthStatus.Healthy;
+                        options.HealthCheck = () => diagnostics.HealthTracker.CurrentStatus == HealthStatus.Healthy;
                 });
 
         return new VostokMiddlewaresBuilder(services);

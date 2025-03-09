@@ -26,10 +26,10 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
 [PublicAPI]
 public sealed class UnhandledExceptionMiddleware(
     RequestDelegate next,
-    IOptions<UnhandledExceptionMiddlewareOptions> settings,
+    IOptions<UnhandledExceptionMiddlewareOptions> options,
     ILogger<UnhandledExceptionMiddleware> logger)
 {
-    private readonly UnhandledExceptionMiddlewareOptions _options = settings.Value;
+    private readonly UnhandledExceptionMiddlewareOptions _options = options.Value;
 
     public async Task InvokeAsync(HttpContext context)
     {

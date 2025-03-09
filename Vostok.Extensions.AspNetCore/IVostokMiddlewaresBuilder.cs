@@ -69,7 +69,7 @@ public interface IVostokMiddlewaresBuilder
     /// <summary>
     /// Customizes built-in diagnostic features (info providers and health checks).
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesSettings> configure);
+    IVostokMiddlewaresBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesOptions> configure);
 
     /// <summary>
     /// Allows to customize <see cref="VostokMiddlewaresOptions"/>.

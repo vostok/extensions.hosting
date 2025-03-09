@@ -29,8 +29,8 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
     /// <inheritdoc cref="VostokMiddlewaresApplicationBuilderExtensions"/>
     public static IApplicationBuilder UseVostokMiddlewares(this IApplicationBuilder applicationBuilder)
     {
-        var settings = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresOptions>>().Value;
-        settings.MiddlewaresAdded = true;
+        var options = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresOptions>>().Value;
+        options.MiddlewaresAdded = true;
 
         var middlewares = new List<Type>();
 
@@ -53,10 +53,10 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
 
         void Add<TMiddleware>()
         {
-            if (settings.PreVostokMiddlewares.TryGetValue(typeof(TMiddleware), out var injected))
+            if (options.PreVostokMiddlewares.TryGetValue(typeof(TMiddleware), out var injected))
                 middlewares.AddRange(injected);
 
-            if (settings.IsEnabled<TMiddleware>())
+            if (options.IsEnabled<TMiddleware>())
                 middlewares.Add(typeof(TMiddleware));
         }
     }

@@ -14,19 +14,19 @@ public static class VostokThrottlingBuilderExtensions
     /// Disables the throttling middleware altogether.
     /// </summary>
     public static IVostokThrottlingBuilder DisableThrottling(this IVostokThrottlingBuilder configurator) =>
-        configurator.ConfigureMiddleware(settings => settings.Enabled = _ => false);
+        configurator.ConfigureMiddleware(options => options.Enabled = _ => false);
 
     /// <summary>
     /// Disables generation of throttling metrics.
     /// </summary>
     public static IVostokThrottlingBuilder DisableMetrics(this IVostokThrottlingBuilder configurator) =>
-        configurator.ConfigureOptions(s => s.EnableMetrics = false);
+        configurator.ConfigureOptions(options => options.EnableMetrics = false);
 
     /// <summary>
     /// <para>If set to <c>true</c>, adds an instance of <see cref="ThreadPoolOverloadQuota"/> to the throttling provider.</para>
     /// </summary>
     public static IVostokThrottlingBuilder DisableThreadPoolOverloadQuota(this IVostokThrottlingBuilder configurator) =>
-        configurator.ConfigureOptions(s => s.UseThreadPoolOverloadQuota = false);
+        configurator.ConfigureOptions(options => options.UseThreadPoolOverloadQuota = false);
 
     /// <summary>
     /// <para>Configures throttling essentials, such as capacity and queue limits, to be obtained from given <paramref name="essentialsProvider"/>.</para>
@@ -46,30 +46,30 @@ public static class VostokThrottlingBuilderExtensions
     /// <inheritdoc cref="ThrottlingConfigurationBuilderExtensions.UseConsumerQuota"/>
     public static IVostokThrottlingBuilder UseConsumerQuota(this IVostokThrottlingBuilder configurator, Func<PropertyQuotaOptions> quotaOptionsProvider) =>
         configurator
-            .ConfigureMiddleware(settings => settings.UseConsumerQuota())
+            .ConfigureMiddleware(options => options.UseConsumerQuota())
             .ConfigureBuilder(builder => builder.UseConsumerQuota(quotaOptionsProvider));
 
     /// <inheritdoc cref="ThrottlingConfigurationBuilderExtensions.UsePriorityQuota"/>
     public static IVostokThrottlingBuilder UsePriorityQuota(this IVostokThrottlingBuilder configurator, Func<PropertyQuotaOptions> quotaOptionsProvider) =>
         configurator
-            .ConfigureMiddleware(settings => settings.UsePriorityQuota())
+            .ConfigureMiddleware(options => options.UsePriorityQuota())
             .ConfigureBuilder(builder => builder.UsePriorityQuota(quotaOptionsProvider));
 
     /// <inheritdoc cref="ThrottlingConfigurationBuilderExtensions.UseMethodQuota"/>
     public static IVostokThrottlingBuilder UseMethodQuota(this IVostokThrottlingBuilder configurator, Func<PropertyQuotaOptions> quotaOptionsProvider) =>
         configurator
-            .ConfigureMiddleware(settings => settings.UseMethodQuota())
+            .ConfigureMiddleware(options => options.UseMethodQuota())
             .ConfigureBuilder(builder => builder.UseMethodQuota(quotaOptionsProvider));
 
     /// <inheritdoc cref="ThrottlingConfigurationBuilderExtensions.UseUrlQuota"/>
     public static IVostokThrottlingBuilder UseUrlQuota(this IVostokThrottlingBuilder configurator, Func<PropertyQuotaOptions> quotaOptionsProvider) =>
         configurator
-            .ConfigureMiddleware(settings => settings.UseUrlQuota())
+            .ConfigureMiddleware(options => options.UseUrlQuota())
             .ConfigureBuilder(builder => builder.UseUrlQuota(quotaOptionsProvider));
 
     /// <inheritdoc cref="ThrottlingConfigurationBuilderExtensions.UseCustomPropertyQuota"/>
     public static IVostokThrottlingBuilder UseCustomPropertyQuota(this IVostokThrottlingBuilder configurator, string propertyName, Func<HttpContext, string> propertyValueProvider, Func<PropertyQuotaOptions> quotaOptionsProvider) =>
         configurator
-            .ConfigureMiddleware(settings => settings.UseCustomPropertyQuota(propertyName, propertyValueProvider))
+            .ConfigureMiddleware(options => options.UseCustomPropertyQuota(propertyName, propertyValueProvider))
             .ConfigureBuilder(builder => builder.UseCustomPropertyQuota(propertyName, quotaOptionsProvider));
 }

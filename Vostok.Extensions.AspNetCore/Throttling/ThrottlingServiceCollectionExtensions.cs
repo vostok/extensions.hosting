@@ -64,14 +64,14 @@ public static class ThrottlingServiceCollectionExtensions
 
     private static void AddThrottlingObservability(IServiceProvider services, ThrottlingProvider throttlingProvider)
     {
-        var diagnosticSettings = services.GetRequiredService<IOptions<DiagnosticFeaturesSettings>>().Value;
+        var options = services.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
 
         AddThrottlingMetrics(services, throttlingProvider);
 
-        if (diagnosticSettings.AddThrottlingInfoProvider)
+        if (options.AddThrottlingInfoProvider)
             AddThrottlingInfo(services, throttlingProvider);
 
-        if (diagnosticSettings.AddThrottlingHealthCheck)
+        if (options.AddThrottlingHealthCheck)
             AddThrottlingHealthCheck(services, throttlingProvider);
     }
 
