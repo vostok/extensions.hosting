@@ -35,5 +35,6 @@ public static class ServiceBeaconBuilderExtensions
     {
         services.TryAddSingleton(ServiceBeaconFactory.Create);
         services.TryAddSingleton(ServiceDiscoveryEventsContextFactory.Create);
+        services.AddHostedService<ServiceBeaconHostedService>();
     }
 }

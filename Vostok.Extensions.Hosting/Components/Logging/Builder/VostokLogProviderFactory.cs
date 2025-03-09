@@ -18,6 +18,9 @@ internal static class VostokLogProviderFactory
         foreach (var customization in customizations)
             compositeLog = customization(compositeLog, provider);
 
-        return new VostokLoggerProvider(compositeLog);
+        return new VostokLoggerProvider(compositeLog, new VostokLoggerProviderSettings
+        {
+            IgnoredScopePrefixes = ["Microsoft.AspNetCore"]
+        });
     }
 }
