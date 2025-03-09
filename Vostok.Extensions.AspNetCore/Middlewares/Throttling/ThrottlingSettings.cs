@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Http;
 
+using Vostok.Extensions.AspNetCore.Throttling;
 using Vostok.Throttling;
 
 namespace Vostok.Extensions.AspNetCore.Middlewares.Throttling;
@@ -40,7 +41,7 @@ public sealed class ThrottlingSettings
 
     /// <summary>
     /// <para>Additional properties to be extracted from <see cref="HttpContext"/> and passed to <see cref="IThrottlingProvider"/>.</para>
-    /// <para>Use <see cref="IVostokThrottlingBuilderExtensions.UseCustomPropertyQuota"/> extension to add throttling by a custom property.</para>
+    /// <para>Use <see cref="VostokThrottlingBuilderExtensions.UseCustomPropertyQuota"/> extension to add throttling by a custom property.</para>
     /// </summary>
     public List<Func<HttpContext, (string propertyName, string propertyValue)>> AdditionalProperties { get; } = [];
 

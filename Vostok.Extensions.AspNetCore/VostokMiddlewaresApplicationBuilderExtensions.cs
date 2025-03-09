@@ -66,14 +66,14 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
     private static void UseBeaconPathBase(this IApplicationBuilder applicationBuilder)
     {
         var serviceBeacon = applicationBuilder.ApplicationServices.GetService<IServiceBeacon>();
+
         if (serviceBeacon is null)
             return;
-
-        if (!serviceBeacon.ReplicaInfo.TryGetUrl(out var url) is false)
+        if (!serviceBeacon.ReplicaInfo.TryGetUrl(out var url))
             return;
 
         var urlPath = url.AbsolutePath;
-        if (string.IsNullOrEmpty(urlPath) || urlPath == Slash)
+        if (string.IsNullOrEmpty(urlPath) || urlPath is Slash)
             return;
 
         applicationBuilder.UsePathBase(urlPath);
