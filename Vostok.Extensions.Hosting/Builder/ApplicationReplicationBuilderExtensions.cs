@@ -33,6 +33,9 @@ public static class ApplicationReplicationBuilderExtensions
         return builder;
     }
 
-    private static void AddApplicationReplication(this IServiceCollection services) =>
+    private static void AddApplicationReplication(this IServiceCollection services)
+    {
         services.TryAddSingleton<IVostokApplicationReplicationInfo, ApplicationReplicationInfo>();
+        services.AddSingleton<IValidateOptions<ApplicationReplicationOptions>, ApplicationReplicationOptionsValidator>();
+    }
 }
