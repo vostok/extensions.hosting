@@ -13,7 +13,7 @@ public static class ApplicationLimitsBuilderExtensions
 {
     public static IVostokBuilder WithApplicationLimits(
         this IVostokBuilder builder,
-        Action<ApplicationLimitsConfigurationOptions> configure)
+        Action<ApplicationLimitsOptions> configure)
     {
         builder.WithApplicationLimits((options, _) => configure(options));
 
@@ -22,12 +22,12 @@ public static class ApplicationLimitsBuilderExtensions
 
     public static IVostokBuilder WithApplicationLimits(
         this IVostokBuilder builder,
-        Action<ApplicationLimitsConfigurationOptions, IServiceProvider>? configure = null)
+        Action<ApplicationLimitsOptions, IServiceProvider>? configure = null)
     {
         builder.Services.AddApplicationLimits();
 
         if (configure is not null)
-            builder.Services.AddOptions<ApplicationLimitsConfigurationOptions>().Configure(configure);
+            builder.Services.AddOptions<ApplicationLimitsOptions>().Configure(configure);
 
         return builder;
     }

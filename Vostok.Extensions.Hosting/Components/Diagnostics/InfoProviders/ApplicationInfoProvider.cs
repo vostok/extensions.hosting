@@ -7,7 +7,7 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 internal class ApplicationInfoProvider(
     IVostokApplicationIdentity identity,
     IVostokApplicationLimits limits,
-    Func<IVostokApplicationReplicationInfo> replication) : IDiagnosticInfoProvider
+    IVostokApplicationReplicationInfo replication) : IDiagnosticInfoProvider
 {
     public object Query() => new
     {
@@ -19,7 +19,7 @@ internal class ApplicationInfoProvider(
             identity.Environment,
             identity.Instance
         },
-        Replication = replication(),
+        Replication = replication,
         Limits = new
         {
             Cpu = limits.CpuUnits.HasValue ? $"{limits.CpuUnits.Value:F2} core(s)" : "<unlimited>",
