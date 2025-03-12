@@ -23,7 +23,7 @@ internal sealed class ServiceBeaconHostedService(
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-    // Called after Kestrel started (if enabled).
+    // Called after Kestrel started (if present).
     private void StartBeacon()
     {
         logger.LogInformation("Starting..");
@@ -32,7 +32,7 @@ internal sealed class ServiceBeaconHostedService(
         WaitForServiceBeaconRegistration();
     }
 
-    // Called before Kestrel stopped (if enabled).
+    // Called before Kestrel stopped (if present).
     private void StopBeacon()
     {
         logger.LogInformation("Stopping..");
