@@ -1,0 +1,59 @@
+﻿using JetBrains.Annotations;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Trace;
+
+using Vostok.Clusterclient.Core.Model;
+using Vostok.ServiceDiscovery.Abstractions;
+
+namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
+
+[PublicAPI]
+public static class OpenTelemetryVostokAspNetCoreExtensions
+{
+    public static void SetupAspNetCoreInstrumentationForVostok(this TracerProviderBuilder tracing) =>
+        tracing.ConfigureServices(services => services.AddOptions<AspNetCoreTraceInstrumentationOptions>()
+                                                      .Configure<IServiceProvider>(Configure));
+
+    private static void Configure(AspNetCoreTraceInstrumentationOptions options, IServiceProvider provider)
+    {
+        VostokContextPropagator.Use(provider.GetRequiredService<ILogger<VostokContextPropagator>>());
+
+        var serverAddress = GetAddress(provider.GetService<IServiceBeacon>());
+
+        options.EnrichWithHttpRequest += (activity, request) =>
+        {
+            if (serverAddress is var (host, port))
+            {
+                activity.SetTag(WebSemanticConventions.AttributeServerAddress, host);
+                activity.SetTag(WebSemanticConventions.AttributeServerPort, port);
+            }
+
+            activity.SetTag(WebSemanticConventions.AttributeClientAddress, request.HttpContext.Connection.RemoteIpAddress);
+
+            var clientName = request.Headers[HeaderNames.ApplicationIdentity].ToString();
+            if (!string.IsNullOrEmpty(clientName))
+                activity.SetTag(WebSemanticConventions.HttpClientName, clientName);
+
+            if (request.ContentLength.HasValue)
+                activity.SetTag(WebSemanticConventions.AttributeHttpRequestContentLength, request.ContentLength.Value);
+        };
+
+        options.EnrichWithHttpResponse += (activity, response) =>
+        {
+            if (response.ContentLength.HasValue)
+                activity.SetTag(WebSemanticConventions.AttributeHttpResponseContentLength, response.ContentLength.Value);
+        };
+    }
+
+    private static (string host, int port)? GetAddress(IServiceBeacon? beacon)
+    {
+        if (beacon is null || !beacon.ReplicaInfo.TryGetUrl(out var url))
+            return null;
+
+        return (url.Host, url.Port);
+    }
+}

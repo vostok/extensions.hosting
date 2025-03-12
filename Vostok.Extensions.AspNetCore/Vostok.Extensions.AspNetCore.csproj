@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -78,6 +79,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration\Vostok.Configuration\bin\Release\$(ReferencesFramework)\Vostok.Configuration.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry" Version="1.11.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
   </ItemGroup>
 
 </Project>
