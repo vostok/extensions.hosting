@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Helpers;
+using Vostok.Extensions.Hosting.HostedServices;
 using Vostok.Extensions.Hosting.OpenTelemetry;
 
 namespace Vostok.Extensions.Hosting.Builder;
@@ -21,6 +22,8 @@ internal sealed class VostokBuilder : IVostokBuilder
     private void AddCoreServices()
     {
         PrepareSubstitutions(Services);
+
+        Services.AddHostedService<VostokStartupService>();
 
         this.WithApplicationIdentity();
 
