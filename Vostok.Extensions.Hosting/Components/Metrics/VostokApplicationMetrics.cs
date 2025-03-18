@@ -4,7 +4,7 @@ using Vostok.Metrics;
 
 namespace Vostok.Extensions.Hosting.Components.Metrics;
 
-internal sealed class VostokApplicationMetrics : IVostokApplicationMetrics, IDisposable
+internal sealed class VostokApplicationMetrics : IVostokApplicationMetrics
 {
     public IMetricContext Root { get; }
     public IMetricContext Project { get; }
@@ -12,8 +12,6 @@ internal sealed class VostokApplicationMetrics : IVostokApplicationMetrics, IDis
     public IMetricContext Environment { get; }
     public IMetricContext Application { get; }
     public IMetricContext Instance { get; }
-
-    private bool _disposed;
 
     public VostokApplicationMetrics(IMetricContext root, IVostokApplicationIdentity identity)
     {
@@ -32,16 +30,5 @@ internal sealed class VostokApplicationMetrics : IVostokApplicationMetrics, IDis
             instance = instance.ToLowerInvariant();
 
         Instance = Application.WithTag(WellKnownApplicationIdentityProperties.Instance, instance);
-    }
-
-    public void Dispose()
-    {
-        if (_disposed)
-            return;
-
-        if (Root is IDisposable disposable)
-            disposable.Dispose();
-
-        _disposed = true;
     }
 }

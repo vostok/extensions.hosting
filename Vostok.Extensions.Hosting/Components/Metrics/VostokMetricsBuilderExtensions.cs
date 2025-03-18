@@ -14,7 +14,7 @@ public static class VostokMetricsBuilderExtensions
 {
     public static IVostokMetricsBuilder Configure(
         this IVostokMetricsBuilder builder,
-        Action<MetricsConfigurationOptions> configure)
+        Action<MetricContextConfig> configure)
     {
         builder.Configure((options, _) => configure(options));
         return builder;
@@ -22,9 +22,9 @@ public static class VostokMetricsBuilderExtensions
 
     public static IVostokMetricsBuilder Configure(
         this IVostokMetricsBuilder builder,
-        Action<MetricsConfigurationOptions, IServiceProvider> configure)
+        Action<MetricContextConfig, IServiceProvider> configure)
     {
-        builder.Services.AddOptions<MetricsConfigurationOptions>().Configure(configure);
+        builder.Services.AddOptions<MetricContextConfig>().Configure(configure);
         return builder;
     }
 

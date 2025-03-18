@@ -2,8 +2,12 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.Metrics;
+using Vostok.Extensions.Hosting.Components.Metrics.Options;
+using Vostok.Hosting.Abstractions;
+using Vostok.Metrics;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -22,6 +26,11 @@ public static class MetricsBuilderExtensions
         return builder;
     }
 
-    private static void AddMetrics(this IServiceCollection services) =>
-        services.TryAddSingleton(ApplicationMetricsFactory.Create);
+    private static void AddMetrics(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IOptionsFactory<MetricContextConfig>, MetricContextConfigFactory>();
+        services.TryAddSingleton<IConfigureOptions<MetricContextConfig>, MetricContextDefaultConfiguration>();
+        services.TryAddSingleton(RootMetricsContextFactory.Create);
+        services.TryAddSingleton<IVostokApplicationMetrics, VostokApplicationMetrics>();
+    }
 }
