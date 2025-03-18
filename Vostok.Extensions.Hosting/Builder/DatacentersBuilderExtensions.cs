@@ -3,7 +3,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Datacenters;
 
 namespace Vostok.Extensions.Hosting.Builder;
@@ -11,8 +10,6 @@ namespace Vostok.Extensions.Hosting.Builder;
 [PublicAPI]
 public static class DatacentersBuilderExtensions
 {
-    internal const string ActualDatacentersKey = "_ActualDatacenters";
-
     public static IVostokBuilder WithDatacenters(
         this IVostokBuilder builder,
         Action<DatacentersConfigurationOptions> configure)
@@ -34,18 +31,6 @@ public static class DatacentersBuilderExtensions
         return builder;
     }
 
-    private static void AddDatacenters(this IServiceCollection services)
-    {
-        // Do not add services if custom IDatacenters already registered
-        if (services.Any(descriptor => descriptor.ServiceType == typeof(IDatacenters) &&
-                                       descriptor.ImplementationType != typeof(SubstitutableDatacenters)))
-        {
-            return;
-        }
-
-        services.TryAddSingleton<IDatacenters, SubstitutableDatacenters>();
-        services.TryAddKeyedSingleton<IDatacenters>(
-            ActualDatacentersKey,
-            (provider, _) => DatacentersFactory.Create(provider));
-    }
+    private static void AddDatacenters(this IServiceCollection services) =>
+        services.TryAddSingleton(DatacentersFactory.Create);
 }

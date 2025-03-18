@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Vostok.Datacenters;
@@ -32,19 +30,6 @@ internal static class DatacentersFactory
 
         options.ApplyCustomizations(datacentersSettings);
 
-        var datacenters = new Vostok.Datacenters.Datacenters(datacentersSettings);
-
-        // note (ponomaryovigor, 04.02.2025): warm up providers to prevent potential cyclic dependency with ClusterConfigClient
-        try
-        {
-            options.DatacenterMapping.Invoke(IPAddress.None);
-            options.ActiveDatacentersProvider.Invoke();
-        }
-        catch (Exception error)
-        {
-            log.Error(error, "Failed to warm up datacenters.");
-        }
-
-        return datacenters;
+        return new Vostok.Datacenters.Datacenters(datacentersSettings);
     }
 }
