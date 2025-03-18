@@ -7,7 +7,9 @@ using Vostok.Extensions.Hosting.Components.Logging.Builder;
 using Vostok.Extensions.Hosting.Components.Logging.Console;
 using Vostok.Extensions.Hosting.Components.Logging.File;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
+using Vostok.Logging.File;
 using Vostok.Logging.File.Configuration;
 
 namespace Vostok.Extensions.Hosting.Components.Logging;
@@ -15,17 +17,22 @@ namespace Vostok.Extensions.Hosting.Components.Logging;
 [PublicAPI]
 public static class VostokLogBuilderExtensions
 {
-    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder, ILog log)
+    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder, ILog log, string? logName = null, Action? customDispose = null)
     {
-        builder.Services.AddKeyedSingleton(LogRegistration.Unnamed, log);
+        builder.AddLog(_ => log, logName, customDispose);
         return builder;
     }
 
-    public static IVostokLogBuilder AddLog(
-        this IVostokLogBuilder builder,
-        Func<IServiceProvider, ILog> implementationFactory)
+    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder, Func<IServiceProvider, ILog> implementationFactory, string? logName, Action? customDispose)
     {
-        builder.Services.AddKeyedSingleton(LogRegistration.Unnamed, implementationFactory);
+        logName ??= LogRegistrationFactory.GetNextName();
+        var logRegistration = LogRegistration.For(logName);
+
+        builder.Services.TryAddKeyedSingleton(logRegistration, logRegistration);
+        builder.Services.TryAddKeyedSingleton(
+            logRegistration,
+            (provider, _) => LogRegistrationFactory.Register(provider, implementationFactory, logName, customDispose));
+
         return builder;
     }
 
@@ -33,7 +40,7 @@ public static class VostokLogBuilderExtensions
         this IVostokLogBuilder builder,
         Action<ConsoleLogSettings>? configure = null)
     {
-        builder.Services.TryAddKeyedSingleton(LogRegistration.For(ConsoleLogFactory.LogName), ConsoleLogFactory.Create);
+        builder.AddLog(ConsoleLogFactory.Create, ConsoleLogFactory.LogName, ConsoleLog.Flush);
 
         if (configure is not null)
             builder.Services.Configure(configure);
@@ -45,7 +52,7 @@ public static class VostokLogBuilderExtensions
         this IVostokLogBuilder builder,
         Action<FileLogSettings>? configureSettings = null)
     {
-        builder.Services.TryAddKeyedSingleton(LogRegistration.For(FileLogFactory.LogName), FileLogFactory.Create);
+        builder.AddLog(FileLogFactory.Create, FileLogFactory.LogName, FileLog.FlushAll);
 
         if (configureSettings is not null)
             builder.Services.Configure(configureSettings);
@@ -53,26 +60,20 @@ public static class VostokLogBuilderExtensions
         return builder;
     }
 
-    public static IVostokLogBuilder ClearLogs(this IVostokLogBuilder builder)
-    {
-        builder.Services.RemoveAllKeyed<ILog>(LogRegistration.All);
-        return builder;
-    }
-
     public static IVostokLogBuilder CustomizeLog(
         this IVostokLogBuilder builder,
-        Func<ILog, ILog> customize,
-        string? name = null)
+        string? name,
+        Func<ILog, ILog> customize)
     {
-        builder.CustomizeLog((log, _) => customize(log), name);
+        builder.CustomizeLog(name, (log, _) => customize(log));
 
         return builder;
     }
 
     public static IVostokLogBuilder CustomizeLog(
         this IVostokLogBuilder builder,
-        Func<ILog, IServiceProvider, ILog> customize,
-        string? name = null)
+        string? name,
+        Func<ILog, IServiceProvider, ILog> customize)
     {
         var customization = new LogCustomization(customize);
 
@@ -84,9 +85,29 @@ public static class VostokLogBuilderExtensions
         return builder;
     }
 
+    public static IVostokLogBuilder ClearLogs(this IVostokLogBuilder builder)
+    {
+        builder.Services.RemoveAllKeyed<LogRegistration>(LogRegistration.All);
+        builder.Services.RemoveAllKeyed<ILog>(LogRegistration.All);
+        return builder;
+    }
+
     public static IVostokLogBuilder DisableLog(this IVostokLogBuilder builder, string name)
     {
+        builder.Services.RemoveAllKeyed<LogRegistration>(LogRegistration.For(name));
         builder.Services.RemoveAllKeyed<ILog>(LogRegistration.For(name));
+        return builder;
+    }
+
+    public static IVostokLogBuilder AddRule(this IVostokLogBuilder builder, LogConfigurationRule rule)
+    {
+        builder.Services.Configure<VostokLogRulesOptions>(options => options.Rules.Add(rule));
+        return builder;
+    }
+
+    public static IVostokLogBuilder ClearRules(this IVostokLogBuilder builder)
+    {
+        builder.Services.Configure<VostokLogRulesOptions>(options => options.Rules.Clear());
         return builder;
     }
 }
