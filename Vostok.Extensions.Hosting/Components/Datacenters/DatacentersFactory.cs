@@ -28,9 +28,7 @@ internal static class DatacentersFactory
             return new EmptyDatacenters();
         }
 
-        var datacentersSettings = new DatacentersSettings(
-            options.DatacenterMapping,
-            options.ActiveDatacentersProvider);
+        var datacentersSettings = new DatacentersSettings(options.DatacenterMapping, options.ActiveDatacentersProvider);
 
         options.ApplyCustomizations(datacentersSettings);
 
