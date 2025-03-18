@@ -2,13 +2,13 @@
 
 internal sealed class LogRegistration
 {
-    private readonly string? _key;
+    private readonly string? _name;
+    public string Name => _name ?? throw new InvalidOperationException($"Cannot get a log name from '{nameof(All)}' registration.");
 
     public static readonly LogRegistration All = new();
-    public static readonly LogRegistration Unnamed = For("_Unnamed");
-    public static LogRegistration For(string key) => new(key);
+    public static LogRegistration For(string name) => new(name ?? throw new ArgumentNullException(nameof(name)));
 
-    private LogRegistration(string? key = null) => _key = key;
+    private LogRegistration(string? name = null) => _name = name;
 
     private bool Equals(LogRegistration? other)
     {
@@ -17,9 +17,9 @@ internal sealed class LogRegistration
         if (ReferenceEquals(this, other))
             return true;
 
-        if (_key is null || other._key is null)
+        if (_name is null || other._name is null)
             return true;
-        return _key == other._key;
+        return _name == other._name;
     }
 
     public override bool Equals(object? obj)
@@ -34,5 +34,5 @@ internal sealed class LogRegistration
     }
 
     public override int GetHashCode() =>
-        _key is null ? 0 : _key.GetHashCode();
+        _name is null ? 0 : _name.GetHashCode();
 }
