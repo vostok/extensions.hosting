@@ -34,7 +34,7 @@ public static class LoggingBuilderExtensions
         builder.Services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>
         {
             var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
-                                          .CreateLogger("Vostok.Log");
+                                          .CreateLogger(string.Empty);
 
             return new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
         });
