@@ -86,4 +86,8 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Vostok.Extensions.Hosting\Vostok.Extensions.Hosting.csproj" />
+  </ItemGroup>
+
 </Project>

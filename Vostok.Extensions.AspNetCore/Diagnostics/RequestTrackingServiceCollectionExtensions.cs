@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Vostok.Extensions.AspNetCore.Helpers;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore.Diagnostics;

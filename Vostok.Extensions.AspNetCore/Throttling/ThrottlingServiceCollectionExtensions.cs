@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.AspNetCore.Diagnostics;
-using Vostok.Extensions.AspNetCore.Helpers;
 using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Throttling;

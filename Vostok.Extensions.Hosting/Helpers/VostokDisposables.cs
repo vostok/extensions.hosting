@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Vostok.Extensions.AspNetCore.Helpers;
+namespace Vostok.Extensions.Hosting.Helpers;
 
 internal sealed class VostokDisposables(ILogger<VostokDisposables> logger) : IDisposable
 {

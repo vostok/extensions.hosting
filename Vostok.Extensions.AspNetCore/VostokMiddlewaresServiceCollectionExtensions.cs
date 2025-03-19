@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 using Vostok.Commons.Environment;
@@ -29,7 +28,6 @@ public static class VostokMiddlewaresServiceCollectionExtensions
     public static IVostokMiddlewaresBuilder AddVostokMiddlewares(this IServiceCollection services)
     {
         services.AddHostedService<VostokAspNetCoreHostedService>();
-        services.TryAddSingleton<VostokDisposables>(); // todo: move to better place
 
         services.ConfigureKestrelDefaults();
         services.AddRequestTrackingDefaults();
