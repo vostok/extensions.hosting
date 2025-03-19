@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Vostok.Extensions.AspNetCore.Helpers;
+namespace Vostok.Extensions.Hosting.Helpers;
 
 internal static class ServiceProviderExtensions
 {

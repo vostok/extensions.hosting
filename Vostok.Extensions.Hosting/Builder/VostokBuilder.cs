@@ -23,6 +23,7 @@ internal sealed class VostokBuilder : IVostokBuilder
     {
         PrepareSubstitutions(Services);
 
+        Services.TryAddSingleton<VostokDisposables>();
         Services.AddHostedService<VostokStartupService>();
 
         this.WithApplicationIdentity();

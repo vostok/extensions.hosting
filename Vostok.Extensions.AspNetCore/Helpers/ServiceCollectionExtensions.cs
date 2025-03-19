@@ -3,6 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.AspNetCore.Diagnostics;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore.Helpers;

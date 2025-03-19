@@ -31,6 +31,9 @@ public static class HerculesSinkBuilderExtensions
         return builder;
     }
 
-    private static void AddHerculesSink(this IServiceCollection services) =>
+    private static void AddHerculesSink(this IServiceCollection services)
+    {
         services.TryAddSingleton(HerculesSinkFactory.Create);
+        services.AddHostedService<HerculesSinkMetricsHostedService>();
+    }
 }

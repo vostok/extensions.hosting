@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-using Vostok.Extensions.AspNetCore.Helpers;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 using HealthReport = Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport;
