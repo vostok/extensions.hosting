@@ -42,7 +42,6 @@ internal static class ZooKeeperClientFactory
 
         options.ApplyAuthenticationInfos(zooKeeperClient);
 
-        // todo: StaticProvider configurator
         return zooKeeperClient;
     }
 

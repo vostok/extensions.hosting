@@ -27,17 +27,26 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.HostedServices;
 
-internal sealed class VostokStartupService(IServiceProvider provider, ILogger<VostokStartupService> logger)
+internal sealed class VostokStartupService(
+    IServiceProvider provider,
+    IEnumerable<VostokStartupService.CustomStartupAction> customStartupActions,
+    ILogger<VostokStartupService> logger)
     : IHostedLifecycleService
 {
+    public delegate void CustomStartupAction(IServiceProvider provider);
+
     public async Task StartingAsync(CancellationToken cancellationToken)
     {
         WarmupVostokLog();
         WarmupVostokTracer();
         WarmupVostokMetricsContext();
         WarmupHerculesSink();
+        WarmupDatacenters();
         await WarmupServiceDiscoveryAsync();
         await WarmupClusterConfigClientAsync();
+
+        foreach (var startupAction in customStartupActions)
+            startupAction(provider);
 
         ConfigureFlowingContext();
 
@@ -76,6 +85,13 @@ internal sealed class VostokStartupService(IServiceProvider provider, ILogger<Vo
         var herculesSink = provider.GetService<IHerculesSink>();
         if (herculesSink is not null)
             HerculesSinkProvider.Configure(herculesSink, true);
+    }
+
+    private void WarmupDatacenters()
+    {
+        var datacenters = provider.GetService<IDatacenters>();
+        if (datacenters is not null)
+            DatacentersProvider.Configure(datacenters, true);
     }
 
     private async Task WarmupServiceDiscoveryAsync()
@@ -166,7 +182,6 @@ internal sealed class VostokStartupService(IServiceProvider provider, ILogger<Vo
         if (datacenters is null)
             return;
 
-        DatacentersProvider.Configure(datacenters, canOverwrite: true);
         logger.LogInformation("Application datacenter: {DatacenterName}.", datacenters.GetLocalDatacenter() ?? "unknown");
     }
 
