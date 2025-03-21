@@ -9,19 +9,18 @@ internal sealed class MetricContextConfigFactory(
     IEnumerable<IConfigureOptions<MetricContextConfig>> setups,
     IEnumerable<IPostConfigureOptions<MetricContextConfig>> postConfigures,
     IEnumerable<IValidateOptions<MetricContextConfig>> validations,
-    IEnumerable<IMetricEventSender> senders)
-    : OptionsFactory<MetricContextConfig>(setups, postConfigures, validations)
+    IEnumerable<IMetricEventSender> senders) : OptionsFactory<MetricContextConfig>(setups, postConfigures, validations)
 {
     protected override MetricContextConfig CreateInstance(string _)
     {
         var compositeMetricEventSender = BuildCompositeMetricEventSender(senders.ToArray());
-        return new MetricContextConfig(compositeMetricEventSender ?? new DevNullMetricEventSender());
+        return new MetricContextConfig(compositeMetricEventSender);
     }
 
-    private static IMetricEventSender? BuildCompositeMetricEventSender(IMetricEventSender[] senders) =>
+    private static IMetricEventSender BuildCompositeMetricEventSender(IMetricEventSender[] senders) =>
         senders switch
         {
-            [] => null,
+            [] => new DevNullMetricEventSender(),
             [var sender] => sender,
             _ => new CompositeMetricEventSender(senders)
         };
