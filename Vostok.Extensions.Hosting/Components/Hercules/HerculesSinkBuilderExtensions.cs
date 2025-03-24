@@ -47,7 +47,7 @@ public static class HerculesSinkBuilderExtensions
         Func<IServiceProvider, IClusterProvider> implementationFactory)
     {
         builder.Services.AddKeyedSingleton(
-            HerculesSinkFactory.HerculesSinkClusterProviderKey,
+            HerculesSinkFactory.ClusterProviderKey,
             (provider, _) => implementationFactory(provider));
 
         return builder;
