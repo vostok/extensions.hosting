@@ -76,7 +76,7 @@ public static class VostokBuilderTelemetryExtensions
     private static void AddMetrics(this IServiceCollection services)
     {
         services.TryAddSingleton<IOptionsFactory<MetricContextConfig>, MetricContextConfigFactory>();
-        services.TryAddSingleton<IConfigureOptions<MetricContextConfig>, MetricContextDefaultConfiguration>();
+        services.TryAddSingleton<IConfigureOptions<MetricContextConfig>, MetricContextInitialConfiguration>();
         services.TryAddSingleton(RootMetricsContextFactory.Create);
         services.TryAddSingleton<IVostokApplicationMetrics, VostokApplicationMetrics>();
     }

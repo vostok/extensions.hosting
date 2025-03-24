@@ -35,7 +35,7 @@ public static class VostokBuilderClusterConfigClientExtensions
 
     private static void AddClusterConfigClient(this IServiceCollection services)
     {
-        services.TryAddSingleton<IConfigureOptions<ClusterConfigClientSettings>, ClusterConfigClientDefaultConfiguration>();
+        services.TryAddSingleton<IConfigureOptions<ClusterConfigClientSettings>, ClusterConfigClientInitialConfiguration>();
         services.TryAddSingleton(ClusterConfigClientFactory.Create);
     }
 }

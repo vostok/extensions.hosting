@@ -6,7 +6,7 @@ using Vostok.Metrics.Senders;
 
 namespace Vostok.Extensions.Hosting.Components.Metrics.Options;
 
-internal class MetricContextDefaultConfiguration(ILog log, IEnumerable<IMetricEventSender> senders)
+internal class MetricContextInitialConfiguration(ILog log, IEnumerable<IMetricEventSender> senders)
     : IConfigureOptions<MetricContextConfig>
 {
     public void Configure(MetricContextConfig config)

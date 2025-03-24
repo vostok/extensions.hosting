@@ -9,7 +9,7 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ClusterConfigClient;
 
-internal sealed class ClusterConfigClientDefaultConfiguration(ILog log, ITracer tracer)
+internal sealed class ClusterConfigClientInitialConfiguration(ILog log, ITracer tracer)
     : IConfigureOptions<ClusterConfigClientSettings>
 {
     public void Configure(ClusterConfigClientSettings settings)
