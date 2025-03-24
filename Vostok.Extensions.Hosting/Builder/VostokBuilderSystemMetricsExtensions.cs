@@ -10,7 +10,7 @@ using Vostok.Metrics.System.Gc;
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
-public static class SystemMetricsBuilderExtensions
+public static class VostokBuilderSystemMetricsExtensions
 {
     public static IVostokBuilder WithSystemMetrics(
         this IVostokBuilder builder,

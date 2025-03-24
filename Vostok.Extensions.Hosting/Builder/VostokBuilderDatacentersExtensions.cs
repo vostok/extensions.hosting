@@ -8,7 +8,7 @@ using Vostok.Extensions.Hosting.Components.Datacenters;
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
-public static class DatacentersBuilderExtensions
+public static class VostokBuilderDatacentersExtensions
 {
     public static IVostokBuilder WithDatacenters(
         this IVostokBuilder builder,

@@ -10,7 +10,7 @@ using Vostok.Hosting.Abstractions;
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
-public static class ApplicationReplicationBuilderExtensions
+public static class VostokBuilderApplicationReplicationExtensions
 {
     public static IVostokBuilder WithApplicationReplicationInfo(
         this IVostokBuilder builder,

@@ -1,0 +1,83 @@
+﻿using System.Diagnostics;
+
+using JetBrains.Annotations;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using Vostok.Extensions.Hosting.Components.Logging;
+using Vostok.Extensions.Hosting.Components.Logging.Builder;
+using Vostok.Extensions.Hosting.Components.Logging.Substitution;
+using Vostok.Extensions.Hosting.Components.Metrics;
+using Vostok.Extensions.Hosting.Components.Metrics.Options;
+using Vostok.Hosting.Abstractions;
+using Vostok.Logging.Abstractions;
+using Vostok.Logging.Microsoft;
+using Vostok.Metrics;
+using Vostok.Tracing.Abstractions;
+using Vostok.Tracing.Diagnostics;
+
+namespace Vostok.Extensions.Hosting.Builder;
+
+[PublicAPI]
+public static class VostokBuilderTelemetryExtensions
+{
+    public const string ActualLogKey = "_ActualLog";
+
+    public static IVostokBuilder WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
+    {
+        var descriptor =
+            ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
+        builder.Services.TryAddEnumerable(descriptor);
+
+        var vostokLogBuilder = new VostokLogBuilder(builder.Services);
+        configure(vostokLogBuilder);
+
+        return builder;
+    }
+
+    public static IVostokBuilder WithMetrics(
+        this IVostokBuilder builder,
+        Action<IVostokMetricsBuilder>? configure = null)
+    {
+        builder.Services.AddMetrics();
+
+        var metricsBuilder = new VostokMetricsBuilder(builder.Services);
+        configure?.Invoke(metricsBuilder);
+
+        return builder;
+    }
+
+    internal static void WithTracing(this IVostokBuilder builder)
+    {
+        var settings = new ActivitySourceTracerSettings
+        {
+            ActivitySource = new ActivitySource(TracingConstants.VostokTracerActivitySourceName)
+        };
+
+        var activitySourceTracer = new ActivitySourceTracer(settings);
+        builder.Services.TryAddSingleton<ITracer>(activitySourceTracer);
+    }
+
+    internal static void EnableOuterVostokLog(this IVostokBuilder builder)
+    {
+        builder.Services.TryAddSingleton<ILog, SubstitutableLog>();
+        builder.Services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>
+        {
+            var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
+                                          .CreateLogger(string.Empty);
+
+            return new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
+        });
+    }
+
+    private static void AddMetrics(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IOptionsFactory<MetricContextConfig>, MetricContextConfigFactory>();
+        services.TryAddSingleton<IConfigureOptions<MetricContextConfig>, MetricContextDefaultConfiguration>();
+        services.TryAddSingleton(RootMetricsContextFactory.Create);
+        services.TryAddSingleton<IVostokApplicationMetrics, VostokApplicationMetrics>();
+    }
+}

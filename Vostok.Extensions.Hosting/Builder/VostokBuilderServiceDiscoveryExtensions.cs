@@ -1,0 +1,82 @@
+﻿using JetBrains.Annotations;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery;
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery.EventsContext;
+using Vostok.Extensions.Hosting.Components.ZooKeeperClient;
+using Vostok.ServiceDiscovery;
+using Vostok.ZooKeeper.Client;
+
+namespace Vostok.Extensions.Hosting.Builder;
+
+[PublicAPI]
+public static class ServiceBeaconBuilderExtensions
+{
+    public static IVostokBuilder WithServiceBeacon(this IVostokBuilder builder, Action<IServiceBeaconBuilder> configure)
+    {
+        builder.Services.AddServiceBeacon();
+
+        var serviceBeaconBuilder = new ServiceBeaconBuilder(builder.Services);
+        configure(serviceBeaconBuilder);
+
+        return builder;
+    }
+
+    public static IVostokBuilder DisableServiceBeacon(this IVostokBuilder builder)
+    {
+        builder.Services.Replace(ServiceDescriptor.Singleton(ServiceBeaconFactory.CreateDisabled));
+        return builder;
+    }
+
+    public static IVostokBuilder WithServiceLocator(
+        this IVostokBuilder builder,
+        Action<ServiceLocatorSettings> configure)
+    {
+        builder.WithServiceLocator((settings, _) => configure(settings));
+
+        return builder;
+    }
+
+    public static IVostokBuilder WithServiceLocator(
+        this IVostokBuilder builder,
+        Action<ServiceLocatorSettings, IServiceProvider>? configure = null)
+    {
+        builder.Services.AddServiceLocator();
+
+        if (configure is not null)
+            builder.Services.AddOptions<ServiceLocatorSettings>().Configure(configure);
+
+        return builder;
+    }
+
+    public static IVostokBuilder WithZooKeeperClient(
+        this IVostokBuilder builder,
+        Action<IZooKeeperClientBuilder> configure)
+    {
+        builder.Services.AddZooKeeperClient();
+
+        var zooKeeperClientBuilder = new ZooKeeperClientBuilder(builder.Services);
+        configure(zooKeeperClientBuilder);
+
+        return builder;
+    }
+
+    private static void AddServiceBeacon(this IServiceCollection services)
+    {
+        services.TryAddSingleton(ServiceBeaconFactory.Create);
+        services.TryAddSingleton(ServiceDiscoveryEventsContextFactory.Create);
+        services.AddHostedService<ServiceBeaconHostedService>();
+    }
+
+    private static void AddServiceLocator(this IServiceCollection services) =>
+        services.TryAddSingleton(ServiceLocatorFactory.Create);
+
+    private static void AddZooKeeperClient(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IOptionsFactory<ZooKeeperClientSettings>, ZooKeeperClientSettingsFactory>();
+        services.TryAddSingleton(ZooKeeperClientFactory.Create);
+    }
+}

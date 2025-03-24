@@ -9,7 +9,7 @@ using Vostok.Hosting.Abstractions;
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
-public static class ApplicationLimitsBuilderExtensions
+public static class VostokBuilderApplicationLimitsExtensions
 {
     public static IVostokBuilder WithApplicationLimits(
         this IVostokBuilder builder,

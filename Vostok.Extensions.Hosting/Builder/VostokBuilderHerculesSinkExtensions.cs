@@ -11,7 +11,7 @@ using Vostok.Hercules.Client.Abstractions;
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
-public static class HerculesSinkBuilderExtensions
+public static class VostokBuilderHerculesSinkExtensions
 {
     public static IVostokBuilder WithHerculesSink(
         this IVostokBuilder builder,

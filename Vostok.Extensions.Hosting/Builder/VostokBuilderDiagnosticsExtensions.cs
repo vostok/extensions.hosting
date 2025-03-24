@@ -13,7 +13,7 @@ using Vostok.Metrics;
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
-public static class DiagnosticsBuilderExtensions
+public static class VostokBuilderDiagnosticsExtensions
 {
     public static IVostokBuilder WithDiagnostics(this IVostokBuilder builder,
         Action<IVostokDiagnosticsBuilder>? configure = null)

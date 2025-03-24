@@ -10,7 +10,7 @@ using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
-public static class ClusterConfigClientBuilderExtensions
+public static class VostokBuilderClusterConfigClientExtensions
 {
     public static IVostokBuilder WithClusterConfigClient(
         this IVostokBuilder builder,

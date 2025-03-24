@@ -20,7 +20,7 @@ internal sealed class SubstitutionsValidator(IServiceProvider provider)
     private void SubstituteLogging()
     {
         var substitutableLog = provider.GetService<ILog>() as SubstitutableLog;
-        var actualLog = provider.GetKeyedService<ILog>(LoggingBuilderExtensions.ActualLogKey);
+        var actualLog = provider.GetKeyedService<ILog>(VostokBuilderTelemetryExtensions.ActualLogKey);
 
         if (substitutableLog is not null && actualLog is not null)
             substitutableLog.SubstituteWith(actualLog);
