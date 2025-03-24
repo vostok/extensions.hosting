@@ -4,30 +4,26 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Vostok.Extensions.Hosting.Components.ServiceDiscovery;
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery.EventsContext;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
 [PublicAPI]
 public static class ServiceBeaconBuilderExtensions
 {
-    public static IVostokBuilder WithServiceBeacon(
-        this IVostokBuilder builder,
-        Action<ServiceBeaconConfigurationOptions> configure)
+    public static IVostokBuilder WithServiceBeacon(this IVostokBuilder builder, Action<IServiceBeaconBuilder> configure)
     {
-        builder.WithServiceBeacon((settings, _) => configure(settings));
+        builder.Services.AddServiceBeacon();
+
+        var serviceBeaconBuilder = new ServiceBeaconBuilder(builder.Services);
+        configure(serviceBeaconBuilder);
 
         return builder;
     }
 
-    public static IVostokBuilder WithServiceBeacon(
-        this IVostokBuilder builder,
-        Action<ServiceBeaconConfigurationOptions, IServiceProvider>? configure = null)
+    public static IVostokBuilder DisableServiceBeacon(this IVostokBuilder builder)
     {
-        builder.Services.AddServiceBeacon();
-
-        if (configure is not null)
-            builder.Services.AddOptions<ServiceBeaconConfigurationOptions>().Configure(configure);
-
+        builder.Services.Replace(ServiceDescriptor.Singleton(ServiceBeaconFactory.CreateDisabled));
         return builder;
     }
 
