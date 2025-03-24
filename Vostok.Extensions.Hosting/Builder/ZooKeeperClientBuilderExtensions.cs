@@ -2,8 +2,10 @@ using JetBrains.Annotations;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.ZooKeeperClient;
+using Vostok.ZooKeeper.Client;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -12,25 +14,19 @@ public static class ZooKeeperClientBuilderExtensions
 {
     public static IVostokBuilder WithZooKeeperClient(
         this IVostokBuilder builder,
-        Action<ZooKeeperClientConfigurationOptions> configure)
-    {
-        builder.WithZooKeeperClient((options, _) => configure(options));
-
-        return builder;
-    }
-
-    public static IVostokBuilder WithZooKeeperClient(
-        this IVostokBuilder builder,
-        Action<ZooKeeperClientConfigurationOptions, IServiceProvider>? configure = null)
+        Action<IZooKeeperClientBuilder> configure)
     {
         builder.Services.AddZooKeeperClient();
 
-        if (configure is not null)
-            builder.Services.AddOptions<ZooKeeperClientConfigurationOptions>().Configure(configure);
+        var zooKeeperClientBuilder = new ZooKeeperClientBuilder(builder.Services);
+        configure(zooKeeperClientBuilder);
 
         return builder;
     }
 
-    private static void AddZooKeeperClient(this IServiceCollection services) =>
+    private static void AddZooKeeperClient(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IOptionsFactory<ZooKeeperClientSettings>, ZooKeeperClientSettingsFactory>();
         services.TryAddSingleton(ZooKeeperClientFactory.Create);
+    }
 }

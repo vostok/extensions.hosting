@@ -1,46 +1,33 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
+using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 
 namespace Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 
 internal static class ZooKeeperClientFactory
 {
+    public const string ClusterProviderKey = "ZooKeeperClientClusterProvider";
+
     public static IZooKeeperClient Create(IServiceProvider provider)
     {
-        var options = provider.GetRequiredService<IOptions<ZooKeeperClientConfigurationOptions>>().Value;
         var log = provider.GetRequiredService<ILog>();
-
-        ZooKeeperClientSettings? settings = null;
+        var settings = provider.GetRequiredService<IOptions<ZooKeeperClientSettings>>().Value;
+        var authenticationInfos = provider.GetServices<AuthenticationInfo>();
 
         // todo: Enable/Disable
-
-        if (options.ConnectionString is not null)
-            settings = new ZooKeeperClientSettings(options.ConnectionString);
-
-        var clusterProvider = options.ClusterProviderBuilder?.Build(provider);
-        if (clusterProvider is not null)
-            settings = new ZooKeeperClientSettings(() => clusterProvider.GetCluster());
-
-        if (settings is null)
-        {
-            log.LogDisabled("ZooKeeperClient", "not configured ZooKeeper topology");
-            return new DevNullZooKeeperClient();
-        }
-
-        options.ApplyCustomizations(settings);
-
+        
         var zooKeeperClient = new ZooKeeper.Client.ZooKeeperClient(
             settings,
             log.WithEventsDroppedByProperties(IsDataChangedLog));
 
-        options.ApplyAuthenticationInfos(zooKeeperClient);
+        foreach (var authenticationInfo in authenticationInfos)
+            zooKeeperClient.AddAuthenticationInfo(authenticationInfo);
 
         return zooKeeperClient;
     }
