@@ -13,7 +13,7 @@ public static class HerculesServiceDiscoveryEventsSenderFactory
     {
         var sink = services.GetService<IHerculesSink>();
         var options = services.GetRequiredService<IOptions<HerculesServiceDiscoveryEventsSenderOptions>>().Value;
-        if (sink is null || options.Stream is null)
+        if (sink is null)
             return new DevNullServiceDiscoveryEventsSender();
 
         var settings = new HerculesServiceDiscoveryEventsSenderSettings(sink, options.Stream);
