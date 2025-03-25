@@ -23,4 +23,21 @@ public static class DatacentersBuilderExtensions
             builder.Services.AddOptions<DatacentersSettings>().Configure(configure);
         return builder;
     }
+
+    public static IDatacentersBuilder ConfigureProviders(
+        this IDatacentersBuilder builder,
+        Action<DatacentersProvidersOptions> configure)
+    {
+        builder.ConfigureProviders((options, _) => configure(options));
+        return builder;
+    }
+
+    public static IDatacentersBuilder ConfigureProviders(
+        this IDatacentersBuilder builder,
+        Action<DatacentersProvidersOptions, IServiceProvider>? configure = null)
+    {
+        if (configure is not null)
+            builder.Services.AddOptions<DatacentersProvidersOptions>().Configure(configure);
+        return builder;
+    }
 }

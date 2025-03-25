@@ -8,10 +8,10 @@ internal sealed class DatacentersSettingsFactory(
     IEnumerable<IConfigureOptions<DatacentersSettings>> setups,
     IEnumerable<IPostConfigureOptions<DatacentersSettings>> postConfigures,
     IEnumerable<IValidateOptions<DatacentersSettings>> validations,
-    IOptions<DatacentersOptions> optionsMonitor)
+    IOptions<DatacentersProvidersOptions> options)
     : OptionsFactory<DatacentersSettings>(setups, postConfigures, validations)
 {
     protected override DatacentersSettings CreateInstance(string name) =>
-        new(optionsMonitor.Value.DatacenterMapping,
-            optionsMonitor.Value.ActiveDatacentersProvider);
+        new(options.Value.DatacenterMapping,
+            options.Value.ActiveDatacentersProvider);
 }
