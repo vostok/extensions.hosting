@@ -29,7 +29,7 @@ internal sealed class VostokBuilder : IVostokBuilder
         this.WithApplicationIdentity();
 
         this.EnableOuterVostokLog();
-        this.AddTracing();
+        this.WithTracing();
 
         this.ConfigureOpenTelemetryForVostok();
     }

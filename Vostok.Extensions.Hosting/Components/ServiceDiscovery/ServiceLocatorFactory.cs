@@ -14,9 +14,9 @@ internal static class ServiceLocatorFactory
 {
     public static IServiceLocator Create(IServiceProvider provider)
     {
-        var options = provider.GetRequiredService<IOptions<ServiceLocatorConfigurationOptions>>().Value;
-        var log = provider.GetRequiredService<ILog>();
+        var settings = provider.GetRequiredService<IOptions<ServiceLocatorSettings>>().Value;
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
+        var log = provider.GetRequiredService<ILog>();
 
         if (zooKeeperClient is null or DevNullZooKeeperClient)
         {
@@ -24,10 +24,6 @@ internal static class ServiceLocatorFactory
             return new DevNullServiceLocator();
         }
 
-        var settings = new ServiceLocatorSettings();
-
-        options.ApplyCustomizations(settings);
-
-        return new ServiceLocator(zooKeeperClient, settings);
+        return new ServiceLocator(zooKeeperClient, settings, log);
     }
 }

@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.Metrics.Hercules;
 using Vostok.Metrics;
@@ -14,7 +15,7 @@ public static class VostokMetricsBuilderExtensions
 {
     public static IVostokMetricsBuilder Configure(
         this IVostokMetricsBuilder builder,
-        Action<MetricsConfigurationOptions> configure)
+        Action<MetricContextConfig> configure)
     {
         builder.Configure((options, _) => configure(options));
         return builder;
@@ -22,9 +23,9 @@ public static class VostokMetricsBuilderExtensions
 
     public static IVostokMetricsBuilder Configure(
         this IVostokMetricsBuilder builder,
-        Action<MetricsConfigurationOptions, IServiceProvider> configure)
+        Action<MetricContextConfig, IServiceProvider> configure)
     {
-        builder.Services.AddOptions<MetricsConfigurationOptions>().Configure(configure);
+        builder.Services.AddOptions<MetricContextConfig>().Configure(configure);
         return builder;
     }
 
@@ -44,23 +45,22 @@ public static class VostokMetricsBuilderExtensions
 
     public static IVostokMetricsBuilder AddHerculesMetricSender(
         this IVostokMetricsBuilder builder,
-        Action<HerculesMetricsSenderConfigurationOptions> configure)
+        Action<HerculesMetricSenderSettings> configure)
     {
         builder.AddHerculesMetricSender((options, _) => configure(options));
         return builder;
     }
-    
+
     public static IVostokMetricsBuilder AddHerculesMetricSender(
         this IVostokMetricsBuilder builder,
-        Action<HerculesMetricsSenderConfigurationOptions, IServiceProvider>? configure = null)
+        Action<HerculesMetricSenderSettings, IServiceProvider>? configure = null)
     {
-        var serviceDescriptor =
-            ServiceDescriptor.Singleton<IMetricEventSender, HerculesMetricSender>(HerculesMetricSenderFactory.Create);
-
+        var serviceDescriptor = ServiceDescriptor.Singleton<IMetricEventSender, HerculesMetricSender>(HerculesMetricSenderFactory.Create);
         builder.Services.TryAddEnumerable(serviceDescriptor);
+        builder.Services.TryAddSingleton<IOptionsFactory<HerculesMetricSenderSettings>, HerculesMetricSenderSettingsFactory>();
 
         if (configure is not null)
-            builder.Services.AddOptions<HerculesMetricsSenderConfigurationOptions>().Configure(configure);
+            builder.Services.AddOptions<HerculesMetricSenderSettings>().Configure(configure);
 
         return builder;
     }

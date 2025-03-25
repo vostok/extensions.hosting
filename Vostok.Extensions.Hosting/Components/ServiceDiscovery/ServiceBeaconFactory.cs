@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
@@ -18,76 +17,68 @@ internal static class ServiceBeaconFactory
 {
     public static IServiceBeacon Create(IServiceProvider provider)
     {
-        var options = provider.GetRequiredService<IOptions<ServiceBeaconConfigurationOptions>>().Value;
+        var settings = provider.GetRequiredService<IOptions<ServiceBeaconSettings>>().Value;
         var log = provider.GetRequiredService<ILog>();
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
-
-        if (!options.Enabled)
-        {
-            log.LogDisabled("ServiceBeacon", "explicit disable");
-            return new DevNullServiceBeacon(CreateDevNullReplicaInfo(options, log, provider));
-        }
 
         if (zooKeeperClient is null or DevNullZooKeeperClient)
         {
             log.LogDisabled("ServiceLocator", "disabled ZooKeeperClient");
-            return new DevNullServiceBeacon(CreateDevNullReplicaInfo(options, log, provider));
+            return new DevNullServiceBeacon(CreateDevNullReplicaInfo(settings, log, provider));
         }
 
-        return CreateBeacon(options, zooKeeperClient, log, provider);
+        return CreateBeacon(settings, zooKeeperClient, log, provider);
+    }
+
+    public static IServiceBeacon CreateDisabled(IServiceProvider provider)
+    {
+        var settings = provider.GetRequiredService<IOptions<ServiceBeaconSettings>>().Value;
+        var log = provider.GetRequiredService<ILog>();
+        return new DevNullServiceBeacon(CreateDevNullReplicaInfo(settings, log, provider));
     }
 
     private static ServiceBeacon CreateBeacon(
-        ServiceBeaconConfigurationOptions options,
+        ServiceBeaconSettings settings,
         IZooKeeperClient zooKeeperClient,
         ILog log,
         IServiceProvider provider)
     {
         var serviceDiscoveryEventsContext = provider.GetRequiredService<IServiceDiscoveryEventsContext>();
-        var settings = new ServiceBeaconSettings
-        {
-            ServiceDiscoveryEventContext = serviceDiscoveryEventsContext
-        };
-
-        if (options.RegistrationDeniedFromNonActiveDatacenters)
-        {
-            var datacenters = provider.GetRequiredService<IDatacenters>();
-            settings.RegistrationAllowedProvider = datacenters.LocalDatacenterIsActive;
-        }
-
-        options.ApplyCustomizations(settings);
+        settings.ServiceDiscoveryEventContext = serviceDiscoveryEventsContext;
 
         var applicationIdentity = provider.GetRequiredService<IVostokApplicationIdentity>();
 
         // todo: What if file log disabled?
         var fileLogSettings = provider.GetRequiredService<IOptions<FileLogSettings>>().Value;
+        var replicaCustomizations = provider.GetServices<ReplicaInfoSetup>();
 
         return new ServiceBeacon(
             zooKeeperClient,
-            s =>
+            replica =>
             {
-                s.SetEnvironment(applicationIdentity.Environment);
-                s.SetApplication(applicationIdentity.FormatServiceName());
+                replica.SetEnvironment(applicationIdentity.Environment);
+                replica.SetApplication(applicationIdentity.FormatServiceName());
 
-                s.SetProperty(WellKnownApplicationIdentityProperties.Project, applicationIdentity.Project);
-                s.SetProperty(WellKnownApplicationIdentityProperties.Subproject, applicationIdentity.Subproject);
-                s.SetProperty(WellKnownApplicationIdentityProperties.Environment, applicationIdentity.Environment);
-                s.SetProperty(WellKnownApplicationIdentityProperties.Application, applicationIdentity.Application);
-                s.SetProperty(WellKnownApplicationIdentityProperties.Instance, applicationIdentity.Instance);
+                replica.SetProperty(WellKnownApplicationIdentityProperties.Project, applicationIdentity.Project);
+                replica.SetProperty(WellKnownApplicationIdentityProperties.Subproject, applicationIdentity.Subproject);
+                replica.SetProperty(WellKnownApplicationIdentityProperties.Environment, applicationIdentity.Environment);
+                replica.SetProperty(WellKnownApplicationIdentityProperties.Application, applicationIdentity.Application);
+                replica.SetProperty(WellKnownApplicationIdentityProperties.Instance, applicationIdentity.Instance);
 
-                s.SetProperty("logsDirectory", GetLogsDirectory(fileLogSettings));
+                replica.SetProperty("logsDirectory", GetLogsDirectory(fileLogSettings));
 
-                options.ApplyReplicaInfoCustomizations(s);
+                foreach (var customization in replicaCustomizations)
+                    customization(replica);
             },
             settings,
             log);
     }
 
     private static IReplicaInfo CreateDevNullReplicaInfo(
-        ServiceBeaconConfigurationOptions options,
+        ServiceBeaconSettings settings,
         ILog log,
         IServiceProvider provider)
-        => CreateBeacon(options, new DevNullZooKeeperClient(), log, provider).ReplicaInfo;
+        => CreateBeacon(settings, new DevNullZooKeeperClient(), log, provider).ReplicaInfo;
 
     private static string? GetLogsDirectory(FileLogSettings fileLogSettings)
     {
