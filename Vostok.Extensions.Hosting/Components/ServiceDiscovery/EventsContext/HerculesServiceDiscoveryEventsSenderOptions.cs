@@ -5,5 +5,5 @@ namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery.EventsContext;
 [PublicAPI]
 public sealed class HerculesServiceDiscoveryEventsSenderOptions
 {
-    public required string Stream { get; set; }
+    public string? Stream { get; set; }
 }
