@@ -12,6 +12,5 @@ internal sealed class DatacentersSettingsFactory(
     : OptionsFactory<DatacentersSettings>(setups, postConfigures, validations)
 {
     protected override DatacentersSettings CreateInstance(string name) =>
-        new(options.Value.DatacenterMapping,
-            options.Value.ActiveDatacentersProvider);
+        new(options.Value.DatacenterMapping, options.Value.ActiveDatacentersProvider);
 }
