@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Net;
 using System.Runtime;
 using System.Runtime.InteropServices;
 
@@ -37,16 +38,14 @@ internal sealed class VostokStartupService(
 
     public async Task StartingAsync(CancellationToken cancellationToken)
     {
+        // note (ponomaryovigor, 01.04.2025): Order is important to prevent cyclic dependencies.
+        WarmupDatacenters();
         WarmupVostokLog();
         WarmupVostokTracer();
         WarmupVostokMetricsContext();
         WarmupHerculesSink();
-        WarmupDatacenters();
         await WarmupServiceDiscoveryAsync();
         await WarmupClusterConfigClientAsync();
-
-        foreach (var startupAction in customStartupActions)
-            startupAction(provider);
 
         ConfigureFlowingContext();
 
@@ -57,6 +56,9 @@ internal sealed class VostokStartupService(
         LogApplicationLimits();
         LogApplicationReplication();
         LogThreadPoolSettings();
+
+        foreach (var startupAction in customStartupActions)
+            startupAction(provider);
     }
 
     private void WarmupVostokLog()
@@ -90,8 +92,13 @@ internal sealed class VostokStartupService(
     private void WarmupDatacenters()
     {
         var datacenters = provider.GetService<IDatacenters>();
-        if (datacenters is not null)
-            DatacentersProvider.Configure(datacenters, true);
+        if (datacenters is null)
+            return;
+
+        // note (ponomaryovigor, 01.04.2025): Warmup providers to prevent potential cyclic dependencies with CCC.
+        _ = datacenters.GetActiveDatacenters();
+        _ = datacenters.GetDatacenter(IPAddress.None);
+        DatacentersProvider.Configure(datacenters, true);
     }
 
     private async Task WarmupServiceDiscoveryAsync()
