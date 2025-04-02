@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
-  <Import Project="..\..\vostok.devtools\git-commit-to-assembly-title\Vostok.Tools.GitCommit2AssemblyTitle.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
@@ -54,6 +53,22 @@
     <Reference Include="Vostok.Configuration.Sources.Json">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.sources.json\Vostok.Configuration.Sources.Json\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources.Xml">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.xml\Vostok.Configuration.Sources.Xml\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources.Yaml">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.yaml\Vostok.Configuration.Sources.Yaml\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.Yaml.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources.ClusterConfig">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.cc\Vostok.Configuration.Sources.ClusterConfig\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.ClusterConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Microsoft">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.microsoft\Vostok.Configuration.Microsoft\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Microsoft.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Context">
       <SpecificVersion>False</SpecificVersion>
