@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using OpenTelemetry.Trace;
+
 using Vostok.Commons.Environment;
 using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Helpers;
 using Vostok.Extensions.AspNetCore.HostedServices;
-using Vostok.Extensions.AspNetCore.Middlewares;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
+using Vostok.Extensions.AspNetCore.OpenTelemetry;
 using Vostok.Extensions.AspNetCore.Throttling;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
@@ -19,7 +21,8 @@ namespace Vostok.Extensions.AspNetCore;
 /// <summary>
 /// <para>Register Vostok web components and their configuration in DI container:</para>
 /// <list type="bullet">
-///     <item>Register hosted service for ServiceBeacon and warmup ping api</item>
+///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
+///     <item>Enable AspNetCore tracing instrumentation</item>
 ///     <item>Configure Kestrel defaults</item>
 ///     <item>Setup request tracking defaults</item>
 ///     <item>Setup throttling defaults</item>
@@ -36,6 +39,12 @@ public static class VostokWebComponentsServiceCollectionExtensions
     public static IVostokWebComponentsBuilder AddVostokWebComponents(this IServiceCollection services)
     {
         services.AddHostedService<VostokAspNetCoreHostedService>();
+
+        services.ConfigureOpenTelemetryTracerProvider(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                   .SetupAspNetCoreInstrumentationForVostok();
+        });
 
         services.ConfigureKestrelDefaults();
         services.AddRequestTrackingDefaults();
