@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using JetBrains.Annotations;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using OpenTelemetry.Instrumentation.AspNetCore;
@@ -9,7 +11,8 @@ using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
 
-internal static class OpenTelemetryVostokAspNetCoreExtensions
+[PublicAPI]
+public static class OpenTelemetryVostokAspNetCoreExtensions
 {
     public static void SetupAspNetCoreInstrumentationForVostok(this TracerProviderBuilder tracing) =>
         tracing.ConfigureServices(services => services.AddOptions<AspNetCoreTraceInstrumentationOptions>()
