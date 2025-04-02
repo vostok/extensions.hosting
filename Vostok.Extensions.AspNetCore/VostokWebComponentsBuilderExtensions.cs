@@ -13,7 +13,7 @@ using Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
 namespace Vostok.Extensions.AspNetCore;
 
 [PublicAPI]
-public static class VostokMiddlewaresBuilderExtensions
+public static class VostokWebComponentsBuilderExtensions
 {
     /// <summary>
     /// <para>Disables the built-in Vostok middleware of given type <typeparamref name="TMiddleware"></typeparamref>.</para>
@@ -30,7 +30,7 @@ public static class VostokMiddlewaresBuilderExtensions
     ///     <item><description><see cref="DiagnosticApiMiddleware"/></description></item>
     /// </list>
     /// </summary>
-    public static IVostokMiddlewaresBuilder DisableVostokMiddleware<TMiddleware>(this IVostokMiddlewaresBuilder configurator) =>
+    public static IVostokWebComponentsBuilder DisableVostokMiddleware<TMiddleware>(this IVostokWebComponentsBuilder configurator) =>
         configurator.Configure(options => options.MiddlewareDisabled[typeof(TMiddleware)] = true);
 
     /// <summary>
@@ -49,19 +49,19 @@ public static class VostokMiddlewaresBuilderExtensions
     ///     <item><description><see cref="DiagnosticApiMiddleware"/></description></item>
     /// </list>
     /// </summary>
-    public static IVostokMiddlewaresBuilder EnableVostokMiddleware<TMiddleware>(this IVostokMiddlewaresBuilder configurator) =>
+    public static IVostokWebComponentsBuilder EnableVostokMiddleware<TMiddleware>(this IVostokWebComponentsBuilder configurator) =>
         configurator.Configure(options => options.MiddlewareDisabled[typeof(TMiddleware)] = false);
 
     /// <summary>
     /// Injects a singleton middleware of type <typeparamref name="TMiddleware"/> before the earliest Vostok middleware.
     /// </summary>
-    public static IVostokMiddlewaresBuilder InjectPreVostokMiddleware<TMiddleware>(this IVostokMiddlewaresBuilder configurator) =>
+    public static IVostokWebComponentsBuilder InjectPreVostokMiddleware<TMiddleware>(this IVostokWebComponentsBuilder configurator) =>
         configurator.InjectPreVostokMiddleware<TMiddleware, FillRequestInfoMiddleware>();
 
     /// <summary>
     /// Injects a singleton middleware of type <typeparamref name="TMiddleware"/> before Vostok middleware of type <typeparamref name="TBefore"/>.
     /// </summary>
-    public static IVostokMiddlewaresBuilder InjectPreVostokMiddleware<TMiddleware, TBefore>(this IVostokMiddlewaresBuilder configurator) =>
+    public static IVostokWebComponentsBuilder InjectPreVostokMiddleware<TMiddleware, TBefore>(this IVostokWebComponentsBuilder configurator) =>
         configurator.Configure(options =>
         {
             if (!options.PreVostokMiddlewares.TryGetValue(typeof(TBefore), out var injected))

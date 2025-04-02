@@ -19,8 +19,7 @@ public static class ThrottlingServiceCollectionExtensions
     public static void AddThrottlingDefaults(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddOptions<ThrottlingConfigurationBuilder>()
-                         .Configure<IOptions<VostokThrottlingOptions>, IVostokApplicationLimits,
-                             ILogger<ThrottlingMiddleware>>(
+                         .Configure<IOptions<VostokThrottlingOptions>, IVostokApplicationLimits, ILogger<ThrottlingMiddleware>>(
                              (builder, options, limits, logger) =>
                              {
                                  AddThrottlingCpuLimits(limits, builder);

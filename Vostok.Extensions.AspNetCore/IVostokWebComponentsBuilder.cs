@@ -16,63 +16,63 @@ using Vostok.Extensions.AspNetCore.Throttling;
 namespace Vostok.Extensions.AspNetCore;
 
 /// <summary>
-/// Vostok middlewares builder.
+/// Vostok Web components builder.
 /// </summary>
 [PublicAPI]
-public interface IVostokMiddlewaresBuilder
+public interface IVostokWebComponentsBuilder
 {
     /// <summary>
     /// Customizes built-in <see cref="HttpContextTweakMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureHttpContextTweaks(Action<HttpContextTweakMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigureHttpContextTweaks(Action<HttpContextTweakMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="FillRequestInfoMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureRequestInfoFilling(Action<FillRequestInfoMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigureRequestInfoFilling(Action<FillRequestInfoMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="DistributedContextMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDistributedContext(Action<DistributedContextMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigureDistributedContext(Action<DistributedContextMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="ThrottlingMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureThrottling(Action<IVostokThrottlingBuilder> configure);
+    IVostokWebComponentsBuilder ConfigureThrottling(Action<IVostokThrottlingBuilder> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="LoggingMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureLogging(Action<LoggingMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigureLogging(Action<LoggingMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="DatacenterAwarenessMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDatacenterAwareness(Action<DatacenterAwarenessMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigureDatacenterAwareness(Action<DatacenterAwarenessMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="UnhandledExceptionMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureUnhandledExceptions(Action<UnhandledExceptionMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigureUnhandledExceptions(Action<UnhandledExceptionMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="PingApiMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigurePingApi(Action<PingApiMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigurePingApi(Action<PingApiMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in <see cref="DiagnosticApiMiddleware"/>.
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDiagnosticApi(Action<DiagnosticApiMiddlewareOptions> configure);
+    IVostokWebComponentsBuilder ConfigureDiagnosticApi(Action<DiagnosticApiMiddlewareOptions> configure);
 
     /// <summary>
     /// Customizes built-in diagnostic features (info providers and health checks).
     /// </summary>
-    IVostokMiddlewaresBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesOptions> configure);
+    IVostokWebComponentsBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesOptions> configure);
 
     /// <summary>
     /// Allows to customize <see cref="VostokMiddlewaresOptions"/>.
     /// </summary>
-    internal IVostokMiddlewaresBuilder Configure(Action<VostokMiddlewaresOptions> configure);
+    internal IVostokWebComponentsBuilder Configure(Action<VostokMiddlewaresOptions> configure);
 }
