@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Helpers;
@@ -9,7 +10,7 @@ namespace Vostok.Extensions.AspNetCore.Diagnostics;
 internal static class RequestTrackingServiceCollectionExtensions
 {
     public static void AddRequestTrackingDefaults(this IServiceCollection serviceCollection) =>
-        serviceCollection.AddSingleton<IRequestTracker>(services =>
+        serviceCollection.TryAddSingleton<IRequestTracker>(services =>
         {
             var options = services.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
 

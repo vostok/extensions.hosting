@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using OpenTelemetry.Trace;
+
 using Vostok.Commons.Environment;
 using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Helpers;
 using Vostok.Extensions.AspNetCore.HostedServices;
-using Vostok.Extensions.AspNetCore.Middlewares;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
+using Vostok.Extensions.AspNetCore.OpenTelemetry;
 using Vostok.Extensions.AspNetCore.Throttling;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
@@ -17,17 +19,32 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 namespace Vostok.Extensions.AspNetCore;
 
 /// <summary>
-/// <para>Register Vostok middlewares and their configuration in DI container.</para>
-/// <para>Use returning <see cref="IVostokMiddlewaresBuilder"/> to configure them.</para>
+/// <para>Register Vostok web components and their configuration in DI container:</para>
+/// <list type="bullet">
+///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
+///     <item>Enable AspNetCore tracing instrumentation</item>
+///     <item>Configure Kestrel defaults</item>
+///     <item>Setup request tracking defaults</item>
+///     <item>Setup throttling defaults</item>
+///     <item>Setup HealthChecks</item>
+///     <item>Add Vostok middlewares</item>
+/// </list>
+/// <para>Use returning <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
 /// <para>Applies reasonable Kestrel defaults.</para>
 /// </summary>
 [PublicAPI]
-public static class VostokMiddlewaresServiceCollectionExtensions
+public static class VostokWebComponentsServiceCollectionExtensions
 {
-    /// <inheritdoc cref="VostokMiddlewaresServiceCollectionExtensions"/>
-    public static IVostokMiddlewaresBuilder AddVostokMiddlewares(this IServiceCollection services)
+    /// <inheritdoc cref="VostokWebComponentsServiceCollectionExtensions"/>
+    public static IVostokWebComponentsBuilder AddVostokWebComponents(this IServiceCollection services)
     {
         services.AddHostedService<VostokAspNetCoreHostedService>();
+
+        services.ConfigureOpenTelemetryTracerProvider(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                   .SetupAspNetCoreInstrumentationForVostok();
+        });
 
         services.ConfigureKestrelDefaults();
         services.AddRequestTrackingDefaults();
@@ -45,7 +62,7 @@ public static class VostokMiddlewaresServiceCollectionExtensions
                         options.HealthCheck = () => diagnostics.HealthTracker.CurrentStatus == HealthStatus.Healthy;
                 });
 
-        return new VostokMiddlewaresBuilder(services);
+        return new VostokWebComponentsBuilder(services);
     }
 
     private static void ConfigureKestrelDefaults(this IServiceCollection serviceCollection) =>
