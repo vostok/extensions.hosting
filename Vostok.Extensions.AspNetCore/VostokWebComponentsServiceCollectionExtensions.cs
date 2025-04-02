@@ -17,15 +17,23 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 namespace Vostok.Extensions.AspNetCore;
 
 /// <summary>
-/// <para>Register Vostok middlewares and their configuration in DI container.</para>
-/// <para>Use returning <see cref="IVostokMiddlewaresBuilder"/> to configure them.</para>
+/// <para>Register Vostok web components and their configuration in DI container:</para>
+/// <list type="bullet">
+///     <item>Register hosted service for ServiceBeacon and warmup ping api</item>
+///     <item>Configure Kestrel defaults</item>
+///     <item>Setup request tracking defaults</item>
+///     <item>Setup throttling defaults</item>
+///     <item>Setup HealthChecks</item>
+///     <item>Add Vostok middlewares</item>
+/// </list>
+/// <para>Use returning <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
 /// <para>Applies reasonable Kestrel defaults.</para>
 /// </summary>
 [PublicAPI]
-public static class VostokMiddlewaresServiceCollectionExtensions
+public static class VostokWebComponentsServiceCollectionExtensions
 {
-    /// <inheritdoc cref="VostokMiddlewaresServiceCollectionExtensions"/>
-    public static IVostokMiddlewaresBuilder AddVostokMiddlewares(this IServiceCollection services)
+    /// <inheritdoc cref="VostokWebComponentsServiceCollectionExtensions"/>
+    public static IVostokWebComponentsBuilder AddVostokWebComponents(this IServiceCollection services)
     {
         services.AddHostedService<VostokAspNetCoreHostedService>();
 
@@ -45,7 +53,7 @@ public static class VostokMiddlewaresServiceCollectionExtensions
                         options.HealthCheck = () => diagnostics.HealthTracker.CurrentStatus == HealthStatus.Healthy;
                 });
 
-        return new VostokMiddlewaresBuilder(services);
+        return new VostokWebComponentsBuilder(services);
     }
 
     private static void ConfigureKestrelDefaults(this IServiceCollection serviceCollection) =>
