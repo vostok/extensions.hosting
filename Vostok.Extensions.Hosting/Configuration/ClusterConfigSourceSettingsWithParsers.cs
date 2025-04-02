@@ -6,14 +6,15 @@ using Vostok.Configuration.Sources.Yaml;
 
 namespace Vostok.Extensions.Hosting.Configuration;
 
-internal sealed class ClusterConfigSourceWithParsers(IClusterConfigClient client, string prefix)
-    : ClusterConfigSource(new ClusterConfigSourceSettings(client, prefix)
+internal sealed class ClusterConfigSourceSettingsWithParsers : ClusterConfigSourceSettings
+{
+    public ClusterConfigSourceSettingsWithParsers(IClusterConfigClient client, string prefix) : base(client, prefix)
     {
-        ConditionalValuesParsers = new List<(ValueNodeParser, ValueNodeCondition)>
-        {
+        ConditionalValuesParsers =
+        [
             (XmlConfigurationParser.Parse, node => node.Name != null && node.Name.EndsWith(".xml")),
             (JsonConfigurationParser.Parse, node => node.Name != null && node.Name.EndsWith(".json")),
-            (YamlConfigurationParser.Parse,
-                node => node.Name != null && (node.Name.EndsWith(".yaml") || node.Name.EndsWith("yml")))
-        }
-    });
+            (YamlConfigurationParser.Parse, node => node.Name != null && (node.Name.EndsWith(".yaml") || node.Name.EndsWith("yml")))
+        ];
+    }
+}
