@@ -2,7 +2,7 @@
   <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
