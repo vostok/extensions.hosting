@@ -182,6 +182,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.Telemetry" Version="9.4.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+    <PackageReference Include="Scrutor" Version="6.0.1" />
   </ItemGroup>
   
   <ItemGroup>

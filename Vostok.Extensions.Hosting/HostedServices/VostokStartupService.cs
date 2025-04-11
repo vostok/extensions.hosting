@@ -4,7 +4,6 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Vostok.Clusterclient.Core;
@@ -31,11 +30,10 @@ internal sealed class VostokStartupService(
     IServiceProvider provider,
     IEnumerable<VostokStartupService.CustomStartupAction> customStartupActions,
     ILogger<VostokStartupService> logger)
-    : IHostedLifecycleService
 {
     public delegate void CustomStartupAction(IServiceProvider provider);
 
-    public async Task StartingAsync(CancellationToken cancellationToken)
+    public async Task WarmupVostokAsync()
     {
         // note (ponomaryovigor, 01.04.2025): Order is important to prevent cyclic dependencies.
         WarmupDatacenters();
@@ -215,10 +213,4 @@ internal sealed class VostokStartupService(
         logger.LogInformation("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.",
             state.MinWorkerThreads, state.MinIocpThreads);
     }
-
-    public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StartedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StoppingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
