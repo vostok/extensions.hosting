@@ -22,6 +22,8 @@ public static class VostokBuilderDiagnosticsExtensions
         builder.Services.AddDiagnostics();
         builder.Services.AddHealthTracker();
         builder.Services.TryAddSingleton<IVostokApplicationDiagnostics, DiagnosticsHub>();
+        builder.Services.AddHostedService<HealthTrackerLaunchingHostedService>();
+        builder.Services.AddHostedService<HealthCheckMetricsHostedService>(); // todo: Move to Kontur extensions?
 
         var diagnosticsBuilder = new VostokDiagnosticsBuilder(builder.Services);
         configure?.Invoke(diagnosticsBuilder);
