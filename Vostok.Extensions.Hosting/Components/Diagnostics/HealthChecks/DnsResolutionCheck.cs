@@ -12,12 +12,12 @@ public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>
 
     private static readonly TimeSpan Period = TimeSpan.FromMinutes(5);
 
-    private readonly CurrentProcessMonitor monitor = new();
     private readonly IDisposable subscription;
 
     private DnsStatistics dnsStatistics;
 
-    public DnsResolutionCheck() => subscription = monitor.ObserveMetrics(Period).Subscribe(this);
+    public DnsResolutionCheck(CurrentProcessMonitor monitor) =>
+        subscription = monitor.ObserveMetrics(Period).Subscribe(this);
 
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {
@@ -47,8 +47,7 @@ public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>
 
     public void Dispose()
     {
-        subscription?.Dispose();
-        monitor?.Dispose();
+        subscription.Dispose();
     }
 
     private struct DnsStatistics(int failedLookupsCount, int lookupsCount)

@@ -39,15 +39,6 @@ public static class VostokBuilderDiagnosticsExtensions
         services.TryAddSingleton<IDiagnosticInfo>(DiagnosticInfoFactory.Create);
     }
 
-    private static void AddHealthTracker(this IServiceCollection services)
-    {
-        services.AddOptions<HealthTrackerOptions>();
-
-        services.TryAddSingleton<DatacenterWhitelistCheck>();
-        services.TryAddSingleton<ThreadPoolStarvationCheck>();
-        services.TryAddSingleton<DnsResolutionCheck>();
-        services.TryAddSingleton<ZooKeeperConnectionCheck>();
-
+    private static void AddHealthTracker(this IServiceCollection services) =>
         services.TryAddSingleton<IHealthTracker>(HealthTrackerFactory.Create);
-    }
 }
