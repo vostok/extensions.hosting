@@ -4,7 +4,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 
-internal class ApplicationInfoProvider(
+internal sealed class ApplicationInfoProvider(
     IVostokApplicationIdentity identity,
     IVostokApplicationLimits limits,
     IVostokApplicationReplicationInfo replication) : IDiagnosticInfoProvider

@@ -4,7 +4,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 
-internal class HerculesSinkInfoProvider(HerculesSink sink) : IDiagnosticInfoProvider
+internal sealed class HerculesSinkInfoProvider(HerculesSink sink) : IDiagnosticInfoProvider
 {
     public object Query()
     {

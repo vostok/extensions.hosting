@@ -3,7 +3,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 
-internal class HealthChecksInfoProvider(IHealthTracker healthTracker) : IDiagnosticInfoProvider
+internal sealed class HealthChecksInfoProvider(IHealthTracker healthTracker) : IDiagnosticInfoProvider
 {
     public object Query()
     {
