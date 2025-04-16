@@ -21,7 +21,7 @@ internal sealed class ClusterConfigDeferredConfigurationProvider : IConfiguratio
     public void Load() => _provider?.Load();
 
     public IEnumerable<string> GetChildKeys(IEnumerable<string> earlierKeys, string? parentPath) =>
-        _provider?.GetChildKeys(earlierKeys, parentPath) ?? [];
+        _provider?.GetChildKeys(earlierKeys, parentPath) ?? earlierKeys;
 
     public IChangeToken GetReloadToken() => _provider?.GetReloadToken() ?? _activationToken;
 
