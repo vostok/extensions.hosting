@@ -31,11 +31,7 @@ public static class VostokBuilderConfigurationExtensions
         });
         builder.Services.TryAddSingleton<Vostok.Configuration.Abstractions.IConfigurationProvider>(provider =>
         {
-            var megaSource = provider.GetService<IConfigurationSource>();
             var vostokConfigurationProvider = new Vostok.Configuration.ConfigurationProvider();
-            
-            //(deniaa) Можно будет добавить экстеншнов, которые этот сорс будут устанавливать в провайдер для указанного T.
-            vostokConfigurationProvider.TrySetupSourceFor<string>(megaSource.ScopeTo("some/nested/thing"));
             
             return vostokConfigurationProvider;
         });
@@ -43,13 +39,66 @@ public static class VostokBuilderConfigurationExtensions
         return builder;
     }
 
+    
+    class Node
+    {
+        public string? Name;
+        public string? Value;
+        public readonly List<Node> Children = new();
+
+        public ISettingsNode Convert()
+        {
+            if (Value != null)
+                return new ValueNode(Name, Value);
+
+            if (Children.Count > 0)
+            {
+                if (int.TryParse(Children.First().Name, out _))
+                {
+                    return new ArrayNode(Name, Children.Select(c => c.Convert()).OrderBy(x =>
+                    {
+                        if (int.TryParse(x.Name, out var index))
+                            return index;
+
+                        return 0;
+                    }).ToList());
+                }
+                return new ObjectNode(Name, Children.Select(c => c.Convert()));
+            }
+            
+            return new ObjectNode(Name);
+        }
+    }
+    
     private static ISettingsNode ConvertToISettingsNode(IConfiguration state)
     {
-        foreach (var keyValuePair in state.AsEnumerable())
+        var rootNode = new Node();
+        
+        foreach (var pair in state.AsEnumerable())
         {
-            Console.WriteLine(keyValuePair.Key + " " + keyValuePair.Value);
+            if (pair.Value == null)
+                continue;
+            
+            var segments = pair.Key.Split(":", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var root = rootNode;
+            foreach (var segment in segments)
+            {
+                var existedChildren = root.Children.FirstOrDefault(c => c.Name == segment);
+                if (existedChildren == null)
+                {
+                    var child = new Node() { Name = segment };
+                    root.Children.Add(child);
+                    root = child;
+                }
+                else
+                {
+                    root = existedChildren;
+                }
+            }
+            root.Value = pair.Value;
         }
 
-        return new ValueNode("foo");
+        var settingsNode = rootNode.Convert();
+        return settingsNode;
     }   
 }
