@@ -3,13 +3,14 @@ using System.Text;
 
 using Microsoft.Extensions.Logging;
 
+using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
 
 internal sealed class VostokContextReader(ILogger logger)
 {
-    private const string DistributedGlobalName = "vostok.tracing.context";
+    internal const string DistributedGlobalName = "vostok.tracing.context";
 
     private readonly TraceContextSerializer _traceContextSerializer = new();
 
