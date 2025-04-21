@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 
 using Vostok.Context;
@@ -37,21 +38,43 @@ internal sealed class VostokContextPropagatorTests
         CheckResult(result);
     }
 
-    [TestCase("hello")]
-    [TestCase("vostok.tracing.contexx")]
-    public void Should_extract_trace_data_and_skip_other_fields(string stringKey)
+    [Test]
+    public void Should_extract_trace_data_and_skip_other_fields()
     {
-        FlowingContext.Globals.Use(42);
-        FlowingContext.Globals.Use(stringKey);
-        FlowingContext.Globals.Use(_traceContext);
-
         FlowingContext.Configuration.RegisterDistributedGlobal("int", new IntSerializer());
         FlowingContext.Configuration.RegisterDistributedGlobal("string", new StringSerializer());
+
+        FlowingContext.Globals.Use(42);
+        FlowingContext.Globals.Use("Hello World!");
+        FlowingContext.Globals.Use(_traceContext);
 
         var serialized = FlowingContext.SerializeDistributedGlobals()!;
 
         var result = Extract(serialized);
         CheckResult(result);
+    }
+
+    [Test]
+    public void Should_extract_trace_data_and_skip_fields_with_same_size()
+    {
+        FlowingContext.Configuration.RegisterDistributedGlobal("vostok.tracing.contaaa", new StringSerializer());
+
+        FlowingContext.Globals.Use("Hello World!");
+        FlowingContext.Globals.Use(_traceContext);
+
+        var serialized = FlowingContext.SerializeDistributedGlobals()!;
+
+        var result = Extract(serialized);
+        CheckResult(result);
+    }
+
+    [Test]
+    public void Should_not_extract_trace_data_when_not_present()
+    {
+        var serialized = FlowingContext.SerializeDistributedGlobals()!;
+
+        var result = Extract(serialized);
+        result.ActivityContext.IsValid().Should().BeFalse();
     }
 
     private void CheckResult(PropagationContext result)
