@@ -3,7 +3,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
@@ -25,6 +24,7 @@
     <Compile Include="..\..\vostok.commons.environment\Vostok.Commons.Environment\AssemblyTitleParser.cs" Link="Commons\AssemblyTitleParser.cs" />
     <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Url\UrlNormalizer.cs" Link="Commons\UrlNormalizer.cs" />
     <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Url\UrlExtensions.cs" Link="Commons\UrlExtensions.cs" />
+    <Compile Include="..\..\vostok.tracing\Vostok.Tracing\TraceContextSerializer.cs" Link="Commons\TraceContextSerializer.cs" />
   </ItemGroup>
   
   <ItemGroup>
@@ -88,6 +88,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Vostok.Extensions.Hosting\Vostok.Extensions.Hosting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Vostok.Extensions.AspNetCore.Tests" />
   </ItemGroup>
 
 </Project>

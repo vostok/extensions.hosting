@@ -20,7 +20,7 @@ public static class OpenTelemetryVostokAspNetCoreExtensions
 
     private static void Configure(AspNetCoreTraceInstrumentationOptions options, IServiceProvider provider)
     {
-        VostokContextPropagator.Use(provider.GetRequiredService<ILogger<VostokContextPropagator>>());
+        VostokContextPropagator.Use(provider.GetRequiredService<ILoggerFactory>());
 
         var serverAddress = GetAddress(provider.GetService<IServiceBeacon>());
 

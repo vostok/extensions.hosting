@@ -1,57 +1,37 @@
-﻿using System.Text;
+﻿using System.Buffers.Binary;
+using System.Text;
 
 using Microsoft.Extensions.Logging;
 
+using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
 
 internal sealed class VostokContextReader(ILogger logger)
 {
-    private const string DistributedGlobalName = "vostok.tracing.context";
+    internal const string DistributedGlobalName = "vostok.tracing.context";
 
     private readonly TraceContextSerializer _traceContextSerializer = new();
 
-    // todo: Replace with safe Span api.
-    public unsafe TraceContext? Read(string input)
+    public TraceContext? Read(string input)
     {
         try
         {
-            var bytes = Convert.FromBase64String(input);
+            ReadOnlySpan<byte> remainingBytes = Convert.FromBase64String(input);
 
-            fixed (byte* begin = bytes)
+            do
             {
-                var end = begin + bytes.Length;
+                remainingBytes = ReadString(remainingBytes, out var key);
 
-                var ptr = begin;
+                if (key is not DistributedGlobalName)
+                    continue;
 
-                string ReadString(out int size, int? expectedSize = null)
-                {
-                    size = *(int*)ptr;
-                    if (size < 0)
-                        throw new Exception("Negative size.");
-                    if (expectedSize.HasValue && size != expectedSize)
-                        return string.Empty;
-                    if (ptr + sizeof(int) + size > end)
-                        throw new Exception("Wrong sizes.");
-                    return Encoding.UTF8.GetString(ptr + sizeof(int), size);
-                }
-
-                while (ptr < end)
-                {
-                    var key = ReadString(out var size, DistributedGlobalName.Length);
-                    if (key == DistributedGlobalName)
-                    {
-                        ptr += sizeof(int) + size;
-                        var value = ReadString(out _);
-                        return _traceContextSerializer.Deserialize(value);
-                    }
-
-                    ptr += sizeof(int) + size;
-                    ReadString(out size, -1);
-                    ptr += sizeof(int) + size;
-                }
-            }
+                ReadString(remainingBytes, out var value, skipSizeCheck: true);
+                if (value is not null)
+                    return _traceContextSerializer.Deserialize(value);
+                break;
+            } while (remainingBytes.Length > 0);
         }
         catch (Exception error)
         {
@@ -59,5 +39,27 @@ internal sealed class VostokContextReader(ILogger logger)
         }
 
         return null;
+    }
+
+    private static ReadOnlySpan<byte> ReadString(
+        ReadOnlySpan<byte> bytes,
+        out string? value,
+        bool skipSizeCheck = false)
+    {
+        const int sizeOfInt = sizeof(int);
+
+        value = null;
+
+        if (!BinaryPrimitives.TryReadInt32LittleEndian(bytes, out var size) || bytes.Length < sizeOfInt + size)
+            return ReadOnlySpan<byte>.Empty;
+
+        bytes = bytes[sizeOfInt..];
+        if (!skipSizeCheck && size != DistributedGlobalName.Length)
+            return bytes[size..];
+
+        var propertyBytes = bytes[..size];
+        value = Encoding.UTF8.GetString(propertyBytes);
+
+        return bytes[size..];
     }
 }

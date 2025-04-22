@@ -12,21 +12,22 @@ namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
 /// </summary>
 internal sealed class VostokContextPropagator : TextMapPropagator
 {
-    private readonly VostokContextReader _vostokContextReader;
-    private const string ContextGlobalsHeader = "Context-Globals";
+    internal const string ContextGlobalsHeader = "Context-Globals";
 
-    public static void Use(ILogger logger)
+    private readonly VostokContextReader _vostokContextReader;
+
+    public static void Use(ILoggerFactory loggerFactory)
     {
         Sdk.SetDefaultTextMapPropagator(new CompositeTextMapPropagator(
         [
             Propagators.DefaultTextMapPropagator,
-            new VostokContextPropagator(logger)
+            new VostokContextPropagator(loggerFactory)
         ]));
     }
 
-    private VostokContextPropagator(ILogger logger)
+    internal VostokContextPropagator(ILoggerFactory loggerFactory)
     {
-        _vostokContextReader = new VostokContextReader(logger);
+        _vostokContextReader = new VostokContextReader(loggerFactory.CreateLogger<VostokContextPropagator>());
 
         Fields = new HashSet<string>
         {
