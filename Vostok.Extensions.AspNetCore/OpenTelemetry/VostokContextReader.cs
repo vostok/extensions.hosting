@@ -27,7 +27,7 @@ internal sealed class VostokContextReader(ILogger logger)
                 if (key is not DistributedGlobalName)
                     continue;
 
-                ReadString(remainingBytes, out var value, true);
+                ReadString(remainingBytes, out var value, skipSizeCheck: true);
                 if (value is not null)
                     return _traceContextSerializer.Deserialize(value);
                 break;
@@ -41,7 +41,8 @@ internal sealed class VostokContextReader(ILogger logger)
         return null;
     }
 
-    private static ReadOnlySpan<byte> ReadString(ReadOnlySpan<byte> bytes,
+    private static ReadOnlySpan<byte> ReadString(
+        ReadOnlySpan<byte> bytes,
         out string? value,
         bool skipSizeCheck = false)
     {

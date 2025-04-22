@@ -79,6 +79,7 @@ internal sealed class VostokContextPropagatorTests
 
     private void CheckResult(PropagationContext result)
     {
+        result.ActivityContext.IsValid().Should().BeTrue();
         result.ActivityContext.TraceId.ToString().Should().Be(_traceContext.TraceId.ToString("N"));
         result.ActivityContext.SpanId.ToString().Should().Be(_traceContext.SpanId.ToString("N")[..16]);
     }
