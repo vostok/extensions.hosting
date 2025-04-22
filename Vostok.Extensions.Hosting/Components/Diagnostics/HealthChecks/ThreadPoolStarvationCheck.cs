@@ -1,12 +1,9 @@
-﻿using JetBrains.Annotations;
-
-using Vostok.Commons.Threading;
+﻿using Vostok.Commons.Threading;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
-[PublicAPI]
-public class ThreadPoolStarvationCheck : IHealthCheck
+internal sealed class ThreadPoolStarvationCheck : IHealthCheck
 {
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {

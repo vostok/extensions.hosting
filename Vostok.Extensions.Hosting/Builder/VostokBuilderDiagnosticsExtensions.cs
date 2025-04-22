@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Vostok.Extensions.Hosting.Components.Diagnostics;
-using Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
@@ -23,6 +22,8 @@ public static class VostokBuilderDiagnosticsExtensions
         builder.Services.AddDiagnostics();
         builder.Services.AddHealthTracker();
         builder.Services.TryAddSingleton<IVostokApplicationDiagnostics, DiagnosticsHub>();
+        builder.Services.AddHostedService<HealthTrackerLaunchingHostedService>();
+        builder.Services.AddHostedService<HealthCheckMetricsHostedService>(); // todo: Move to Kontur extensions?
 
         var diagnosticsBuilder = new VostokDiagnosticsBuilder(builder.Services);
         configure?.Invoke(diagnosticsBuilder);
@@ -32,28 +33,14 @@ public static class VostokBuilderDiagnosticsExtensions
 
     private static void AddDiagnostics(this IServiceCollection services)
     {
-        services.AddOptions<DiagnosticsInfoOptions>();
-
         services.TryAddSingleton<ApplicationMetricsProvider>();
-        services.TryAddEnumerable(
-            ServiceDescriptor.Singleton<IMetricEventSender, ApplicationMetricsProvider>(x =>
-                x.GetRequiredService<ApplicationMetricsProvider>()));
-        services.TryAddSingleton<EnvironmentInfoProvider>();
-        services.TryAddSingleton<LoadedAssembliesProvider>();
-        services.TryAddSingleton<ApplicationInfoProvider>();
+        var metricsProviderSender = ServiceDescriptor.Singleton<IMetricEventSender, ApplicationMetricsProvider>(p =>
+            p.GetRequiredService<ApplicationMetricsProvider>());
+        services.TryAddEnumerable(metricsProviderSender);
 
         services.TryAddSingleton<IDiagnosticInfo>(DiagnosticInfoFactory.Create);
     }
 
-    private static void AddHealthTracker(this IServiceCollection services)
-    {
-        services.AddOptions<HealthTrackerOptions>();
-
-        services.TryAddSingleton<DatacenterWhitelistCheck>();
-        services.TryAddSingleton<ThreadPoolStarvationCheck>();
-        services.TryAddSingleton<DnsResolutionCheck>();
-        services.TryAddSingleton<ZooKeeperConnectionCheck>();
-
+    private static void AddHealthTracker(this IServiceCollection services) =>
         services.TryAddSingleton<IHealthTracker>(HealthTrackerFactory.Create);
-    }
 }

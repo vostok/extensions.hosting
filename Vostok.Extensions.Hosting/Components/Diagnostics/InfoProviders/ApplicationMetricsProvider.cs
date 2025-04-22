@@ -5,30 +5,30 @@ using Vostok.Metrics.Models;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 
-internal class ApplicationMetricsProvider : IDiagnosticInfoProvider, IMetricEventSender
+internal sealed class ApplicationMetricsProvider : IDiagnosticInfoProvider, IMetricEventSender
 {
     private const int BufferCapacity = 1000;
 
     private static readonly HashSet<string> AllowedAggregationTypes = [WellKnownAggregationTypes.Counter];
 
-    private readonly CircularBuffer<MetricEvent> events = new(BufferCapacity);
-    private readonly object sync = new();
+    private readonly CircularBuffer<MetricEvent> _events = new(BufferCapacity);
+    private readonly object _sync = new();
 
     public void Send(MetricEvent @event)
     {
         if (!string.IsNullOrEmpty(@event.AggregationType) && !AllowedAggregationTypes.Contains(@event.AggregationType))
             return;
 
-        lock (sync)
-            events.Add(@event);
+        lock (_sync)
+            _events.Add(@event);
     }
 
     public object Query()
     {
         MetricEvent[] snapshot;
 
-        lock (sync)
-            snapshot = events.ToArray();
+        lock (_sync)
+            snapshot = _events.ToArray();
 
         var result = new Dictionary<string, double>();
 

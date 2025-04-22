@@ -14,6 +14,4 @@ public class HealthTrackerOptions
     public bool AddZooKeeperConnectionCheck { get; set; } = true;
 
     public bool AddDnsResolutionCheck { get; set; } = true;
-
-    public bool AddConfigurationCheck { get; set; } = true;
 }

@@ -8,7 +8,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 
-internal class EnvironmentInfoProvider(IDatacenters? datacenters) : IDiagnosticInfoProvider
+internal sealed class EnvironmentInfoProvider(IDatacenters? datacenters) : IDiagnosticInfoProvider
 {
     public object Query() => new
     {

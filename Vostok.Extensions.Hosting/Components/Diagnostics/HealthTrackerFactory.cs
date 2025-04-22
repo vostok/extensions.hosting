@@ -1,52 +1,58 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Vostok.Commons.Environment;
+using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
+using Vostok.Metrics.System.Process;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 internal static class HealthTrackerFactory
 {
-    public static HealthTracker Create(IServiceProvider serviceProvider)
+    public static HealthTracker Create(IServiceProvider provider)
     {
-        var log = serviceProvider.GetRequiredService<ILog>();
-        var options = serviceProvider.GetRequiredService<IOptions<HealthTrackerOptions>>().Value;
+        var log = provider.GetRequiredService<ILog>();
+        var options = provider.GetRequiredService<IOptions<HealthTrackerOptions>>().Value;
         var healthTracker = new HealthTracker(options.ChecksPeriod, log);
 
-        if (options.AddDatacenterWhitelistCheck)
+        var datacenters = provider.GetService<IDatacenters>();
+        if (options.AddDatacenterWhitelistCheck && datacenters is not null)
         {
-            var check = serviceProvider.GetRequiredService<DatacenterWhitelistCheck>();
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.DatacenterWhitelist, check);
+            var check = new DatacenterWhitelistCheck(datacenters);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.DatacenterWhitelist, check));
         }
 
         if (options.AddThreadPoolStarvationCheck)
         {
-            var check = serviceProvider.GetRequiredService<ThreadPoolStarvationCheck>();
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.ThreadPoolStarvation, check);
+            var check = new ThreadPoolStarvationCheck();
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.ThreadPoolStarvation, check));
         }
 
-        if (options.AddZooKeeperConnectionCheck)
+        var zooKeeperClient = provider.GetService<IZooKeeperClient>();
+        if (options.AddZooKeeperConnectionCheck && zooKeeperClient is ZooKeeper.Client.ZooKeeperClient realClient)
         {
-            var check = serviceProvider.GetRequiredService<ZooKeeperConnectionCheck>();
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, check);
+            var check = new ZooKeeperConnectionCheck(realClient);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, check));
         }
 
-        if (options.AddDnsResolutionCheck && RuntimeDetector.IsDotNet50AndNewer)
+        var processMonitor = provider.GetService<CurrentProcessMonitor>();
+        if (options.AddDnsResolutionCheck && processMonitor is not null)
         {
-            var check = serviceProvider.GetRequiredService<DnsResolutionCheck>();
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, check);
+            var check = new DnsResolutionCheck(processMonitor);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, check));
+
+            provider.RegisterDisposable(check);
         }
 
-        if (options.AddConfigurationCheck)
-        {
-            // todo (bogdanov.n) 19.02.2025: requires configuration provider
-            // and a way to distinguish between secret and common sources
-
+        // todo (bogdanov.n) 14.02.2025: requires `IConfigurationSource`
+        // if (options.AddConfigurationCheck)
+        // {
             // healthTracker.RegisterCheck(WellKnownHealthCheckNames.Configuration, context.RegisterDisposable(new ConfigurationCheck(context.ConfigurationProvider)));
             // healthTracker.RegisterCheck(WellKnownHealthCheckNames.SecretConfiguration, context.RegisterDisposable(new ConfigurationCheck(context.SecretConfigurationProvider)));
-        }
+        // }
 
         return healthTracker;
     }

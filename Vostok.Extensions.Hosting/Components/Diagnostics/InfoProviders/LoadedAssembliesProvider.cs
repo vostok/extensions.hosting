@@ -3,7 +3,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
 
-internal class LoadedAssembliesProvider : IDiagnosticInfoProvider
+internal sealed class LoadedAssembliesProvider : IDiagnosticInfoProvider
 {
     public object Query() =>
         AppDomain.CurrentDomain

@@ -1,10 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Diagnostics.InfoProviders;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
+using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
+using Vostok.Metrics.System.Process;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
@@ -18,61 +22,65 @@ internal static class DiagnosticInfoFactory
 
         if (options.AddEnvironmentInfo)
         {
-            var environmentInfoProvider = provider.GetRequiredService<EnvironmentInfoProvider>();
+            var datacenters = provider.GetService<IDatacenters>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.EnvironmentInfo);
-            info.RegisterProvider(diagnosticEntry, environmentInfoProvider);
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, new EnvironmentInfoProvider(datacenters)));
         }
 
-        if (options.AddSystemMetricsInfo)
+        var processMonitor = provider.GetService<CurrentProcessMonitor>();
+        if (options.AddSystemMetricsInfo && processMonitor is not null)
         {
-            // todo (bogdanov.n) 17.02.2025: requires `SystemMetricsProvider`
-            // info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics), context.RegisterDisposable(new SystemMetricsProvider()));
+            var systemMetricsEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics);
+            var systemMetricsProvider = new SystemMetricsProvider(processMonitor);
+            info.RegisterProvider(systemMetricsEntry, systemMetricsProvider);
+
+            provider.RegisterDisposable(systemMetricsProvider);
         }
 
         if (options.AddLoadedAssembliesInfo)
         {
-            var loadedAssembliesProvider = provider.GetRequiredService<LoadedAssembliesProvider>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.LoadedAssemblies);
-            info.RegisterProvider(diagnosticEntry, loadedAssembliesProvider);
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, new LoadedAssembliesProvider()));
         }
 
         if (options.AddHealthChecksInfo)
         {
-            // todo (bogdanov.n) 14.02.2025: requires `IHealthTracker`
-            // info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.HealthChecks), new HealthChecksInfoProvider(healthTracker));
+            var healthTracker = provider.GetRequiredService<IHealthTracker>();
+            var healthChecksEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.HealthChecks);
+            provider.RegisterDisposable(info.RegisterProvider(healthChecksEntry, new HealthChecksInfoProvider(healthTracker)));
         }
 
-        if (options.AddConfigurationInfo)
-        {
-            // todo (bogdanov.n) 14.02.2025: requires `IConfigurationSource`
-
-            // note (bogdanov.n) 14.02.2025: configuration can contain secrets,
-            // be careful about what IConfigurationSource you passing
-
-            // info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.Configuration), new ConfigurationInfoProvider());
-        }
-
-        var herculesSink = provider.GetRequiredService<IHerculesSink>();
+        var herculesSink = provider.GetService<IHerculesSink>();
         if (options.AddHerculesSinkInfo && herculesSink is HerculesSink realSink)
         {
-            var herculesSinkInfoProvider = new HerculesSinkInfoProvider(realSink);
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.HerculesSink);
-            info.RegisterProvider(diagnosticEntry, herculesSinkInfoProvider);
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, new HerculesSinkInfoProvider(realSink)));
         }
 
         if (options.AddApplicationMetricsInfo)
         {
             var metricsProvider = provider.GetRequiredService<ApplicationMetricsProvider>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.ApplicationMetrics);
-            info.RegisterProvider(diagnosticEntry, metricsProvider);
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, metricsProvider));
         }
 
-        if (options.AddApplicationInfo)
+        var identity = provider.GetService<IVostokApplicationIdentity>();
+        var replication = provider.GetService<IVostokApplicationReplicationInfo>();
+        var limits = provider.GetService<IVostokApplicationLimits>();
+        if (options.AddApplicationInfo && identity is not null && replication is not null && limits is not null)
         {
-            var applicationInfoProvider = provider.GetRequiredService<ApplicationInfoProvider>();
+            var applicationInfoProvider = new ApplicationInfoProvider(identity, limits, replication);
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.ApplicationInfo);
-            info.RegisterProvider(diagnosticEntry, applicationInfoProvider);
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, applicationInfoProvider));
         }
+
+        // todo (bogdanov.n) 14.02.2025: requires `IConfigurationSource`
+        // if (options.AddConfigurationInfo)
+        // {
+        //     note (bogdanov.n) 14.02.2025: configuration can contain secrets,
+        //     be careful about what IConfigurationSource you passing
+        //     provider.RegisterDisposable(info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.Configuration), new ConfigurationInfoProvider()));
+        // }
 
         return info;
     }

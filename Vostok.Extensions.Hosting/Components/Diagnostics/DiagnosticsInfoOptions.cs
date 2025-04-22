@@ -17,7 +17,5 @@ public sealed class DiagnosticsInfoOptions
 
     public bool AddHealthChecksInfo { get; set; } = true;
 
-    public bool AddConfigurationInfo { get; set; }
-
     public bool AddHerculesSinkInfo { get; set; } = true;
 }

@@ -1,30 +1,27 @@
-﻿using JetBrains.Annotations;
-
-using Vostok.Hosting.Abstractions.Diagnostics;
+﻿using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Metrics.System.Process;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
-[PublicAPI]
-public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>, IDisposable
+internal sealed class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>, IDisposable
 {
     private const double FailedLookupsThreshold = 0.2;
 
     private static readonly TimeSpan Period = TimeSpan.FromMinutes(5);
 
-    private readonly CurrentProcessMonitor monitor = new();
-    private readonly IDisposable subscription;
+    private readonly IDisposable _subscription;
 
-    private DnsStatistics dnsStatistics;
+    private DnsStatistics _dnsStatistics;
 
-    public DnsResolutionCheck() => subscription = monitor.ObserveMetrics(Period).Subscribe(this);
+    public DnsResolutionCheck(CurrentProcessMonitor monitor) =>
+        _subscription = monitor.ObserveMetrics(Period).Subscribe(this);
 
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {
-        if (dnsStatistics.FailedLookupsFraction > FailedLookupsThreshold)
+        if (_dnsStatistics.FailedLookupsFraction > FailedLookupsThreshold)
         {
             var healthCheckResult = HealthCheckResult.Degraded(
-                $"Percentage of failed DNS lookups exceeded: {dnsStatistics.FailedLookupsFraction * 100} %");
+                $"Percentage of failed DNS lookups exceeded: {_dnsStatistics.FailedLookupsFraction * 100} %");
             
             return Task.FromResult(healthCheckResult);
         }
@@ -34,7 +31,7 @@ public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>
 
     public void OnNext(CurrentProcessMetrics value)
     {
-        dnsStatistics = new DnsStatistics(value.FailedDnsLookupsCount ?? 0, value.DnsLookupsCount ?? 0);
+        _dnsStatistics = new DnsStatistics(value.FailedDnsLookupsCount ?? 0, value.DnsLookupsCount ?? 0);
     }
 
     public void OnCompleted()
@@ -47,8 +44,7 @@ public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>
 
     public void Dispose()
     {
-        subscription?.Dispose();
-        monitor?.Dispose();
+        _subscription.Dispose();
     }
 
     private struct DnsStatistics(int failedLookupsCount, int lookupsCount)

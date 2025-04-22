@@ -1,12 +1,9 @@
-﻿using JetBrains.Annotations;
-
-using Vostok.Datacenters;
+﻿using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
-[PublicAPI]
-public class DatacenterWhitelistCheck(IDatacenters datacenters) : IHealthCheck
+internal sealed class DatacenterWhitelistCheck(IDatacenters datacenters) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {

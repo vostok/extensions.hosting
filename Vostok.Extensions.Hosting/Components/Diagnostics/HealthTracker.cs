@@ -13,72 +13,72 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
-internal class HealthTracker : IHealthTracker, IDisposable
+internal sealed class HealthTracker : IHealthTracker, IDisposable
 {
-    private readonly TimeSpan checkPeriod;
-    private readonly ILog log;
+    private readonly TimeSpan _checkPeriod;
+    private readonly ILog _log;
 
-    private readonly CachingObservable<HealthStatus> statusObservable;
-    private readonly CachingObservable<HealthReport> reportsObservable;
-    private readonly CachingObservable<(HealthStatus previous, HealthStatus current)> statusChangesObservable;
-    private readonly ConcurrentDictionary<string, IHealthCheck> checks;
-    private readonly CancellationTokenSource cancellation;
+    private readonly CachingObservable<HealthStatus> _statusObservable;
+    private readonly CachingObservable<HealthReport> _reportsObservable;
+    private readonly CachingObservable<(HealthStatus previous, HealthStatus current)> _statusChangesObservable;
+    private readonly ConcurrentDictionary<string, IHealthCheck> _checks;
+    private readonly CancellationTokenSource _cancellation;
 
-    private volatile HealthReport currentReport;
-    private volatile Task? checkerTask;
-    private volatile TaskCompletionSource<bool> checkerSignal;
+    private volatile HealthReport _currentReport;
+    private volatile Task? _checkerTask;
+    private volatile TaskCompletionSource<bool> _checkerSignal;
 
     public HealthTracker(TimeSpan checkPeriod, ILog log)
     {
-        this.checkPeriod = checkPeriod;
-        this.log = log.ForContext<HealthTracker>();
+        _checkPeriod = checkPeriod;
+        _log = log.ForContext<HealthTracker>();
 
         var results = new Dictionary<string, HealthCheckResult>();
-        currentReport = new HealthReport(HealthStatus.Healthy, TimeSpan.Zero, DateTimeOffset.UtcNow, results);
-        statusObservable = new CachingObservable<HealthStatus>(currentReport.Status);
-        reportsObservable = new CachingObservable<HealthReport>(currentReport);
-        statusChangesObservable = new CachingObservable<(HealthStatus previous, HealthStatus current)>();
-        checks = new ConcurrentDictionary<string, IHealthCheck>(StringComparer.OrdinalIgnoreCase);
-        cancellation = new CancellationTokenSource();
-        checkerSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _currentReport = new HealthReport(HealthStatus.Healthy, TimeSpan.Zero, DateTimeOffset.UtcNow, results);
+        _statusObservable = new CachingObservable<HealthStatus>(_currentReport.Status);
+        _reportsObservable = new CachingObservable<HealthReport>(_currentReport);
+        _statusChangesObservable = new CachingObservable<(HealthStatus previous, HealthStatus current)>();
+        _checks = new ConcurrentDictionary<string, IHealthCheck>(StringComparer.OrdinalIgnoreCase);
+        _cancellation = new CancellationTokenSource();
+        _checkerSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 
-    public HealthStatus CurrentStatus => currentReport.Status;
+    public HealthStatus CurrentStatus => _currentReport.Status;
 
-    public HealthReport CurrentReport => currentReport;
+    public HealthReport CurrentReport => _currentReport;
 
-    public IObservable<HealthStatus> ObserveStatus() => statusObservable;
+    public IObservable<HealthStatus> ObserveStatus() => _statusObservable;
 
-    public IObservable<HealthReport> ObserveReports() => reportsObservable;
+    public IObservable<HealthReport> ObserveReports() => _reportsObservable;
 
-    public IObservable<(HealthStatus previous, HealthStatus current)> ObserveStatusChanges() => statusChangesObservable;
+    public IObservable<(HealthStatus previous, HealthStatus current)> ObserveStatusChanges() => _statusChangesObservable;
 
     public IDisposable RegisterCheck(string name, IHealthCheck check)
     {
-        if (!checks.TryAdd(name, check))
+        if (!_checks.TryAdd(name, check))
             throw new InvalidOperationException($"Health check with name '{name}' is already registered.");
 
         ForceNextIteration();
 
-        return new ActionDisposable(() => checks.TryRemove(name, out _));
+        return new ActionDisposable(() => _checks.TryRemove(name, out _));
     }
 
     public IEnumerator<(string name, IHealthCheck check)> GetEnumerator() =>
-        checks.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
+        _checks.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
 
     public void Dispose()
     {
-        cancellation.Cancel();
+        _cancellation.Cancel();
 
-        if (checkerTask != null)
-            checkerTask.ContinueWith(_ => { }).GetAwaiter().GetResult();
+        if (_checkerTask != null)
+            _checkerTask.ContinueWith(_ => { }).GetAwaiter().GetResult();
     }
 
     public void LaunchPeriodicalChecks(CancellationToken externalToken)
     {
-        var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(externalToken, cancellation.Token);
+        var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(externalToken, _cancellation.Token);
 
-        Interlocked.Exchange(ref checkerTask, Task.Run(() => RunPeriodicallyAsync(linkedCancellation.Token)));
+        Interlocked.Exchange(ref _checkerTask, Task.Run(() => RunPeriodicallyAsync(linkedCancellation.Token)));
     }
 
     public async Task<HealthReport> RunChecksAsync(CancellationToken cancellationToken)
@@ -87,7 +87,7 @@ internal class HealthTracker : IHealthTracker, IDisposable
 
         var watch = Stopwatch.StartNew();
 
-        foreach (var pair in checks)
+        foreach (var pair in _checks)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -104,7 +104,7 @@ internal class HealthTracker : IHealthTracker, IDisposable
 
     private void ForceNextIteration()
         => Interlocked
-            .Exchange(ref checkerSignal,
+            .Exchange(ref _checkerSignal,
                 new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously))
             .TrySetResult(true);
 
@@ -112,13 +112,13 @@ internal class HealthTracker : IHealthTracker, IDisposable
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            var budget = TimeBudget.StartNew(checkPeriod);
+            var budget = TimeBudget.StartNew(_checkPeriod);
 
             var report = await RunChecksAsync(cancellationToken).ConfigureAwait(false);
 
             HandleReport(report);
 
-            await Task.WhenAny(Task.Delay(budget.Remaining, cancellationToken), checkerSignal.Task)
+            await Task.WhenAny(Task.Delay(budget.Remaining, cancellationToken), _checkerSignal.Task)
                 .ConfigureAwait(false);
         }
     }
@@ -138,15 +138,15 @@ internal class HealthTracker : IHealthTracker, IDisposable
     {
         LogFailedHealthChecks(report);
 
-        var oldReport = Interlocked.Exchange(ref currentReport, report);
+        var oldReport = Interlocked.Exchange(ref _currentReport, report);
 
-        reportsObservable.Next(report);
+        _reportsObservable.Next(report);
 
         if (oldReport.Status != report.Status)
         {
             LogChangedHealthStatus(oldReport.Status, report.Status);
-            statusObservable.Next(report.Status);
-            statusChangesObservable.Next((oldReport.Status, report.Status));
+            _statusObservable.Next(report.Status);
+            _statusChangesObservable.Next((oldReport.Status, report.Status));
         }
     }
 
@@ -157,7 +157,7 @@ internal class HealthTracker : IHealthTracker, IDisposable
             if (pair.Value.Status == HealthStatus.Healthy)
                 continue;
 
-            log.Warn(
+            _log.Warn(
                 "Health check '{HealthCheckName}' yielded '{HealthStatus}' result. Reason: {HealthStatusReason}",
                 pair.Key,
                 pair.Value.Status,
@@ -170,8 +170,8 @@ internal class HealthTracker : IHealthTracker, IDisposable
         const string message = "Current health status changed from {OldHealthStatus} to {NewHealthStatus}.";
 
         if (newStatus == HealthStatus.Healthy)
-            log.Info(message, oldStatus, newStatus);
+            _log.Info(message, oldStatus, newStatus);
         else
-            log.Warn(message, oldStatus, newStatus);
+            _log.Warn(message, oldStatus, newStatus);
     }
 }
