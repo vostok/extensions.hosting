@@ -24,7 +24,7 @@ internal static class DiagnosticInfoFactory
         {
             var datacenters = provider.GetService<IDatacenters>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.EnvironmentInfo);
-            info.RegisterProvider(diagnosticEntry, new EnvironmentInfoProvider(datacenters));
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, new EnvironmentInfoProvider(datacenters)));
         }
 
         var processMonitor = provider.GetService<CurrentProcessMonitor>();
@@ -40,28 +40,28 @@ internal static class DiagnosticInfoFactory
         if (options.AddLoadedAssembliesInfo)
         {
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.LoadedAssemblies);
-            info.RegisterProvider(diagnosticEntry, new LoadedAssembliesProvider());
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, new LoadedAssembliesProvider()));
         }
 
         if (options.AddHealthChecksInfo)
         {
             var healthTracker = provider.GetRequiredService<IHealthTracker>();
             var healthChecksEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.HealthChecks);
-            info.RegisterProvider(healthChecksEntry, new HealthChecksInfoProvider(healthTracker));
+            provider.RegisterDisposable(info.RegisterProvider(healthChecksEntry, new HealthChecksInfoProvider(healthTracker)));
         }
 
         var herculesSink = provider.GetService<IHerculesSink>();
         if (options.AddHerculesSinkInfo && herculesSink is HerculesSink realSink)
         {
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.HerculesSink);
-            info.RegisterProvider(diagnosticEntry, new HerculesSinkInfoProvider(realSink));
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, new HerculesSinkInfoProvider(realSink)));
         }
 
         if (options.AddApplicationMetricsInfo)
         {
             var metricsProvider = provider.GetRequiredService<ApplicationMetricsProvider>();
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.ApplicationMetrics);
-            info.RegisterProvider(diagnosticEntry, metricsProvider);
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, metricsProvider));
         }
 
         var identity = provider.GetService<IVostokApplicationIdentity>();
@@ -71,8 +71,16 @@ internal static class DiagnosticInfoFactory
         {
             var applicationInfoProvider = new ApplicationInfoProvider(identity, limits, replication);
             var diagnosticEntry = CreateEntry(WellKnownDiagnosticInfoProvidersNames.ApplicationInfo);
-            info.RegisterProvider(diagnosticEntry, applicationInfoProvider);
+            provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, applicationInfoProvider));
         }
+
+        // todo (bogdanov.n) 14.02.2025: requires `IConfigurationSource`
+        // if (options.AddConfigurationInfo)
+        // {
+        //     note (bogdanov.n) 14.02.2025: configuration can contain secrets,
+        //     be careful about what IConfigurationSource you passing
+        //     provider.RegisterDisposable(info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.Configuration), new ConfigurationInfoProvider()));
+        // }
 
         return info;
     }

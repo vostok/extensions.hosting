@@ -22,30 +22,37 @@ internal static class HealthTrackerFactory
         if (options.AddDatacenterWhitelistCheck && datacenters is not null)
         {
             var check = new DatacenterWhitelistCheck(datacenters);
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.DatacenterWhitelist, check);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.DatacenterWhitelist, check));
         }
 
         if (options.AddThreadPoolStarvationCheck)
         {
             var check = new ThreadPoolStarvationCheck();
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.ThreadPoolStarvation, check);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.ThreadPoolStarvation, check));
         }
 
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
         if (options.AddZooKeeperConnectionCheck && zooKeeperClient is ZooKeeper.Client.ZooKeeperClient realClient)
         {
             var check = new ZooKeeperConnectionCheck(realClient);
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, check);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, check));
         }
 
         var processMonitor = provider.GetService<CurrentProcessMonitor>();
         if (options.AddDnsResolutionCheck && processMonitor is not null)
         {
             var check = new DnsResolutionCheck(processMonitor);
-            healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, check);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, check));
 
             provider.RegisterDisposable(check);
         }
+
+        // todo (bogdanov.n) 14.02.2025: requires `IConfigurationSource`
+        // if (options.AddConfigurationCheck)
+        // {
+            // healthTracker.RegisterCheck(WellKnownHealthCheckNames.Configuration, context.RegisterDisposable(new ConfigurationCheck(context.ConfigurationProvider)));
+            // healthTracker.RegisterCheck(WellKnownHealthCheckNames.SecretConfiguration, context.RegisterDisposable(new ConfigurationCheck(context.SecretConfigurationProvider)));
+        // }
 
         return healthTracker;
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Metrics;
@@ -22,7 +23,8 @@ internal sealed class HealthCheckMetricsHostedService(IServiceProvider provider)
 
         _context = metrics.Instance.WithTag(WellKnownTagKeys.Component, "VostokHealthChecks");
 
-        healthTracker.ObserveReports().Subscribe(this);
+        var subscription = healthTracker.ObserveReports().Subscribe(this);
+        provider.RegisterDisposable(subscription);
 
         return Task.CompletedTask;
     }
