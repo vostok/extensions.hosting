@@ -19,7 +19,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 namespace Vostok.Extensions.AspNetCore;
 
 /// <summary>
-/// <para>Register Vostok web components and their configuration in DI container:</para>
+/// Register Vostok web components and their configuration in DI container:
 /// <list type="bullet">
 ///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
 ///     <item>Enable AspNetCore tracing instrumentation</item>

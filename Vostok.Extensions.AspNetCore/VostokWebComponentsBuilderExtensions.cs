@@ -35,8 +35,8 @@ public static class VostokWebComponentsBuilderExtensions
 
     /// <summary>
     /// <para>Enables the built-in Vostok middleware of given type <typeparamref name="TMiddleware"></typeparamref>.</para>
-    /// <para>Use this method to partially enable vostok middlewares after calling <see cref="DisableAllVostokMiddlewares"/>.</para> // todo
-    /// <para>Current list of Vostok middlewares:</para>
+    /// <para>Use this method to partially enable vostok middlewares after calling <see cref="DisableVostokMiddleware{TMiddleware}"/>.</para>
+    /// <para>Current list of Vostok middlewares:
     /// <list type="bullet">
     ///     <item><description><see cref="HttpContextTweakMiddleware"/></description></item>
     ///     <item><description><see cref="FillRequestInfoMiddleware"/></description></item>
@@ -48,6 +48,7 @@ public static class VostokWebComponentsBuilderExtensions
     ///     <item><description><see cref="PingApiMiddleware"/></description></item>
     ///     <item><description><see cref="DiagnosticApiMiddleware"/></description></item>
     /// </list>
+    /// </para>
     /// </summary>
     public static IVostokWebComponentsBuilder EnableVostokMiddleware<TMiddleware>(this IVostokWebComponentsBuilder configurator) =>
         configurator.Configure(options => options.MiddlewareDisabled[typeof(TMiddleware)] = false);

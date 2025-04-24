@@ -14,9 +14,9 @@ internal sealed class VostokMiddlewaresOptions
     {
         if (!MiddlewaresAdded)
             return false;
-        
-        if (MiddlewareDisabled.TryGetValue(typeof(TMiddleware), out var d))
-            return !d;
+
+        if (MiddlewareDisabled.TryGetValue(typeof(TMiddleware), out var disabled))
+            return !disabled;
 
         return true;
     }

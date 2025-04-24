@@ -15,6 +15,9 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 [PublicAPI]
 public sealed class PingApiMiddleware(RequestDelegate next, IOptions<PingApiMiddlewareOptions> options)
 {
+    internal const string PingPath = "/_status/ping";
+    internal const string VersionPath = "/_status/version";
+
     private readonly string _commitHash =
         options.Value.CommitHashProvider?.Invoke() ?? AssemblyCommitHashExtractor.ExtractFromEntryAssembly();
 
@@ -24,13 +27,13 @@ public sealed class PingApiMiddleware(RequestDelegate next, IOptions<PingApiMidd
 
         switch (request.Path.Value)
         {
-            case "/_status/ping":
+            case PingPath:
                 if (!HttpMethods.IsGet(request.Method))
                     break;
 
                 return HandlePingRequest(context);
 
-            case "/_status/version":
+            case VersionPath:
                 if (!HttpMethods.IsGet(request.Method))
                     break;
 
