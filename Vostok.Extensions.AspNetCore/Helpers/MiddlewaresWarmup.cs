@@ -2,6 +2,7 @@ using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Transport;
+using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.Helpers;
@@ -18,6 +19,6 @@ internal static class MiddlewaresWarmup
                 configuration.SetupUniversalTransport();
             });
 
-        await client.SendAsync(Request.Get("_status/ping"), TimeSpan.FromSeconds(20));
+        await client.SendAsync(Request.Get(PingApiMiddleware.PingPath), TimeSpan.FromSeconds(20));
     }
 }

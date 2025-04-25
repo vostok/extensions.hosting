@@ -23,7 +23,7 @@ internal sealed class VostokAspNetCoreHostedService(
     IServiceProvider provider,
     ILogger<VostokAspNetCoreHostedService> logger) : IHostedLifecycleService
 {
-    private Uri? _warmupUri;
+    private Uri? _serviceBeaconUri;
 
     // Called before Kestrel started.
     public Task StartingAsync(CancellationToken cancellationToken)
@@ -36,24 +36,30 @@ internal sealed class VostokAspNetCoreHostedService(
     // Called after Kestrel started.
     public async Task StartedAsync(CancellationToken cancellationToken)
     {
-        if (_warmupUri is not null && middlewaresOptions.Value.IsEnabled<PingApiMiddleware>())
-            await MiddlewaresWarmup.WarmupPingApi(_warmupUri);
+        if (!middlewaresOptions.Value.IsEnabled<PingApiMiddleware>())
+            return;
+
+        var warmupUrl = _serviceBeaconUri;
+
+        if (warmupUrl is null)
+        {
+            if (GetServerAddresses()?.FirstOrDefault() is not { } fallbackAddress || !TryParseUrl(fallbackAddress, out var url))
+                return;
+
+            warmupUrl = url;
+        }
+
+        await MiddlewaresWarmup.WarmupPingApi(warmupUrl);
     }
 
     private void SynchronizeAddressesWithServiceBeacon()
     {
-        var addresses = server.Features.Get<IServerAddressesFeature>()?.Addresses;
+        var addresses = GetServerAddresses();
         var urls = configuration[WebHostDefaults.ServerUrlsKey]?.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
         var serviceBeacon = provider.GetService<IServiceBeacon>();
         if (serviceBeacon is null) // todo: serviceBeacon is not ServiceBeacon
-        {
-            var url = addresses?.FirstOrDefault() ?? urls?.FirstOrDefault();
-            if (url is not null && TryParseUrl(url, out var parsed))
-                _warmupUri = parsed;
-
             return;
-        }
 
         if (serviceBeacon.ReplicaInfo.TryGetUrl(out var serviceBeaconUrl))
         {
@@ -64,7 +70,7 @@ internal sealed class VostokAspNetCoreHostedService(
                 addresses.Add($"{serviceBeaconUrl.Scheme}://*:{serviceBeaconUrl.Port}/");
 
             logger.LogInformation("Using url provided in Service beacon: '{Url}'.", serviceBeaconUrl);
-            _warmupUri = serviceBeaconUrl;
+            _serviceBeaconUri = serviceBeaconUrl;
 
             return;
         }
@@ -72,6 +78,8 @@ internal sealed class VostokAspNetCoreHostedService(
         if (addresses?.Any() == true || urls?.Any() == true)
             throw new NotImplementedException("Dynamic configuration of Service beacon is not currently supported. Please configure port explicitly during Vostok environment setup.");
     }
+
+    private ICollection<string>? GetServerAddresses() => server.Features.Get<IServerAddressesFeature>()?.Addresses;
 
     private static bool HasAddress(IEnumerable<string>? urls, Uri expectedUrl)
     {
