@@ -45,5 +45,5 @@ public sealed class FillRequestInfoMiddlewareOptions
     /// <para>By default, the middleware parses the value of<see cref="HeaderNames.ApplicationIdentity"/> header.</para>
     /// <para>Provided delegates are not expected to throw exceptions; <c>null</c> should be returned instead.</para>
     /// </summary>
-    public List<Func<HttpRequest, string>> AdditionalClientIdentityProviders { get; set; } = [];
+    public List<Func<HttpRequest, string?>> AdditionalClientIdentityProviders { get; set; } = [];
 }

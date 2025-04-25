@@ -28,7 +28,7 @@ public sealed class FillRequestInfoMiddleware(
         IRequestInfo requestInfo = new RequestInfo(
             GetTimeout(context.Request),
             GetPriority(context.Request),
-            GetClientApplicationIdentity(context.Request),
+            GetClientApplicationIdentity(context.Request, _options),
             context.Request.HttpContext.Connection.RemoteIpAddress ?? IPAddress.None);
 
         FlowingContext.Globals.Set(requestInfo);
@@ -38,8 +38,16 @@ public sealed class FillRequestInfoMiddleware(
         await next(context);
     }
 
-    private static TResult? ObtainFromProviders<TResult>(HttpRequest request, IEnumerable<Func<HttpRequest, TResult>> providers)
-        => providers.Select(provider => provider(request)).FirstOrDefault();
+    internal static string? GetClientApplicationIdentity(
+        HttpRequest request,
+        FillRequestInfoMiddlewareOptions options)
+    {
+        var clientApplicationIdentity = request.Headers[HeaderNames.ApplicationIdentity].ToString();
+        if (!string.IsNullOrEmpty(clientApplicationIdentity))
+            return clientApplicationIdentity;
+
+        return ObtainFromProviders(request, options.AdditionalClientIdentityProviders);
+    }
 
     private TimeSpan GetTimeout(HttpRequest request)
     {
@@ -59,12 +67,8 @@ public sealed class FillRequestInfoMiddleware(
         return ObtainFromProviders(request, _options.AdditionalPriorityProviders) ?? _options.DefaultPriorityProvider(request);
     }
 
-    private string? GetClientApplicationIdentity(HttpRequest request)
-    {
-        var clientApplicationIdentity = request.Headers[HeaderNames.ApplicationIdentity].ToString();
-        if (!string.IsNullOrEmpty(clientApplicationIdentity))
-            return clientApplicationIdentity;
-
-        return ObtainFromProviders(request, _options.AdditionalClientIdentityProviders);
-    }
+    private static TResult? ObtainFromProviders<TResult>(
+        HttpRequest request,
+        IEnumerable<Func<HttpRequest, TResult>> providers) =>
+        providers.Select(provider => provider(request)).FirstOrDefault();
 }

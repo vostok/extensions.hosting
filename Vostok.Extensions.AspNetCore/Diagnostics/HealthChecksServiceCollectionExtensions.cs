@@ -1,14 +1,13 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
-namespace Vostok.Extensions.AspNetCore.Helpers;
+namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
-internal static class ServiceCollectionExtensions
+internal static class HealthChecksServiceCollectionExtensions
 {
     public static void AddVostokHealthChecks(this IServiceCollection services)
     {

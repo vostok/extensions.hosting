@@ -8,7 +8,6 @@ using OpenTelemetry.Trace;
 
 using Vostok.Commons.Environment;
 using Vostok.Extensions.AspNetCore.Diagnostics;
-using Vostok.Extensions.AspNetCore.Helpers;
 using Vostok.Extensions.AspNetCore.HostedServices;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Extensions.AspNetCore.OpenTelemetry;

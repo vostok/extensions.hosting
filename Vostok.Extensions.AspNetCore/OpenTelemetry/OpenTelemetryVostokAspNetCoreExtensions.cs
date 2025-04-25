@@ -2,11 +2,12 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Trace;
 
-using Vostok.Clusterclient.Core.Model;
+using Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
@@ -22,6 +23,7 @@ public static class OpenTelemetryVostokAspNetCoreExtensions
     {
         VostokContextPropagator.Use(provider.GetRequiredService<ILoggerFactory>());
 
+        var fillRequestInfoOptions = provider.GetRequiredService<IOptions<FillRequestInfoMiddlewareOptions>>().Value;
         var serverAddress = GetAddress(provider.GetService<IServiceBeacon>());
 
         options.EnrichWithHttpRequest += (activity, request) =>
@@ -34,7 +36,7 @@ public static class OpenTelemetryVostokAspNetCoreExtensions
 
             activity.SetTag(WebSemanticConventions.AttributeClientAddress, request.HttpContext.Connection.RemoteIpAddress);
 
-            var clientName = request.Headers[HeaderNames.ApplicationIdentity].ToString();
+            var clientName = FillRequestInfoMiddleware.GetClientApplicationIdentity(request, fillRequestInfoOptions);
             if (!string.IsNullOrEmpty(clientName))
                 activity.SetTag(WebSemanticConventions.HttpClientName, clientName);
 
