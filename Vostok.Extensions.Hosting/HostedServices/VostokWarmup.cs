@@ -26,12 +26,12 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.HostedServices;
 
-internal sealed class VostokStartupService(
+internal sealed class VostokWarmup(
     IServiceProvider provider,
-    IEnumerable<VostokStartupService.CustomStartupAction> customStartupActions,
-    ILogger<VostokStartupService> logger)
+    IEnumerable<VostokWarmup.CustomWarmupAction> customStartupActions,
+    ILogger<VostokWarmup> logger)
 {
-    public delegate void CustomStartupAction(IServiceProvider provider);
+    public delegate void CustomWarmupAction(IServiceProvider provider);
 
     public async Task WarmupVostokAsync()
     {
