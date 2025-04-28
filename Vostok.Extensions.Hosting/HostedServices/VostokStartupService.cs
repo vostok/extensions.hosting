@@ -20,7 +20,6 @@ using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
-using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing.Abstractions;
 using Vostok.ZooKeeper.Client;
@@ -110,13 +109,10 @@ internal sealed class VostokStartupService(
             await actualClient.ExistsAsync("/");
         }
 
-        var serviceBeacon = provider.GetService<IServiceBeacon>();
-        var identity = provider.GetService<IVostokApplicationIdentity>();
+        _ = provider.GetService<IServiceBeacon>();
 
-        if (serviceBeacon is ServiceBeacon actualBeacon)
-            ClusterClientDefaults.ClientApplicationName = actualBeacon.ReplicaInfo.Application;
-        else if (identity is not null)
-            ClusterClientDefaults.ClientApplicationName = identity.FormatServiceName();
+        var serviceNameProvider = provider.GetRequiredService<ServiceNameProvider>();
+        ClusterClientDefaults.ClientApplicationName = serviceNameProvider.ServiceName;
     }
 
     private async Task WarmupClusterConfigClientAsync()

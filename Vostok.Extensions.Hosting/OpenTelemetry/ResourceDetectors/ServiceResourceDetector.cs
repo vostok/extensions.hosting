@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using OpenTelemetry.Resources;
 
-using Vostok.Clusterclient.Core;
 using Vostok.Commons.Environment;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.ServiceDiscovery.Abstractions;
 
 using static Vostok.Extensions.Hosting.OpenTelemetry.VostokSemanticConventions;
@@ -15,13 +15,10 @@ namespace Vostok.Extensions.Hosting.OpenTelemetry.ResourceDetectors;
 [SuppressMessage("ReSharper", "ArrangeObjectCreationWhenTypeNotEvident")]
 internal sealed class ServiceResourceDetector(IServiceProvider provider) : IResourceDetector
 {
-    private readonly IReplicaInfo? _replicaInfo = provider.GetService<IServiceBeacon>()?.ReplicaInfo;
-
     public Resource Detect()
     {
-        // todo: configure ClusterClientDefaults.ClientApplicationName
-        var service = _replicaInfo?.Application ?? ClusterClientDefaults.ClientApplicationName;
-        var environment = _replicaInfo?.Environment;
+        var service = provider.GetRequiredService<ServiceNameProvider>().ServiceName;
+        var environment = provider.GetService<IServiceBeacon>()?.ReplicaInfo?.Environment;
 
         List<KeyValuePair<string, object>> attributes = [new(AttributeHostName, EnvironmentInfo.Host)];
 

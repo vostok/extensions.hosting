@@ -22,6 +22,7 @@ internal sealed class HerculesSinkInitialConfiguration(IServiceProvider provider
         // Note(kungurtsev): allow null api key provider, streams can be configured later.
         settings.AdditionalSetup += setup =>
         {
+            // note (ponomaryovigor, 28.04.2025): Do not use ServiceNameProvider.cs because of circular dependency between sink and beacon.
             if (applicationIdentity is not null)
                 setup.ClientApplicationName = applicationIdentity.FormatServiceName();
 
