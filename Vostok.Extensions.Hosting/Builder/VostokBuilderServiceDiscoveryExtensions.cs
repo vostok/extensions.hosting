@@ -9,6 +9,7 @@ using Vostok.Extensions.Hosting.Components.ServiceDiscovery.EventsContext;
 using Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 using Vostok.ServiceDiscovery;
 using Vostok.ZooKeeper.Client;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
@@ -61,6 +62,12 @@ public static class ServiceBeaconBuilderExtensions
         var zooKeeperClientBuilder = new ZooKeeperClientBuilder(builder.Services);
         configure(zooKeeperClientBuilder);
 
+        return builder;
+    }
+
+    public static IVostokBuilder DisableZooKeeper(this IVostokBuilder builder)
+    {
+        builder.Services.Replace(ServiceDescriptor.Singleton<IZooKeeperClient>(new DevNullZooKeeperClient()));
         return builder;
     }
 

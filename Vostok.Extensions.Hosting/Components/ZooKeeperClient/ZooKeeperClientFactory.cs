@@ -20,8 +20,6 @@ internal static class ZooKeeperClientFactory
         var settings = provider.GetRequiredService<IOptions<ZooKeeperClientSettings>>().Value;
         var authenticationInfos = provider.GetServices<AuthenticationInfo>();
 
-        // todo: Enable/Disable
-        
         var zooKeeperClient = new ZooKeeper.Client.ZooKeeperClient(
             settings,
             log.WithEventsDroppedByProperties(IsDataChangedLog));
