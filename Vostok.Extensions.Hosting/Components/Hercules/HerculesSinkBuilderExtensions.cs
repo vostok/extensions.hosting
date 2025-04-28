@@ -30,7 +30,7 @@ public static class HerculesSinkBuilderExtensions
 
     public static IHerculesSinkBuilder SetDefaultApiKey(this IHerculesSinkBuilder builder, string? defaultApiKey)
     {
-        builder.Services.Configure<HerculesSinkStreamOptions>(o => o.DefaultApiKey = defaultApiKey);
+        builder.Services.Configure<HerculesSinkMiscellaneousOptions>(o => o.DefaultApiKey = defaultApiKey);
         return builder;
     }
 
@@ -61,4 +61,10 @@ public static class HerculesSinkBuilderExtensions
 
     public static IHerculesSinkBuilder SetServiceDiscoveryTopology(this IHerculesSinkBuilder builder, string environment, string application) =>
         builder.SetClusterProvider(provider => ClusterProviderFactory.FromServiceDiscovery(provider, environment, application));
+
+    public static IHerculesSinkBuilder ConfigureVerboseLogging(this IHerculesSinkBuilder builder, bool enabled)
+    {
+        builder.Services.Configure<HerculesSinkMiscellaneousOptions>(options => options.VerboseLogging = enabled);
+        return builder;
+    }
 }

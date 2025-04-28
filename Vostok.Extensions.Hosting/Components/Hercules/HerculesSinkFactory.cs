@@ -14,7 +14,11 @@ internal static class HerculesSinkFactory
     public static IHerculesSink Create(IServiceProvider provider)
     {
         var settings = provider.GetRequiredService<IOptions<HerculesSinkSettings>>().Value;
-        var log = provider.GetService<ILog>()?.WithMinimumLevel(LogLevel.Warn); // todo: Verbose logging?
+        var miscellaneousOptions = provider.GetRequiredService<IOptions<HerculesSinkMiscellaneousOptions>>().Value;
+        var log = provider.GetService<ILog>();
+
+        if (!miscellaneousOptions.VerboseLogging)
+            log = log?.WithMinimumLevel(LogLevel.Warn);
 
         return new HerculesSink(settings, log);
     }

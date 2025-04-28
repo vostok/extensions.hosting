@@ -16,7 +16,7 @@ internal sealed class HerculesSinkSettingsFactory(
     protected override HerculesSinkSettings CreateInstance(string _)
     {
         var clusterProvider = provider.GetRequiredKeyedService<IClusterProvider>(HerculesSinkFactory.ClusterProviderKey);
-        var optionsMonitor = provider.GetRequiredService<IOptionsMonitor<HerculesSinkStreamOptions>>();
+        var optionsMonitor = provider.GetRequiredService<IOptionsMonitor<HerculesSinkMiscellaneousOptions>>();
 
         return new HerculesSinkSettings(clusterProvider, () => optionsMonitor.CurrentValue.DefaultApiKey);
     }
