@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Vostok.ClusterConfig.Client;
+using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Extensions.Hosting.Components.ClusterConfigClient;
 
 namespace Vostok.Extensions.Hosting.Builder;
@@ -32,6 +33,26 @@ public static class VostokBuilderClusterConfigClientExtensions
 
         return builder;
     }
+
+    /// <summary>
+    /// Disables <see cref="IClusterConfigClient"/> altogether.
+    /// </summary>
+    public static IVostokBuilder DisableClusterConfig(this IVostokBuilder builder) =>
+        builder.WithClusterConfigClient(settings =>
+        {
+            settings.EnableLocalSettings = false;
+            settings.EnableClusterSettings = false;
+        });
+
+    /// <summary>
+    /// Enables <see cref="IClusterConfigClient"/> in case it was disabled.
+    /// </summary>
+    public static IVostokBuilder EnableClusterConfig(this IVostokBuilder builder) =>
+        builder.WithClusterConfigClient(settings =>
+        {
+            settings.EnableLocalSettings = true;
+            settings.EnableClusterSettings = true;
+        });
 
     private static void AddClusterConfigClient(this IServiceCollection services)
     {
