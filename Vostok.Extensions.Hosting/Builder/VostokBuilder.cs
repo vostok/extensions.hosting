@@ -15,8 +15,8 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
 
     public void AddCoreServices()
     {
-        Services.Decorate<IHostLifetime, VostokHostLifetime>();
         Services.TryAddSingleton<VostokWarmup>();
+        Services.Decorate<IHostLifetime, VostokHostLifetime>();
 
         PrepareSubstitutions(Services);
 
