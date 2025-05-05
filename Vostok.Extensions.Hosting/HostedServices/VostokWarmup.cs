@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
@@ -17,6 +18,7 @@ using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Builder;
 using Vostok.Extensions.Hosting.Components.Logging.Substitution;
 using Vostok.Extensions.Hosting.Configuration;
+using Vostok.Extensions.Hosting.Components.ThreadPool;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -38,6 +40,8 @@ internal sealed class VostokWarmup(
 
     public async Task WarmupVostokAsync()
     {
+        ConfigureThreadPool();
+
         // note (ponomaryovigor, 01.04.2025): Order is important to prevent cyclic dependencies.
         await WarmupClusterConfigClientAsync();
         WarmupVostokLog();
@@ -58,6 +62,28 @@ internal sealed class VostokWarmup(
         LogApplicationLimits();
         LogApplicationReplication();
         LogThreadPoolSettings();
+    }
+
+    private void ConfigureThreadPool()
+    {
+        var threadPoolOptionsMonitor = provider.GetRequiredService<IOptionsMonitor<ThreadPoolOptions>>();
+        var applicationLimits = provider.GetService<IVostokApplicationLimits>();
+
+        Configure(threadPoolOptionsMonitor.CurrentValue);
+
+        var subscription = threadPoolOptionsMonitor.OnChange(Configure);
+        if (subscription is not null)
+            provider.RegisterDisposable(subscription);
+
+        return;
+
+        void Configure(ThreadPoolOptions options)
+        {
+            if (!options.ConfigureThreadPool)
+                return;
+
+            ThreadPoolHelper.Setup(options.ThreadPoolTuningMultiplier, applicationLimits?.CpuUnits);
+        }
     }
 
     private void WarmupVostokLog()
