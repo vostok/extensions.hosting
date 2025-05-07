@@ -5,8 +5,7 @@ using Vostok.Extensions.Hosting.HostedServices;
 
 namespace Vostok.Extensions.Hosting.Helpers;
 
-internal sealed class VostokHostLifetime(IHostLifetime baseHostLifetime, VostokWarmup warmup)
-    : IHostLifetime
+internal sealed class VostokHostLifetime(IHostLifetime baseHostLifetime, VostokWarmup warmup) : IHostLifetime
 {
     public async Task WaitForStartAsync(CancellationToken cancellationToken)
     {
