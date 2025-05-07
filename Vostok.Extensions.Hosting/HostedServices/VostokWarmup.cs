@@ -14,6 +14,9 @@ using Vostok.Commons.Threading;
 using Vostok.Configuration.Primitives;
 using Vostok.Context;
 using Vostok.Datacenters;
+using Vostok.Extensions.Hosting.Builder;
+using Vostok.Extensions.Hosting.Components.Logging.Substitution;
+using Vostok.Extensions.Hosting.Configuration;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -36,13 +39,13 @@ internal sealed class VostokWarmup(
     public async Task WarmupVostokAsync()
     {
         // note (ponomaryovigor, 01.04.2025): Order is important to prevent cyclic dependencies.
-        WarmupDatacenters();
+        await WarmupClusterConfigClientAsync();
         WarmupVostokLog();
+        WarmupDatacenters();
         WarmupVostokTracer();
         WarmupVostokMetricsContext();
         WarmupHerculesSink();
         await WarmupServiceDiscoveryAsync();
-        await WarmupClusterConfigClientAsync();
         ConfigureFlowingContext();
 
         foreach (var startupAction in customStartupActions)
@@ -59,9 +62,17 @@ internal sealed class VostokWarmup(
 
     private void WarmupVostokLog()
     {
-        var vostokLogger = provider.GetService<ILog>();
-        if (vostokLogger is not null)
-            LogProvider.Configure(vostokLogger, true);
+        var vostokLog = provider.GetService<ILog>();
+        if (vostokLog is null)
+            return;
+
+        LogProvider.Configure(vostokLog, true);
+
+        var substitutableLog = vostokLog as SubstitutableLog;
+        var actualLog = provider.GetKeyedService<ILog>(VostokBuilderTelemetryExtensions.ActualLogKey);
+
+        if (substitutableLog is not null && actualLog is not null)
+            substitutableLog.SubstituteWith(actualLog);
     }
 
     private void WarmupVostokTracer()
@@ -115,11 +126,14 @@ internal sealed class VostokWarmup(
     private async Task WarmupClusterConfigClientAsync()
     {
         var clusterConfigClient = provider.GetService<IClusterConfigClient>();
+        if (clusterConfigClient is null)
+            return;
+
+        await clusterConfigClient.GetAsync(Guid.NewGuid().ToString());
+        ClusterConfigDeferredConfigurationSource.ActivateAllProviders(clusterConfigClient);
+
         if (clusterConfigClient is ClusterConfigClient actualClient)
-        {
-            await actualClient.GetAsync(Guid.NewGuid().ToString());
             ClusterConfigClient.TrySetDefaultClient(actualClient);
-        }
     }
 
     private void ConfigureFlowingContext()
