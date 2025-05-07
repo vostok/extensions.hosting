@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Helpers;
@@ -16,7 +15,7 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
     public void AddCoreServices()
     {
         Services.TryAddSingleton<VostokWarmup>();
-        Services.Decorate<IHostLifetime, VostokHostLifetime>();
+        Services.DecorateHostLifetime();
 
         PrepareSubstitutions(Services);
 
