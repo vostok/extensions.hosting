@@ -8,32 +8,26 @@ using Vostok.Extensions.Hosting.OpenTelemetry;
 
 namespace Vostok.Extensions.Hosting.Builder;
 
-internal sealed class VostokBuilder : IVostokBuilder
+internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilder
 {
-    public IServiceCollection Services { get; }
+    public IServiceCollection Services { get; } = services;
 
-    public VostokBuilder(IServiceCollection services)
-    {
-        Services = services;
-
-        AddCoreServices();
-    }
-
-    private void AddCoreServices()
+    public void AddCoreServices()
     {
         PrepareSubstitutions(Services);
 
-        Services.TryAddSingleton<VostokDisposables>();
         Services.AddHostedService<VostokStartupService>();
 
         this.WithApplicationIdentity();
-
-        this.EnableOuterVostokLog();
-        this.WithTracing();
-
-        Services.TryAddSingleton(ServiceNameProvider.Create);
+        this.WithVostokLogAdapter();
+        this.WithVostokTracerAdapter();
 
         this.ConfigureOpenTelemetryForVostok();
+
+        Services.TryAddSingleton<VostokDisposables>();
+        Services.TryAddSingleton(ServiceNameProvider.Create);
+
+        VostokTypeConverterHelper.AddVostokAttributes();
     }
 
     private static void PrepareSubstitutions(IServiceCollection services)

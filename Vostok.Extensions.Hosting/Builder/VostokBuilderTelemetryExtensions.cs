@@ -50,7 +50,7 @@ public static class VostokBuilderTelemetryExtensions
         return builder;
     }
 
-    internal static void WithTracing(this IVostokBuilder builder)
+    internal static void WithVostokTracerAdapter(this IVostokBuilder builder)
     {
         var settings = new ActivitySourceTracerSettings
         {
@@ -61,7 +61,7 @@ public static class VostokBuilderTelemetryExtensions
         builder.Services.TryAddSingleton<ITracer>(activitySourceTracer);
     }
 
-    internal static void EnableOuterVostokLog(this IVostokBuilder builder)
+    internal static void WithVostokLogAdapter(this IVostokBuilder builder)
     {
         builder.Services.TryAddSingleton<ILog, SubstitutableLog>();
         builder.Services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>

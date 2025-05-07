@@ -2,7 +2,6 @@
 
 using Vostok.Extensions.Hosting;
 using Vostok.Extensions.Hosting.Builder;
-using Vostok.Extensions.Hosting.Helpers;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -16,9 +15,9 @@ public static class VostokServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        VostokTypeConverterHelper.AddVostokAttributes();
-
         var builder = new VostokBuilder(services);
+        builder.AddCoreServices();
+
         configureBuilder(builder);
 
         return services;
