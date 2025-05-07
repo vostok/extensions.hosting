@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Extensions.Hosting.HostedServices;
@@ -14,9 +13,8 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
 
     public void AddCoreServices()
     {
-        PrepareSubstitutions(Services);
-
-        Services.AddHostedService<VostokStartupService>();
+        Services.TryAddSingleton<VostokWarmup>();
+        Services.DecorateHostLifetime();
 
         this.WithApplicationIdentity();
         this.WithVostokLogAdapter();
@@ -28,11 +26,5 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
         Services.TryAddSingleton(ServiceNameProvider.Create);
 
         VostokTypeConverterHelper.AddVostokAttributes();
-    }
-
-    private static void PrepareSubstitutions(IServiceCollection services)
-    {
-        services.AddOptionsWithValidateOnStart<SubstitutionsValidator.SubstitutionMarker>();
-        services.TryAddSingleton<IValidateOptions<SubstitutionsValidator.SubstitutionMarker>, SubstitutionsValidator>();
     }
 }

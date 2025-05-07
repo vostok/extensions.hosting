@@ -4,7 +4,6 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Vostok.Clusterclient.Core;
@@ -15,6 +14,9 @@ using Vostok.Commons.Threading;
 using Vostok.Configuration.Primitives;
 using Vostok.Context;
 using Vostok.Datacenters;
+using Vostok.Extensions.Hosting.Builder;
+using Vostok.Extensions.Hosting.Components.Logging.Substitution;
+using Vostok.Extensions.Hosting.Configuration;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -27,24 +29,23 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.HostedServices;
 
-internal sealed class VostokStartupService(
+internal sealed class VostokWarmup(
     IServiceProvider provider,
-    IEnumerable<VostokStartupService.CustomStartupAction> customStartupActions,
-    ILogger<VostokStartupService> logger)
-    : IHostedLifecycleService
+    IEnumerable<VostokWarmup.CustomWarmupAction> customStartupActions,
+    ILogger<VostokWarmup> logger)
 {
-    public delegate void CustomStartupAction(IServiceProvider provider);
+    public delegate void CustomWarmupAction(IServiceProvider provider);
 
-    public async Task StartingAsync(CancellationToken cancellationToken)
+    public async Task WarmupVostokAsync()
     {
         // note (ponomaryovigor, 01.04.2025): Order is important to prevent cyclic dependencies.
-        WarmupDatacenters();
+        await WarmupClusterConfigClientAsync();
         WarmupVostokLog();
+        WarmupDatacenters();
         WarmupVostokTracer();
         WarmupVostokMetricsContext();
         WarmupHerculesSink();
         await WarmupServiceDiscoveryAsync();
-        await WarmupClusterConfigClientAsync();
         ConfigureFlowingContext();
 
         foreach (var startupAction in customStartupActions)
@@ -61,9 +62,17 @@ internal sealed class VostokStartupService(
 
     private void WarmupVostokLog()
     {
-        var vostokLogger = provider.GetService<ILog>();
-        if (vostokLogger is not null)
-            LogProvider.Configure(vostokLogger, true);
+        var vostokLog = provider.GetService<ILog>();
+        if (vostokLog is null)
+            return;
+
+        LogProvider.Configure(vostokLog, true);
+
+        var substitutableLog = vostokLog as SubstitutableLog;
+        var actualLog = provider.GetKeyedService<ILog>(VostokBuilderTelemetryExtensions.ActualLogKey);
+
+        if (substitutableLog is not null && actualLog is not null)
+            substitutableLog.SubstituteWith(actualLog);
     }
 
     private void WarmupVostokTracer()
@@ -117,11 +126,14 @@ internal sealed class VostokStartupService(
     private async Task WarmupClusterConfigClientAsync()
     {
         var clusterConfigClient = provider.GetService<IClusterConfigClient>();
+        if (clusterConfigClient is null)
+            return;
+
+        await clusterConfigClient.GetAsync(Guid.NewGuid().ToString());
+        ClusterConfigDeferredConfigurationSource.ActivateAllProviders(clusterConfigClient);
+
         if (clusterConfigClient is ClusterConfigClient actualClient)
-        {
-            await actualClient.GetAsync(Guid.NewGuid().ToString());
             ClusterConfigClient.TrySetDefaultClient(actualClient);
-        }
     }
 
     private void ConfigureFlowingContext()
@@ -215,10 +227,4 @@ internal sealed class VostokStartupService(
         logger.LogInformation("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.",
             state.MinWorkerThreads, state.MinIocpThreads);
     }
-
-    public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StartedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StoppingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task StoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
