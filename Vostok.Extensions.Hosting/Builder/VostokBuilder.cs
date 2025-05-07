@@ -30,7 +30,7 @@ internal sealed class VostokBuilder : IVostokBuilder
 
         this.EnableOuterVostokLog();
         this.WithTracing();
-        
+
         Services.TryAddSingleton(ServiceNameProvider.Create);
 
         this.ConfigureOpenTelemetryForVostok();

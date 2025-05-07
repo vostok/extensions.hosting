@@ -45,8 +45,10 @@ internal sealed class VostokStartupService(
         WarmupHerculesSink();
         await WarmupServiceDiscoveryAsync();
         await WarmupClusterConfigClientAsync();
-
         ConfigureFlowingContext();
+
+        foreach (var startupAction in customStartupActions)
+            startupAction(provider);
 
         LogEnvironmentInfo();
         LogDotnetEnvironmentVariables();
@@ -55,9 +57,6 @@ internal sealed class VostokStartupService(
         LogApplicationLimits();
         LogApplicationReplication();
         LogThreadPoolSettings();
-
-        foreach (var startupAction in customStartupActions)
-            startupAction(provider);
     }
 
     private void WarmupVostokLog()
