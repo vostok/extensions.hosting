@@ -39,7 +39,6 @@ internal static class VostokOpenTelemetryServicesExtensions
 
     private static void ConfigureTracingResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear()
-                       .AddTelemetrySdk()
                        .AddDetector(provider => new ServiceResourceDetector(provider));
 
     private static void ConfigureMetricsResource(ResourceBuilder resourceBuilder) =>
@@ -47,7 +46,6 @@ internal static class VostokOpenTelemetryServicesExtensions
 
     private static void ConfigureLoggingResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear()
-                       .AddTelemetrySdk()
                        .AddDetector(provider => new ServiceResourceDetector(provider))
                        .AddDetector(provider => new VostokIdentityResourceDetector(provider));
 }
