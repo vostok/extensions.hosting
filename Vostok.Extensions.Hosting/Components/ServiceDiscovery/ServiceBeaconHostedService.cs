@@ -9,7 +9,7 @@ namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 
 internal sealed class ServiceBeaconHostedService(
     IServiceBeacon serviceBeacon,
-    IOptions<ServiceBeaconRegistrationOptions> options,
+    IOptions<ServiceBeaconMiscellaneousOptions> options,
     IHostApplicationLifetime applicationLifetime,
     ILogger<ServiceBeaconHostedService> logger) : IHostedService
 {
@@ -49,7 +49,11 @@ internal sealed class ServiceBeaconHostedService(
         if (serviceBeacon is not ServiceBeacon actualBeacon)
             return;
 
+        // todo: ForceBeaconRegistrationWait?
+
         if (!actualBeacon.WaitForInitialRegistrationAsync().Wait(optionsValue.RegistrationWaitTimeout))
             throw new Exception($"Service beacon hasn't registered in '{optionsValue.RegistrationWaitTimeout}'.");
+
+        logger.LogInformation("Service beacon registration awaited successfully.");
     }
 }

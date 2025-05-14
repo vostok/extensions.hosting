@@ -32,6 +32,21 @@ public static class ServiceBeaconBuilderExtensions
         return builder;
     }
 
+    public static IServiceBeaconBuilder ConfigureRegistration(
+        this IServiceBeaconBuilder builder,
+        bool waitRegistration,
+        TimeSpan? registrationWaitTimeout = null)
+    {
+        builder.Services.Configure<ServiceBeaconMiscellaneousOptions>(options =>
+        {
+            options.WaitRegistration = waitRegistration;
+            if (registrationWaitTimeout.HasValue)
+                options.RegistrationWaitTimeout = registrationWaitTimeout.Value;
+        });
+
+        return builder;
+    }
+
     public static IServiceBeaconBuilder CustomizeReplicaInfo(
         this IServiceBeaconBuilder builder,
         ReplicaInfoSetup configure)

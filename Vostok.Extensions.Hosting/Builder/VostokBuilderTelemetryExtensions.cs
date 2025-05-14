@@ -9,9 +9,9 @@ using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.Logging;
 using Vostok.Extensions.Hosting.Components.Logging.Builder;
-using Vostok.Extensions.Hosting.Components.Logging.Substitution;
 using Vostok.Extensions.Hosting.Components.Metrics;
 using Vostok.Extensions.Hosting.Components.Metrics.Options;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Microsoft;
@@ -63,7 +63,7 @@ public static class VostokBuilderTelemetryExtensions
 
     internal static void WithVostokLogAdapter(this IVostokBuilder builder)
     {
-        builder.Services.TryAddSingleton<ILog, SubstitutableLog>();
+        builder.Services.TryAddSingleton<ILog>(InitializationLogProvider.Get());
         builder.Services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>
         {
             var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()

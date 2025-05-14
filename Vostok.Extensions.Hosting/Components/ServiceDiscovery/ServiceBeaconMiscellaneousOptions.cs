@@ -1,11 +1,8 @@
-using JetBrains.Annotations;
-
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 
-[PublicAPI]
-public sealed class ServiceBeaconRegistrationOptions
+internal sealed class ServiceBeaconMiscellaneousOptions
 {
     /// <summary>
     /// If enabled, host will wait for <see cref="IServiceBeacon"/> start.
