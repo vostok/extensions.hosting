@@ -2,7 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 
+using Vostok.Configuration;
+using Vostok.Configuration.Logging;
 using Vostok.Configuration.Sources.Manual;
+using Vostok.Logging.Abstractions;
 
 using ConfigurationProvider = Vostok.Configuration.ConfigurationProvider;
 using IConfigurationProvider = Vostok.Configuration.Abstractions.IConfigurationProvider;
@@ -34,11 +37,14 @@ internal static class ConfigurationFactory
         var setups = provider.GetServices<ConfigurationProviderSetup>();
         var configurationSource = provider.GetRequiredService<IConfigurationSource>();
 
-        var configurationProvider = new ConfigurationProvider();
+        var log = provider.GetService<ILog>() ?? new SilentLog();
+        var settings = new ConfigurationProviderSettings()
+                       .WithErrorLogging(log)
+                       .WithUpdatesLogging(log);
+
+        var configurationProvider = new ConfigurationProvider(settings);
         foreach (var setup in setups)
             setup(configurationProvider, configurationSource);
-
-        // todo: Add error logging
 
         return configurationProvider;
     }

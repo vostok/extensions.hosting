@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Vostok.Extensions.Hosting.Components.Logging.Builder;
+using Vostok.Extensions.Hosting.Components.Logging.File;
 using Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
@@ -48,8 +50,7 @@ internal static class ServiceBeaconFactory
 
         var applicationIdentity = provider.GetRequiredService<IVostokApplicationIdentity>();
 
-        // todo: What if file log disabled?
-        var fileLogSettings = provider.GetRequiredService<IOptions<FileLogSettings>>().Value;
+        var logsDirectory = GetLogsDirectory(provider);
         var replicaCustomizations = provider.GetServices<ReplicaInfoSetup>();
 
         return new ServiceBeacon(
@@ -65,7 +66,7 @@ internal static class ServiceBeaconFactory
                 replica.SetProperty(WellKnownApplicationIdentityProperties.Application, applicationIdentity.Application);
                 replica.SetProperty(WellKnownApplicationIdentityProperties.Instance, applicationIdentity.Instance);
 
-                replica.SetProperty("logsDirectory", GetLogsDirectory(fileLogSettings));
+                replica.SetProperty("logsDirectory", logsDirectory);
 
                 foreach (var customization in replicaCustomizations)
                     customization(replica);
@@ -80,10 +81,15 @@ internal static class ServiceBeaconFactory
         IServiceProvider provider)
         => CreateBeacon(settings, new DevNullZooKeeperClient(), log, provider).ReplicaInfo;
 
-    private static string? GetLogsDirectory(FileLogSettings fileLogSettings)
+    private static string? GetLogsDirectory(IServiceProvider provider)
     {
         try
         {
+            if (provider.GetKeyedService<LogRegistration>(LogRegistration.For(FileLogFactory.LogName)) is null)
+                return null; // File log disabled
+
+            var fileLogSettings = provider.GetRequiredService<IOptions<FileLogSettings>>().Value;
+
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileLogSettings.FilePath);
             return Path.GetDirectoryName(path);
         }

@@ -48,6 +48,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.abstractions\Vostok.Configuration.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Configuration.Logging">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.logging\Vostok.Configuration.Logging\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Configuration.Sources">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.sources\Vostok.Configuration.Sources\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.dll</HintPath>
