@@ -3,7 +3,7 @@
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 [PublicAPI]
-public class HealthTrackerOptions
+public sealed class HealthTrackerOptions
 {
     public TimeSpan ChecksPeriod { get; set; } = TimeSpan.FromSeconds(30);
 
@@ -14,4 +14,6 @@ public class HealthTrackerOptions
     public bool AddZooKeeperConnectionCheck { get; set; } = true;
 
     public bool AddDnsResolutionCheck { get; set; } = true;
+
+    public bool AddConfigurationCheck { get; set; } = true;
 }

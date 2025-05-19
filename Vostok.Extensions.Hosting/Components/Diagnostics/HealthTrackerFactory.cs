@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Vostok.Configuration;
+using Vostok.Configuration.Abstractions;
 using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Extensions.Hosting.Helpers;
@@ -47,12 +49,12 @@ internal static class HealthTrackerFactory
             provider.RegisterDisposable(check);
         }
 
-        // todo (bogdanov.n) 14.02.2025: requires `IConfigurationSource`
-        // if (options.AddConfigurationCheck)
-        // {
-            // healthTracker.RegisterCheck(WellKnownHealthCheckNames.Configuration, context.RegisterDisposable(new ConfigurationCheck(context.ConfigurationProvider)));
-            // healthTracker.RegisterCheck(WellKnownHealthCheckNames.SecretConfiguration, context.RegisterDisposable(new ConfigurationCheck(context.SecretConfigurationProvider)));
-        // }
+        var configurationProvider = provider.GetService<IConfigurationProvider>();
+        if (options.AddConfigurationCheck && configurationProvider is ConfigurationProvider actualProvider)
+        {
+            var check = new ConfigurationCheck(actualProvider);
+            provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.Configuration, check));
+        }
 
         return healthTracker;
     }

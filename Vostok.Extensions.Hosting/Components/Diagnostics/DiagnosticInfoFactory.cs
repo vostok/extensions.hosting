@@ -74,14 +74,6 @@ internal static class DiagnosticInfoFactory
             provider.RegisterDisposable(info.RegisterProvider(diagnosticEntry, applicationInfoProvider));
         }
 
-        // todo (bogdanov.n) 14.02.2025: requires `IConfigurationSource`
-        // if (options.AddConfigurationInfo)
-        // {
-        //     note (bogdanov.n) 14.02.2025: configuration can contain secrets,
-        //     be careful about what IConfigurationSource you passing
-        //     provider.RegisterDisposable(info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.Configuration), new ConfigurationInfoProvider()));
-        // }
-
         return info;
     }
 
