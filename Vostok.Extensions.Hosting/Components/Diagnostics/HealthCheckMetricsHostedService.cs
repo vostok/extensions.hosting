@@ -1,27 +1,30 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.Metrics;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Vostok.Extensions.Hosting.Helpers;
-using Vostok.Hosting.Abstractions;
+using Vostok.Extensions.Hosting.OpenTelemetry;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Metrics;
-using Vostok.Metrics.Models;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
-internal sealed class HealthCheckMetricsHostedService(IServiceProvider provider) : IHostedService, IObserver<HealthReport>
+internal sealed class HealthCheckMetricsHostedService(IServiceProvider provider, VostokMeters meters) : IHostedService, IObserver<HealthReport>
 {
-    private IMetricContext _context = null!;
+    private Gauge<int> _checkStatusGauge = null!;
+
+    private static readonly KeyValuePair<string, object?> ComponentTag =
+        new(WellKnownTagKeys.Component, "VostokHealthChecks");
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         var healthTracker = provider.GetService<IHealthTracker>();
-        var metrics = provider.GetService<IVostokApplicationMetrics>();
 
-        if (healthTracker is null || metrics is null)
+        if (healthTracker is null)
             return Task.CompletedTask;
 
-        _context = metrics.Instance.WithTag(WellKnownTagKeys.Component, "VostokHealthChecks");
+        _checkStatusGauge = meters.Instance.CreateGauge<int>("HealthCheckStatus");
 
         var subscription = healthTracker.ObserveReports().Subscribe(this);
         provider.RegisterDisposable(subscription);
@@ -35,15 +38,8 @@ internal sealed class HealthCheckMetricsHostedService(IServiceProvider provider)
     {
         foreach (var check in value.Checks)
         {
-            _context.Send(
-                new MetricDataPoint(
-                    Convert.ToDouble(check.Value.Status),
-                    (WellKnownTagKeys.Name, "HealthCheckStatus"),
-                    ("HealthCheckName", check.Key))
-                {
-                    Timestamp = value.Timestamp
-                }
-            );
+            var checkKeyTag = new KeyValuePair<string, object?>("HealthCheckName", check.Key);
+            _checkStatusGauge.Record(Convert.ToInt32(check.Value.Status), ComponentTag, checkKeyTag);
         }
     }
 

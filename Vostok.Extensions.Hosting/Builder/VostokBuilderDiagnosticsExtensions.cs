@@ -14,7 +14,8 @@ namespace Vostok.Extensions.Hosting.Builder;
 [PublicAPI]
 public static class VostokBuilderDiagnosticsExtensions
 {
-    public static IVostokBuilder WithDiagnostics(this IVostokBuilder builder,
+    public static IVostokBuilder WithDiagnostics(
+        this IVostokBuilder builder,
         Action<IVostokDiagnosticsBuilder>? configure = null)
     {
         // todo (bogdanov.n) 17.02.2025: A `DiagnosticMetricsEnabled` check could take place here
