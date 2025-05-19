@@ -12,6 +12,8 @@ using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Environment;
 using Vostok.Commons.Threading;
+using Vostok.Configuration;
+using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Primitives;
 using Vostok.Context;
 using Vostok.Datacenters;
@@ -40,9 +42,9 @@ internal sealed class VostokWarmup(
 
     public async Task WarmupVostokAsync()
     {
-        ConfigureThreadPool();
-
         // note (ponomaryovigor, 01.04.2025): Order is important to prevent cyclic dependencies.
+        ConfigureThreadPool();
+        WarmupConfiguration();
         await WarmupClusterConfigClientAsync();
         WarmupVostokLog();
         WarmupDatacenters();
@@ -84,6 +86,14 @@ internal sealed class VostokWarmup(
 
             ThreadPoolHelper.Setup(options.ThreadPoolTuningMultiplier, applicationLimits?.CpuUnits);
         }
+    }
+
+    private void WarmupConfiguration()
+    {
+        var configurationProvider = provider.GetService<IConfigurationProvider>();
+
+        if (configurationProvider is ConfigurationProvider actualProvider)
+            ConfigurationProvider.TrySetDefault(actualProvider, true);
     }
 
     private void WarmupVostokLog()
