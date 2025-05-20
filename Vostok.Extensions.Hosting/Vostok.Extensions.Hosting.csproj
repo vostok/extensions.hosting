@@ -181,13 +181,13 @@
       <HintPath>..\..\vostok.clusterclient.topology.sd\Vostok.ClusterClient.Topology.SD\bin\Release\$(ReferencesFramework)\Vostok.ClusterClient.Topology.SD.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Telemetry" Version="9.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Telemetry" Version="9.5.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Kontur" />
     <InternalsVisibleTo Include="Vostok.Extensions.AspNetCore" />
