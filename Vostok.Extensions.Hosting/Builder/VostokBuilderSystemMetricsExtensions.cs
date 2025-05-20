@@ -24,10 +24,13 @@ public static class VostokBuilderSystemMetricsExtensions
         this IVostokBuilder builder,
         Action<SystemMetricsOptions, IServiceProvider>? configure = null)
     {
-        builder.Services.AddSystemMetrics();
+        builder.ConfigureServices(services =>
+        {
+            services.AddSystemMetrics();
 
-        if (configure is not null)
-            builder.Services.AddOptions<SystemMetricsOptions>().Configure(configure);
+            if (configure is not null)
+                services.AddOptions<SystemMetricsOptions>().Configure(configure);
+        });
 
         return builder;
     }

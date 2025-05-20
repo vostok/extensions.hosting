@@ -1,11 +1,10 @@
-﻿using Vostok.Extensions.Hosting.Builder;
-using Vostok.Logging.Abstractions;
+﻿using Vostok.Logging.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Helpers;
 
 internal static class VostokBuilderLoggingHelper
 {
     public static void LogDisabled(this ILog log, string name, string reason) =>
-        log.ForContext<VostokBuilder>()
+        log.ForContext("VostokBuilder")
            .Info("{ComponentName} feature has been disabled due to {ComponentDisabledReason}.", name, reason);
 }

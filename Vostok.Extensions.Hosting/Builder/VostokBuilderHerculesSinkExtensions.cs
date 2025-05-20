@@ -17,17 +17,22 @@ public static class VostokBuilderHerculesSinkExtensions
         this IVostokBuilder builder,
         Action<IHerculesSinkBuilder>? configure = null)
     {
-        builder.Services.AddHerculesSink();
+        builder.ConfigureServices(services =>
+        {
+            services.AddHerculesSink();
 
-        var sinkBuilder = new HerculesSinkBuilder(builder.Services);
-        configure?.Invoke(sinkBuilder);
+            var sinkBuilder = new HerculesSinkBuilder(services);
+            configure?.Invoke(sinkBuilder);
+        });
 
         return builder;
     }
 
     public static IVostokBuilder DisableHerculesSink(this IVostokBuilder builder)
     {
-        builder.Services.Replace(ServiceDescriptor.Singleton<IHerculesSink>(new DevNullHerculesSink()));
+        builder.ConfigureServices(services =>
+            services.Replace(ServiceDescriptor.Singleton<IHerculesSink>(new DevNullHerculesSink())));
+
         return builder;
     }
 

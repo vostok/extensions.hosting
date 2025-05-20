@@ -4,5 +4,5 @@ namespace Vostok.Extensions.Hosting;
 
 public interface IVostokBuilder
 {
-    IServiceCollection Services { get; }
+    void ConfigureServices(Action<IServiceCollection> configure);
 }

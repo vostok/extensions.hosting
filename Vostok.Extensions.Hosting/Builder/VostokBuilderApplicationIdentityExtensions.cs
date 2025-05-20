@@ -25,10 +25,13 @@ public static class VostokBuilderApplicationIdentityExtensions
         this IVostokBuilder builder,
         Action<ApplicationIdentityOptions, IServiceProvider>? configure = null)
     {
-        builder.Services.AddApplicationIdentity();
+        builder.ConfigureServices(services =>
+        {
+            services.AddApplicationIdentity();
 
-        if (configure is not null)
-            builder.Services.AddOptions<ApplicationIdentityOptions>().Configure(configure);
+            if (configure is not null)
+                services.AddOptions<ApplicationIdentityOptions>().Configure(configure);
+        });
 
         return builder;
     }

@@ -23,10 +23,13 @@ public static class VostokBuilderDatacentersExtensions
         this IVostokBuilder builder,
         Action<DatacentersOptions, IServiceProvider>? configure = null)
     {
-        builder.Services.AddDatacenters();
+        builder.ConfigureServices(services =>
+        {
+            services.AddDatacenters();
 
-        if (configure is not null)
-            builder.Services.AddOptions<DatacentersOptions>().Configure(configure);
+            if (configure is not null)
+                services.AddOptions<DatacentersOptions>().Configure(configure);
+        });
 
         return builder;
     }
