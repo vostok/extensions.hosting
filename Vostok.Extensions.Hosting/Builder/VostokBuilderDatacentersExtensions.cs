@@ -2,9 +2,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
-using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Datacenters;
 
 namespace Vostok.Extensions.Hosting.Builder;
@@ -14,19 +12,25 @@ public static class VostokBuilderDatacentersExtensions
 {
     public static IVostokBuilder WithDatacenters(
         this IVostokBuilder builder,
-        Action<IDatacentersBuilder> configure)
+        Action<DatacentersOptions> configure)
     {
-        builder.Services.AddDatacenters();
-
-        var datacentersBuilder = new DatacentersBuilder(builder.Services);
-        configure(datacentersBuilder);
+        builder.WithDatacenters((options, _) => configure(options));
 
         return builder;
     }
 
-    private static void AddDatacenters(this IServiceCollection services)
+    public static IVostokBuilder WithDatacenters(
+        this IVostokBuilder builder,
+        Action<DatacentersOptions, IServiceProvider>? configure = null)
     {
-        services.TryAddSingleton<IOptionsFactory<DatacentersSettings>, DatacentersSettingsFactory>();
-        services.TryAddSingleton(DatacentersFactory.Create);
+        builder.Services.AddDatacenters();
+
+        if (configure is not null)
+            builder.Services.AddOptions<DatacentersOptions>().Configure(configure);
+
+        return builder;
     }
+
+    private static void AddDatacenters(this IServiceCollection services) =>
+        services.TryAddSingleton(DatacentersFactory.Create);
 }

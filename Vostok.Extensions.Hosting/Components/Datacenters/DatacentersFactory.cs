@@ -9,7 +9,17 @@ internal static class DatacentersFactory
 {
     public static IDatacenters Create(IServiceProvider provider)
     {
-        var settings = provider.GetRequiredService<IOptions<DatacentersSettings>>().Value;
+        var options = provider.GetRequiredService<IOptions<DatacentersOptions>>().Value;
+
+        var settings = new DatacentersSettings(options.DatacenterMapping, options.ActiveDatacentersProvider)
+        {
+            DnsCacheTtl = options.DnsCacheTtl,
+            DnsResolveTimeout = options.DnsResolveTimeout,
+            LocalDatacenter = options.LocalDatacenter,
+            LocalHostname = options.LocalHostname,
+            ResolveHostname = options.ResolveHostname
+        };
+
         return new Vostok.Datacenters.Datacenters(settings);
     }
 }
