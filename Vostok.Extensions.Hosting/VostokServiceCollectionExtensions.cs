@@ -9,17 +9,13 @@ namespace Microsoft.Extensions.DependencyInjection;
 [PublicAPI]
 public static class VostokServiceCollectionExtensions
 {
-    public static IServiceCollection AddVostok(
-        this IServiceCollection services,
-        Action<IVostokBuilder> configureBuilder)
+    public static IVostokBuilder AddVostok(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        var builder = new VostokBuilder(services);
-        builder.AddCoreServices();
+        var vostok = new VostokBuilder(services);
+        vostok.AddCoreServices();
 
-        configureBuilder(builder);
-
-        return services;
+        return vostok;
     }
 }
