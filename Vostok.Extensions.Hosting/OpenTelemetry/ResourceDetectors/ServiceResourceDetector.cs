@@ -13,14 +13,14 @@ using static Vostok.Extensions.Hosting.OpenTelemetry.VostokSemanticConventions;
 namespace Vostok.Extensions.Hosting.OpenTelemetry.ResourceDetectors;
 
 [SuppressMessage("ReSharper", "ArrangeObjectCreationWhenTypeNotEvident")]
-internal sealed class ServiceResourceDetector(IServiceProvider provider) : IResourceDetector
+internal sealed class ServiceResourceDetector(IServiceProvider provider, string hostNameAttribute) : IResourceDetector
 {
     public Resource Detect()
     {
         var service = provider.GetRequiredService<ServiceNameProvider>().ServiceName;
         var environment = provider.GetService<IServiceBeacon>()?.ReplicaInfo?.Environment;
 
-        List<KeyValuePair<string, object>> attributes = [new(AttributeHostName, EnvironmentInfo.Host)];
+        List<KeyValuePair<string, object>> attributes = [new(hostNameAttribute, EnvironmentInfo.Host)];
 
         if (environment != null)
             attributes.Add(new(AttributeDeploymentEnvironmentName, environment));

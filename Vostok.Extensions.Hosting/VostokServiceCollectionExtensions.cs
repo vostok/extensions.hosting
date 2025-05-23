@@ -14,7 +14,8 @@ public static class VostokServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         var vostok = new VostokBuilder(services);
-        vostok.AddCoreServices();
+        if (!vostok.IsAlreadyAdded())
+            vostok.AddCoreServices();
 
         return vostok;
     }

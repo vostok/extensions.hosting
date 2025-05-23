@@ -39,13 +39,13 @@ internal static class VostokOpenTelemetryServicesExtensions
 
     private static void ConfigureTracingResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear()
-                       .AddDetector(provider => new ServiceResourceDetector(provider));
+                       .AddDetector(provider => new ServiceResourceDetector(provider, VostokSemanticConventions.AttributeHostName));
 
     private static void ConfigureMetricsResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear();
 
     private static void ConfigureLoggingResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear()
-                       .AddDetector(provider => new ServiceResourceDetector(provider))
+                       .AddDetector(provider => new ServiceResourceDetector(provider, VostokSemanticConventions.AttributeHostNameLegacy))
                        .AddDetector(provider => new VostokIdentityResourceDetector(provider));
 }

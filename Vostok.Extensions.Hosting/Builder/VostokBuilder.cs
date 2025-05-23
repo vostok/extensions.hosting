@@ -13,6 +13,8 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
 
     public void AddCoreServices()
     {
+        Services.TryAddSingleton<VostokAddedMarker>();
+
         Services.TryAddSingleton<VostokWarmup>();
         Services.DecorateHostLifetime();
 
@@ -27,4 +29,9 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
 
         VostokTypeConverterHelper.AddVostokAttributes();
     }
+
+    public bool IsAlreadyAdded() =>
+        Services.Any(service => service.ServiceType == typeof(VostokAddedMarker));
+
+    private sealed class VostokAddedMarker;
 }
