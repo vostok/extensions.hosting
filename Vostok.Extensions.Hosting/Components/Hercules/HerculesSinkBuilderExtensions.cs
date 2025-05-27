@@ -61,10 +61,4 @@ public static class HerculesSinkBuilderExtensions
 
     public static IHerculesSinkBuilder SetServiceDiscoveryTopology(this IHerculesSinkBuilder builder, string environment, string application) =>
         builder.SetClusterProvider(provider => ClusterProviderFactory.FromServiceDiscovery(provider, environment, application));
-
-    public static IHerculesSinkBuilder ConfigureVerboseLogging(this IHerculesSinkBuilder builder, bool enabled)
-    {
-        builder.Services.Configure<HerculesSinkMiscellaneousOptions>(options => options.VerboseLogging = enabled);
-        return builder;
-    }
 }
