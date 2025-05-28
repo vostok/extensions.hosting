@@ -65,13 +65,16 @@ public static class VostokWebComponentsServiceCollectionExtensions
     }
 
     private static void ConfigureKestrelDefaults(this IServiceCollection serviceCollection) =>
-        serviceCollection.Configure<KestrelServerOptions>(s =>
+        serviceCollection.Configure<KestrelServerOptions>(options =>
         {
-            s.AddServerHeader = false;
+            options.AddServerHeader = false;
 
-            s.Limits.MaxRequestBufferSize = 128 * 1024;
-            s.Limits.MaxRequestLineSize = 32 * 1024;
-            s.Limits.MaxRequestHeadersTotalSize = 64 * 1024;
-            s.Limits.MaxConcurrentUpgradedConnections = 10000;
+            options.Limits.MaxRequestBufferSize = 128 * 1024;
+            options.Limits.MaxResponseBufferSize = 64 * 1024;
+
+            options.Limits.MaxRequestBodySize = null;
+            options.Limits.MaxRequestLineSize = 32 * 1024;
+            options.Limits.MaxRequestHeadersTotalSize = 64 * 1024;
+            options.Limits.MaxConcurrentUpgradedConnections = 10000;
         });
 }
