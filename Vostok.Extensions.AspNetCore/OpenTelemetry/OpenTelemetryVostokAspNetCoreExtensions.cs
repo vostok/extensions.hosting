@@ -17,7 +17,7 @@ public static class OpenTelemetryVostokAspNetCoreExtensions
 {
     public static void SetupAspNetCoreInstrumentationForVostok(this TracerProviderBuilder tracing) =>
         tracing.ConfigureServices(services => services.AddOptions<AspNetCoreTraceInstrumentationOptions>()
-                                                      .Configure<IServiceProvider>(Configure));
+                                                      .PostConfigure<IServiceProvider>(Configure));
 
     private static void Configure(AspNetCoreTraceInstrumentationOptions options, IServiceProvider provider)
     {
@@ -26,7 +26,8 @@ public static class OpenTelemetryVostokAspNetCoreExtensions
         var fillRequestInfoOptions = provider.GetRequiredService<IOptions<FillRequestInfoMiddlewareOptions>>().Value;
         var serverAddress = GetAddress(provider.GetService<IServiceBeacon>());
 
-        options.EnrichWithHttpRequest += (activity, request) =>
+        var previousRequestEnrichment = options.EnrichWithHttpRequest;
+        options.EnrichWithHttpRequest = (activity, request) =>
         {
             if (serverAddress is var (host, port))
             {
@@ -42,12 +43,17 @@ public static class OpenTelemetryVostokAspNetCoreExtensions
 
             if (request.ContentLength.HasValue)
                 activity.SetTag(WebSemanticConventions.AttributeHttpRequestContentLength, request.ContentLength.Value);
+
+            previousRequestEnrichment?.Invoke(activity, request);
         };
 
-        options.EnrichWithHttpResponse += (activity, response) =>
+        var previousResponseEnrichment = options.EnrichWithHttpResponse;
+        options.EnrichWithHttpResponse = (activity, response) =>
         {
             if (response.ContentLength.HasValue)
                 activity.SetTag(WebSemanticConventions.AttributeHttpResponseContentLength, response.ContentLength.Value);
+
+            previousResponseEnrichment?.Invoke(activity, response);
         };
     }
 
