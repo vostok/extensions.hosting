@@ -6,12 +6,11 @@ using Vostok.ZooKeeper.Client;
 
 namespace Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 
-internal sealed class ZooKeeperClientSettingsFactory(
+internal sealed class ZooKeeperClientDefaultSettingsFactory(
     IEnumerable<IConfigureOptions<ZooKeeperClientSettings>> setups,
     IEnumerable<IPostConfigureOptions<ZooKeeperClientSettings>> postConfigures,
     IEnumerable<IValidateOptions<ZooKeeperClientSettings>> validations,
-    IServiceProvider provider)
-    : OptionsFactory<ZooKeeperClientSettings>(setups, postConfigures, validations)
+    IServiceProvider provider) : OptionsFactory<ZooKeeperClientSettings>(setups, postConfigures, validations)
 {
     protected override ZooKeeperClientSettings CreateInstance(string name)
     {
@@ -24,7 +23,6 @@ internal sealed class ZooKeeperClientSettingsFactory(
         if (clusterProvider is not null)
             return new ZooKeeperClientSettings(() => clusterProvider.GetCluster());
 
-        throw new InvalidOperationException(
-            $"Topology for {nameof(ZooKeeper.Client.ZooKeeperClient)} was not configured");
+        throw new InvalidOperationException($"Topology for {nameof(ZooKeeper.Client.ZooKeeperClient)} was not configured");
     }
 }

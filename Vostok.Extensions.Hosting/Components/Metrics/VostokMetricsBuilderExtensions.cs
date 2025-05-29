@@ -57,7 +57,7 @@ public static class VostokMetricsBuilderExtensions
     {
         var serviceDescriptor = ServiceDescriptor.Singleton<IMetricEventSender, HerculesMetricSender>(HerculesMetricSenderFactory.Create);
         builder.Services.TryAddEnumerable(serviceDescriptor);
-        builder.Services.TryAddSingleton<IOptionsFactory<HerculesMetricSenderSettings>, HerculesMetricSenderSettingsFactory>();
+        builder.Services.TryAddSingleton<IOptionsFactory<HerculesMetricSenderSettings>, HerculesMetricSenderDefaultSettingsFactory>();
 
         if (configure is not null)
             builder.Services.AddOptions<HerculesMetricSenderSettings>().Configure(configure);

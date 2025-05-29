@@ -33,8 +33,7 @@ public static class VostokBuilderHerculesSinkExtensions
 
     private static void AddHerculesSink(this IServiceCollection services)
     {
-        services.TryAddSingleton<IOptionsFactory<HerculesSinkSettings>, HerculesSinkSettingsFactory>();
-        services.TryAddSingleton<IConfigureOptions<HerculesSinkSettings>, HerculesSinkInitialConfiguration>();
+        services.TryAddSingleton<IOptionsFactory<HerculesSinkSettings>, HerculesSinkDefaultSettingsFactory>();
         services.TryAddSingleton(HerculesSinkFactory.Create);
         services.AddHostedService<HerculesSinkMetricsHostedService>(); // todo: Move to Kontur extensions?
     }

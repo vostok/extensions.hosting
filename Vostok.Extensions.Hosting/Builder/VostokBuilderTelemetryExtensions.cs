@@ -10,7 +10,6 @@ using Microsoft.Extensions.Options;
 using Vostok.Extensions.Hosting.Components.Logging;
 using Vostok.Extensions.Hosting.Components.Logging.Builder;
 using Vostok.Extensions.Hosting.Components.Metrics;
-using Vostok.Extensions.Hosting.Components.Metrics.Options;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
@@ -75,8 +74,7 @@ public static class VostokBuilderTelemetryExtensions
 
     private static void AddMetrics(this IServiceCollection services)
     {
-        services.TryAddSingleton<IOptionsFactory<MetricContextConfig>, MetricContextConfigFactory>();
-        services.TryAddSingleton<IConfigureOptions<MetricContextConfig>, MetricContextInitialConfiguration>();
+        services.TryAddSingleton<IOptionsFactory<MetricContextConfig>, MetricContextDefaultConfigFactory>();
         services.TryAddSingleton(RootMetricsContextFactory.Create);
         services.TryAddSingleton<IVostokApplicationMetrics, VostokApplicationMetrics>();
     }
