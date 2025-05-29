@@ -27,8 +27,7 @@ public static class VostokBuilderTelemetryExtensions
 
     public static IVostokBuilder WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
     {
-        var descriptor =
-            ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
+        var descriptor = ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
         builder.Services.TryAddEnumerable(descriptor);
 
         var vostokLogBuilder = new VostokLogBuilder(builder.Services);
@@ -74,7 +73,7 @@ public static class VostokBuilderTelemetryExtensions
 
     private static void AddMetrics(this IServiceCollection services)
     {
-        services.TryAddSingleton<IOptionsFactory<MetricContextConfig>, MetricContextDefaultConfigFactory>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IOptionsFactory<MetricContextConfig>, MetricContextDefaultConfigFactory>());
         services.TryAddSingleton(RootMetricsContextFactory.Create);
         services.TryAddSingleton<IVostokApplicationMetrics, VostokApplicationMetrics>();
     }

@@ -83,7 +83,7 @@ public static class ServiceBeaconBuilderExtensions
 
     private static void AddZooKeeperClient(this IServiceCollection services)
     {
-        services.TryAddSingleton<IOptionsFactory<ZooKeeperClientSettings>, ZooKeeperClientDefaultSettingsFactory>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IOptionsFactory<ZooKeeperClientSettings>, ZooKeeperClientDefaultSettingsFactory>());
         services.TryAddSingleton(ZooKeeperClientFactory.Create);
     }
 }

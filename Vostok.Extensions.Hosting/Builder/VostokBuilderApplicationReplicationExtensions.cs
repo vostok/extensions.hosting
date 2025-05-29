@@ -36,6 +36,6 @@ public static class VostokBuilderApplicationReplicationExtensions
     private static void AddApplicationReplication(this IServiceCollection services)
     {
         services.TryAddSingleton<IVostokApplicationReplicationInfo, ApplicationReplicationInfo>();
-        services.AddSingleton<IValidateOptions<ApplicationReplicationOptions>, ApplicationReplicationOptionsValidator>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<ApplicationReplicationOptions>, ApplicationReplicationOptionsValidator>());
     }
 }
