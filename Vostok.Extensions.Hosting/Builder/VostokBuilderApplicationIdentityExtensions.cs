@@ -36,6 +36,7 @@ public static class VostokBuilderApplicationIdentityExtensions
     private static void AddApplicationIdentity(this IServiceCollection services)
     {
         services.AddOptionsWithValidateOnStart<ApplicationIdentityOptions>(); // Todo: Idempotency
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<ApplicationIdentityOptions>, ConfigureApplicationIdentityOptionsFromEnv>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<ApplicationIdentityOptions>, ApplicationIdentityOptionsValidator>());
 
         services.TryAddSingleton<IVostokApplicationIdentity, ApplicationIdentity>();

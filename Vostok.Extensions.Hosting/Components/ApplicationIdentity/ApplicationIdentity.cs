@@ -12,6 +12,9 @@ internal sealed class ApplicationIdentity : IVostokApplicationIdentity
     public string Application { get; }
     public string Instance { get; }
 
+    // note(ponomaryovigor):
+    // Despite identity is a cold options, we are using IOptionsMonitor here because it's used by Startup validator and already warmed up.
+    // So we can rid of extra validation check here.
     public ApplicationIdentity(IOptionsMonitor<ApplicationIdentityOptions> options)
     {
         var identityOptions = options.CurrentValue;
