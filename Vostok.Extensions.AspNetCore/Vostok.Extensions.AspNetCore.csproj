@@ -20,22 +20,12 @@
     <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Url\UrlExtensions.cs" Link="Commons\UrlExtensions.cs" />
     <Compile Include="$(CementDir)vostok.tracing\Vostok.Tracing\TraceContextSerializer.cs" Link="Commons\TraceContextSerializer.cs" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ModuleReference Include="vostok.hosting.abstractions" />
     <ModuleReference Include="vostok.configuration" />
-    <ModuleReference Include="vostok.datacenters" />
-    <ModuleReference Include="vostok.context" />
-    <ModuleReference Include="vostok.servicediscovery.abstractions" />
-
-    <ModuleReference Include="vostok.clusterclient.core" />
     <ModuleReference Include="vostok.clusterclient.transport" />
     <ModuleReference Include="vostok.clusterclient.context" />
-
-    <ModuleReference Include="vostok.metrics" />
-    <ModuleReference Include="vostok.tracing.abstractions" />
-
-    <ModuleReference Include="vostok.throttling" />
     <ModuleReference Include="vostok.throttling.metrics" />
   </ItemGroup>
 

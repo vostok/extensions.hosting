@@ -25,49 +25,28 @@
 
   <ItemGroup>
     <ModuleReference Include="vostok.hosting.abstractions" />
-    <ModuleReference Include="vostok.context" />
-    <ModuleReference Include="vostok.datacenters" />
-
-    <ModuleReference Include="vostok.clusterclient.core" />
-    <ModuleReference Include="vostok.clusterconfig.client.abstractions" />
-    <ModuleReference Include="vostok.clusterconfig.client" />
     <ModuleReference Include="vostok.clusterclient.tracing" />
     <ModuleReference Include="vostok.clusterclient.topology.cc" />
     <ModuleReference Include="vostok.clusterclient.topology.sd" />
-
-    <ModuleReference Include="vostok.configuration.abstractions" />
-    <ModuleReference Include="vostok.configuration" />
-    <ModuleReference Include="vostok.configuration.logging" />
-    <ModuleReference Include="vostok.configuration.sources" />
+    <ModuleReference Include="vostok.clusterconfig.client" />
     <ModuleReference Include="vostok.configuration.sources.json" />
     <ModuleReference Include="vostok.configuration.sources.xml" />
     <ModuleReference Include="vostok.configuration.sources.yaml" />
     <ModuleReference Include="vostok.configuration.sources.cc" />
     <ModuleReference Include="vostok.configuration.microsoft" />
-
-    <ModuleReference Include="vostok.hercules.client.abstractions" />
-    <ModuleReference Include="vostok.hercules.client" />
-
-    <ModuleReference Include="vostok.logging.abstractions" />
+    <ModuleReference Include="vostok.configuration.logging" />
     <ModuleReference Include="vostok.logging.configuration" />
     <ModuleReference Include="vostok.logging.console" />
     <ModuleReference Include="vostok.logging.file" />
     <ModuleReference Include="vostok.logging.microsoft" />
-
-    <ModuleReference Include="vostok.metrics" />
     <ModuleReference Include="vostok.metrics.system" />
     <ModuleReference Include="vostok.metrics.hercules" />
-
-    <ModuleReference Include="vostok.tracing.abstractions" />
     <ModuleReference Include="vostok.tracing.diagnostics" />
     <ModuleReference Include="vostok.tracing.extensions" />
-
-    <ModuleReference Include="vostok.servicediscovery.abstractions" />
-    <ModuleReference Include="vostok.servicediscovery" />
-    <ModuleReference Include="vostok.serviceDiscovery.telemetry" />
+    <ModuleReference Include="vostok.hercules.client" />
+    <ModuleReference Include="vostok.servicediscovery.telemetry" />
     <ModuleReference Include="vostok.servicediscovery.telemetry.hercules" />
-
-    <ModuleReference Include="vostok.zookeeper.client.abstractions" />
+    <ModuleReference Include="vostok.servicediscovery" />
     <ModuleReference Include="vostok.zookeeper.client" />
   </ItemGroup>
 
