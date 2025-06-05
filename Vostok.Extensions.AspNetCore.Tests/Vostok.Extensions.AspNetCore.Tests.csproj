@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(CementDir)vostok.devtools\library-common-props\Test-Project-new.props" />
+  <Import Project="..\..\vostok.devtools\library-common-props\Test-Project-new.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="NUnit.Framework" />
     <Using Include="FluentAssertions" />
   </ItemGroup>
 
@@ -18,6 +19,8 @@
 
   <ItemGroup>
     <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Update="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Update="NUnit" Version="4.3.2" />
     <PackageReference Include="FluentAssertions" Version="7.2.0" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(CementDir)vostok.devtools\library-common-props\Main-Project.props" />
+  <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
