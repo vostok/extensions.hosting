@@ -1,18 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\vostok.devtools\library-common-props\Test-Project-new.props" />
+  <Import Project="$(CementDir)vostok.devtools\library-common-props\Test-Project-new.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.14.0" />
-    <PackageReference Update="NUnit3TestAdapter" Version="5.0.0" />
-    <PackageReference Update="NUnit" Version="4.3.2" />
-    <PackageReference Include="FluentAssertions" Version="7.2.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
@@ -20,14 +13,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Vostok.Context">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.context\Vostok.Context\bin\Release\$(ReferencesFramework)\Vostok.Context.dll</HintPath>
-    </Reference>
-    <Reference Include="Vostok.Tracing.Abstractions">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.tracing.abstractions\Vostok.Tracing.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Abstractions.dll</HintPath>
-    </Reference>
+    <ModuleReference Include="vostok.context" />
+    <ModuleReference Include="vostok.tracing.abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.14.0" />
+    <PackageReference Update="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Update="NUnit" Version="4.3.2" />
+    <PackageReference Include="FluentAssertions" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
