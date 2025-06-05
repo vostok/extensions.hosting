@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using NUnit.Framework;
+
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 
