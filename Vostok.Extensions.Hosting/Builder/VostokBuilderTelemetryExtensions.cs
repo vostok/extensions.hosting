@@ -57,11 +57,15 @@ public static class VostokBuilderTelemetryExtensions
 
         var activitySourceTracer = new ActivitySourceTracer(settings);
         builder.Services.TryAddSingleton<ITracer>(activitySourceTracer);
+
+        TracerProvider.Configure(activitySourceTracer, true);
     }
 
     internal static void WithVostokLogAdapter(this IVostokBuilder builder)
     {
-        builder.Services.TryAddSingleton<ILog>(InitializationLogProvider.Get());
+        var substitutableLog = InitializationLogProvider.Get();
+
+        builder.Services.TryAddSingleton<ILog>(substitutableLog);
         builder.Services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>
         {
             var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
@@ -69,6 +73,8 @@ public static class VostokBuilderTelemetryExtensions
 
             return new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
         });
+
+        LogProvider.Configure(substitutableLog, true);
     }
 
     private static void AddMetrics(this IServiceCollection services)
