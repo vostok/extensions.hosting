@@ -27,7 +27,8 @@ public abstract class VostokScheduledAsyncHostedService(IServiceProvider provide
             await _cts.CancelAsync();
             try
             {
-                await _runnerTask!.WaitAsync(cancellationToken);
+                if (_runnerTask != null)
+                    await _runnerTask.WaitAsync(cancellationToken);
             }
             catch (OperationCanceledException)
             {
