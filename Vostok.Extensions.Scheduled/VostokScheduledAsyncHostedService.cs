@@ -37,8 +37,6 @@ public abstract class VostokScheduledAsyncHostedService(IServiceProvider provide
         }
     }
 
-    public virtual Task DoDisposeAsync() => Task.CompletedTask;
-
     public async ValueTask DisposeAsync()
     {
         try
@@ -56,7 +54,13 @@ public abstract class VostokScheduledAsyncHostedService(IServiceProvider provide
 
         (_runner as IDisposable)?.Dispose();
         await DoDisposeAsync();
+        // ReSharper disable once MethodHasAsyncOverload
+        DoDispose();
     }
+
+    protected virtual void DoDispose() { }
+
+    protected virtual Task DoDisposeAsync() => Task.CompletedTask;
 
     protected abstract Task SetupAsync(IScheduledActionsBuilder builder, IServiceProvider provider);
 }
