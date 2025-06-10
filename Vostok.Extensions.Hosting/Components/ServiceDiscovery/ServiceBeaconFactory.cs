@@ -45,8 +45,8 @@ internal static class ServiceBeaconFactory
         ILog log,
         IServiceProvider provider)
     {
-        var serviceDiscoveryEventsContext = provider.GetRequiredService<IServiceDiscoveryEventsContext>();
-        settings.ServiceDiscoveryEventContext = serviceDiscoveryEventsContext;
+        if (provider.GetService<IServiceDiscoveryEventsContext>() is { } eventsContext)
+            settings.ServiceDiscoveryEventContext = eventsContext;
 
         var applicationIdentity = provider.GetRequiredService<IVostokApplicationIdentity>();
 
