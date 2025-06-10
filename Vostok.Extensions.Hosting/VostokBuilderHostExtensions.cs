@@ -13,21 +13,21 @@ public static class VostokBuilderHostExtensions
     {
         ArgumentNullException.ThrowIfNull(hostApplicationBuilder);
 
-        var builder = new HostApplicationVostokBuilder(hostApplicationBuilder);
+        var vostok = new HostApplicationVostokBuilder(hostApplicationBuilder);
         if (!VostokBuilderCoreServices.IsAlreadyAdded(hostApplicationBuilder.Properties))
-            VostokBuilderCoreServices.AddCoreServices(builder, hostApplicationBuilder.Properties);
+            VostokBuilderCoreServices.AddCoreServices(vostok, hostApplicationBuilder.Properties);
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder UseVostok(this IHostBuilder hostBuilder)
     {
         ArgumentNullException.ThrowIfNull(hostBuilder);
 
-        var builder = new HostVostokBuilder(hostBuilder);
+        var vostok = new HostVostokBuilder(hostBuilder);
         if (!VostokBuilderCoreServices.IsAlreadyAdded(hostBuilder.Properties))
-            VostokBuilderCoreServices.AddCoreServices(builder, hostBuilder.Properties);
+            VostokBuilderCoreServices.AddCoreServices(vostok, hostBuilder.Properties);
 
-        return builder;
+        return vostok;
     }
 }
