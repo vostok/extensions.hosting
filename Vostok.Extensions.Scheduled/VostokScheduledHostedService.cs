@@ -43,10 +43,20 @@ public abstract class VostokScheduledHostedService(IServiceProvider provider) : 
 
     public async ValueTask DisposeAsync()
     {
-        if (_runner != null)
+        try
         {
-            (_runner as IDisposable)?.Dispose();
+            // ReSharper disable once MethodHasAsyncOverload
+            _cts?.Cancel();
+
+            if (_runnerTask != null)
+                await _runnerTask.WaitAsync(TimeSpan.FromSeconds(10));
         }
+        catch (Exception)
+        {
+            // pass
+        }
+
+        (_runner as IDisposable)?.Dispose();
         await DoDisposeAsync();
         // ReSharper disable once MethodHasAsyncOverload
         DoDispose();
