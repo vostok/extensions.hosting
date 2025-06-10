@@ -7,7 +7,7 @@ using Vostok.Applications.Scheduled;
 namespace Vostok.Extensions.Scheduled;
 
 [PublicAPI]
-public abstract class VostokScheduledHostedService(IServiceProvider provider) : IHostedService, IDisposable
+public abstract class VostokScheduledHostedService(IServiceProvider provider) : IHostedService, IAsyncDisposable
 {
     private IScheduledActionsRunner? _runner;
     private Task? _runnerTask;
@@ -40,13 +40,14 @@ public abstract class VostokScheduledHostedService(IServiceProvider provider) : 
 
     public virtual Task DoDisposeAsync() => Task.CompletedTask;
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (_runner != null)
         {
             (_runner as IDisposable)?.Dispose();
         }
-        DoDisposeAsync().GetAwaiter().GetResult();
+        await DoDisposeAsync();
+        // ReSharper disable once MethodHasAsyncOverload
         DoDispose();
     }
 
