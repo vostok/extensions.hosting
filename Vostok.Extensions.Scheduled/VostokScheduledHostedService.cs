@@ -27,7 +27,5 @@ public abstract class VostokScheduledHostedService(IScheduledActionsBuilder buil
         base.Dispose();
 
         (_runner as IDisposable)?.Dispose();
-
-        GC.SuppressFinalize(this);
     }
 }
