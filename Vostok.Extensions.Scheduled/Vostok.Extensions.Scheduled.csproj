@@ -8,9 +8,6 @@
 
     <ItemGroup>
         <ModuleReference Include="vostok.applications.scheduled" />
-        <ModuleReference Include="vostok.hosting.abstractions" />
-        <ModuleReference Include="vostok.logging.abstractions" />
-        <ModuleReference Include="vostok.tracing.abstractions" />
     </ItemGroup>
 
     <ItemGroup>
