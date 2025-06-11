@@ -7,60 +7,27 @@ using Vostok.Applications.Scheduled;
 namespace Vostok.Extensions.Scheduled;
 
 [PublicAPI]
-public abstract class VostokScheduledHostedService(IServiceProvider provider) : IHostedService, IAsyncDisposable
+public abstract class VostokScheduledHostedService(IScheduledActionsBuilder builder) : BackgroundService
 {
-    private IScheduledActionsRunner? _runner;
-    private Task? _runnerTask;
-    private CancellationTokenSource? _cts;
+    private IScheduledActionsRunner _runner = null!;
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected sealed override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        _runner = await ScheduledApplicationHelper.InitializeAsync(provider, Setup);
-        _runnerTask = _runner.RunAsync(_cts.Token);
+        if (builder is not ScheduledActionsBuilder actualBuilder)
+            throw new InvalidOperationException(
+                $"Scheduled actions builder has unsuitable implementation type. Should be {typeof(ScheduledActionsBuilder)}, but found {builder.GetType().FullName}");
+
+        _runner = actualBuilder.BuildRunner();
+
+        return _runner.RunAsync(stoppingToken);
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public override void Dispose()
     {
-        if (_cts != null)
-        {
-            await _cts.CancelAsync();
-            try
-            {
-                if (_runnerTask != null)
-                    await _runnerTask.WaitAsync(cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                // pass
-            }
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        try
-        {
-            // ReSharper disable once MethodHasAsyncOverload
-            _cts?.Cancel();
-
-            if (_runnerTask != null)
-                await _runnerTask.WaitAsync(TimeSpan.FromSeconds(10));
-        }
-        catch (Exception)
-        {
-            // pass
-        }
+        base.Dispose();
 
         (_runner as IDisposable)?.Dispose();
-        await DoDisposeAsync();
-        // ReSharper disable once MethodHasAsyncOverload
-        DoDispose();
+
+        GC.SuppressFinalize(this);
     }
-
-    protected virtual void DoDispose() { }
-
-    protected virtual Task DoDisposeAsync() => Task.CompletedTask;
-
-    protected abstract void Setup(IScheduledActionsBuilder builder, IServiceProvider provider);
 }
