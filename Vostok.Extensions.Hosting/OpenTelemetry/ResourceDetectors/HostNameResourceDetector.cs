@@ -4,8 +4,8 @@ using Vostok.Commons.Environment;
 
 namespace Vostok.Extensions.Hosting.OpenTelemetry.ResourceDetectors;
 
-internal sealed class HostNameResourceDetector : IResourceDetector
+internal sealed class HostNameResourceDetector(string attributeName) : IResourceDetector
 {
     public Resource Detect() =>
-        new([new KeyValuePair<string, object>(VostokSemanticConventions.AttributeHostName, EnvironmentInfo.Host)]);
+        new([new KeyValuePair<string, object>(attributeName, EnvironmentInfo.Host)]);
 }
