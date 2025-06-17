@@ -7,7 +7,7 @@ using Vostok.Applications.Scheduled;
 namespace Vostok.Extensions.Scheduled;
 
 [PublicAPI]
-public abstract class VostokScheduledHostedService(IScheduledActionsBuilder builder) : BackgroundService
+public abstract class ScheduledService(IScheduledActionsBuilder builder) : BackgroundService
 {
     private IScheduledActionsRunner _runner = null!;
 
