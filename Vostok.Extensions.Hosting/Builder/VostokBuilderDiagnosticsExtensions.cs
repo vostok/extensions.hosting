@@ -43,5 +43,5 @@ public static class VostokBuilderDiagnosticsExtensions
     }
 
     private static void AddHealthTracker(this IServiceCollection services) =>
-        services.TryAddSingleton<IHealthTracker>(HealthTrackerFactory.Create);
+        services.TryAddSingleton(HealthTrackerFactory.Create);
 }

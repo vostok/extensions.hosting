@@ -6,6 +6,7 @@ using Vostok.Configuration.Abstractions;
 using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Extensions.Hosting.Helpers;
+using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics.System.Process;
 using Vostok.ZooKeeper.Client.Abstractions;
@@ -14,7 +15,7 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 internal static class HealthTrackerFactory
 {
-    public static HealthTracker Create(IServiceProvider provider)
+    public static IHealthTracker Create(IServiceProvider provider)
     {
         var log = provider.GetRequiredService<ILog>();
         var options = provider.GetRequiredService<IOptions<HealthTrackerOptions>>().Value;
@@ -34,9 +35,9 @@ internal static class HealthTrackerFactory
         }
 
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
-        if (options.AddZooKeeperConnectionCheck && zooKeeperClient is ZooKeeper.Client.ZooKeeperClient realClient)
+        if (options.AddZooKeeperConnectionCheck && zooKeeperClient is ZooKeeper.Client.ZooKeeperClient actualClient)
         {
-            var check = new ZooKeeperConnectionCheck(realClient);
+            var check = new ZooKeeperConnectionCheck(actualClient);
             provider.RegisterDisposable(healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, check));
         }
 

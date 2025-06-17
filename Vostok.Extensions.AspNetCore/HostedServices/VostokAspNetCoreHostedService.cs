@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using Vostok.Extensions.AspNetCore.Helpers;
 using Vostok.Extensions.AspNetCore.Middlewares;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.HostedServices;
@@ -58,7 +59,7 @@ internal sealed class VostokAspNetCoreHostedService(
         var urls = configuration[WebHostDefaults.ServerUrlsKey]?.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
         var serviceBeacon = provider.GetService<IServiceBeacon>();
-        if (serviceBeacon is null) // todo: serviceBeacon is not ServiceBeacon
+        if (serviceBeacon is null)
             return;
 
         if (serviceBeacon.ReplicaInfo.TryGetUrl(out var serviceBeaconUrl))
@@ -75,8 +76,11 @@ internal sealed class VostokAspNetCoreHostedService(
             return;
         }
 
-        if (addresses?.Any() == true || urls?.Any() == true)
-            throw new NotImplementedException("Dynamic configuration of Service beacon is not currently supported. Please configure port explicitly during Vostok environment setup.");
+        if (serviceBeacon is not DevNullServiceBeacon && (addresses?.Count != 0 || urls?.Length != 0))
+        {
+            throw new NotImplementedException(
+                "Dynamic configuration of Service beacon is not currently supported. Please configure port explicitly during Vostok setup.");
+        }
     }
 
     private ICollection<string>? GetServerAddresses() => server.Features.Get<IServerAddressesFeature>()?.Addresses;
