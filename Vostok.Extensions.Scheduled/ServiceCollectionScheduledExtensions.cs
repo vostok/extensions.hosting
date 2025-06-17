@@ -13,8 +13,8 @@ namespace Vostok.Extensions.Scheduled;
 [PublicAPI]
 public static class ServiceCollectionScheduledExtensions
 {
-    public static IServiceCollection AddVostokScheduledHostedService<THostedService>(this IServiceCollection services)
-        where THostedService : VostokScheduledHostedService
+    public static IServiceCollection AddScheduledService<THostedService>(this IServiceCollection services)
+        where THostedService : ScheduledService
     {
         services.AddScheduledActionsBuilder();
         services.AddHostedService<THostedService>();
@@ -22,10 +22,10 @@ public static class ServiceCollectionScheduledExtensions
         return services;
     }
 
-    public static IServiceCollection AddVostokScheduledHostedService<THostedService>(
+    public static IServiceCollection AddScheduledService<THostedService>(
         this IServiceCollection services,
         Func<IServiceProvider, THostedService> implementationFactory)
-        where THostedService : VostokScheduledHostedService
+        where THostedService : ScheduledService
     {
         services.AddScheduledActionsBuilder();
         services.AddHostedService(implementationFactory);
