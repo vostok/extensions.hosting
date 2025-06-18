@@ -49,8 +49,6 @@ internal sealed class ServiceBeaconHostedService(
         if (serviceBeacon is not ServiceBeacon actualBeacon)
             return;
 
-        // todo: ForceBeaconRegistrationWait?
-
         if (!actualBeacon.WaitForInitialRegistrationAsync().Wait(optionsValue.RegistrationWaitTimeout))
             throw new Exception($"Service beacon hasn't registered in '{optionsValue.RegistrationWaitTimeout}'.");
 

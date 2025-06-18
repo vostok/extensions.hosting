@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
+  <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
 
-    <PropertyGroup>
-        <TargetFrameworks>net8.0</TargetFrameworks>
-        <Configurations>Debug;Release</Configurations>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <ModuleReference Include="vostok.applications.scheduled" />
-    </ItemGroup>
+  <ItemGroup>
+    <ModuleReference Include="vostok.applications.scheduled" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.5" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.6" />
+  </ItemGroup>
 
 </Project>

@@ -15,6 +15,7 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 internal static class HealthTrackerFactory
 {
+    // todo: replace with .NET healthchecks
     public static IHealthTracker Create(IServiceProvider provider)
     {
         var log = provider.GetRequiredService<ILog>();
