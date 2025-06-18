@@ -109,6 +109,9 @@ internal sealed class VostokWarmup(
 
         if (substitutableLog is not null && actualLog is not null)
             substitutableLog.SubstituteWith(actualLog);
+
+        // note: We don't need static sharing after Vostok warmup.
+        InitializationLogProvider.Clear();
     }
 
     private void WarmupVostokTracer()

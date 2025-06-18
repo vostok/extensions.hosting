@@ -4,8 +4,13 @@ namespace Vostok.Extensions.Hosting.Helpers;
 
 internal static class InitializationLogProvider
 {
-    private static readonly Lazy<SubstitutableLog> Log =
-        new(() => new SubstitutableLog(), LazyThreadSafetyMode.ExecutionAndPublication);
+    private static Lazy<SubstitutableLog> log = CreateNew();
 
-    public static SubstitutableLog Get() => Log.Value;
+    public static SubstitutableLog Get() => log.Value;
+
+    public static void Clear() =>
+        log = CreateNew();
+
+    private static Lazy<SubstitutableLog> CreateNew() =>
+        new(() => new SubstitutableLog(), LazyThreadSafetyMode.ExecutionAndPublication);
 }
