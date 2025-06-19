@@ -1,11 +1,12 @@
-﻿using Vostok.Datacenters;
-using Vostok.Hosting.Abstractions.Diagnostics;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+using Vostok.Datacenters;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
 internal sealed class DatacenterWhitelistCheck(IDatacenters datacenters) : IHealthCheck
 {
-    public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken _ = default)
     {
         var localDatacenter = datacenters.GetLocalDatacenter();
         if (localDatacenter == null)
@@ -15,7 +16,7 @@ internal sealed class DatacenterWhitelistCheck(IDatacenters datacenters) : IHeal
         if (activeDatacenters.Contains(localDatacenter))
             return Task.FromResult(HealthCheckResult.Healthy());
 
-        return Task.FromResult(HealthCheckResult.Failing(
+        return Task.FromResult(HealthCheckResult.Unhealthy(
             $"Local datacenter '{localDatacenter}' is not among active datacenters " +
             $"({string.Join(", ", activeDatacenters.Select(d => $"'{d}'"))})."));
     }

@@ -15,9 +15,9 @@ public static class VostokDiagnosticsBuilderExtensions
         return builder;
     }
 
-    public static IVostokDiagnosticsBuilder ConfigureHealthTracker(
+    public static IVostokDiagnosticsBuilder ConfigureHealthChecks(
         this IVostokDiagnosticsBuilder builder,
-        Action<HealthTrackerOptions> configure)
+        Action<VostokHealthChecksOptions> configure)
     {
         builder.Services.Configure(configure);
         return builder;

@@ -14,7 +14,7 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 internal static class DiagnosticInfoFactory
 {
-    public static DiagnosticInfo Create(IServiceProvider provider)
+    public static IDiagnosticInfo Create(IServiceProvider provider)
     {
         var options = provider.GetRequiredService<IOptions<DiagnosticsInfoOptions>>().Value;
 

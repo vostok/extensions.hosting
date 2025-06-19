@@ -1,11 +1,12 @@
-﻿using Vostok.Hosting.Abstractions.Diagnostics;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Vostok.Throttling;
 
 namespace Vostok.Extensions.AspNetCore.Throttling;
 
-public sealed class ThrottlingHealthCheck(ThrottlingProvider throttlingProvider) : IHealthCheck
+internal sealed class ThrottlingHealthCheck(ThrottlingProvider throttlingProvider) : IHealthCheck
 {
-    public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken _ = default)
     {
         var info = throttlingProvider.CurrentInfo;
 

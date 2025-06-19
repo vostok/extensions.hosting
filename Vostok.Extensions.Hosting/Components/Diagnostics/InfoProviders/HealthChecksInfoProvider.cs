@@ -8,15 +8,17 @@ internal sealed class HealthChecksInfoProvider(IHealthTracker healthTracker) : I
     public object Query()
     {
         var report = healthTracker.CurrentReport;
+        var problems = report.GetProblems();
+        var timestamp = healthTracker.CurrentReportTimestamp;
 
         return new
         {
             CurrentStatus = report.Status,
-            Duration = report.Duration.ToPrettyString(),
-            Timestamp = report.Timestamp.ToString("O"),
-            Recency = (DateTime.UtcNow - report.Timestamp).ToPrettyString() + " ago",
-            report.Problems,
-            report.Checks
+            Duration = report.TotalDuration.ToPrettyString(),
+            Timestamp = timestamp.ToString("O"),
+            Recency = (DateTime.UtcNow - timestamp).ToPrettyString() + " ago",
+            problems,
+            report.Entries
         };
     }
 }

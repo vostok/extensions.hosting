@@ -1,11 +1,11 @@
-﻿using Vostok.Commons.Threading;
-using Vostok.Hosting.Abstractions.Diagnostics;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Vostok.Commons.Threading;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
 internal sealed class ThreadPoolStarvationCheck : IHealthCheck
 {
-    public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken _ = default)
     {
         var state = ThreadPoolUtility.GetPoolState();
 

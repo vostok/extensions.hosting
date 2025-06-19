@@ -1,4 +1,5 @@
-﻿using Vostok.Hosting.Abstractions.Diagnostics;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
 
@@ -8,22 +9,17 @@ internal sealed class ZooKeeperConnectionCheck(IZooKeeperClient client) : IHealt
 {
     private volatile bool _warmedUp;
 
-    public async Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken _ = default)
     {
         await WarmupIfNeededAsync().ConfigureAwait(false);
 
         var currentConnectionState = client.ConnectionState;
 
-        switch (currentConnectionState)
+        return currentConnectionState switch
         {
-            case ConnectionState.Connected:
-            case ConnectionState.ConnectedReadonly:
-                return HealthCheckResult.Healthy();
-
-            default:
-                return HealthCheckResult.Degraded($"ZooKeeper client is not connected. " +
-                                                  $"Current connection state = '{currentConnectionState}'.");
-        }
+            ConnectionState.Connected or ConnectionState.ConnectedReadonly => HealthCheckResult.Healthy(),
+            _ => HealthCheckResult.Degraded($"ZooKeeper client is not connected. Current connection state = '{currentConnectionState}'.")
+        };
     }
 
     private async Task WarmupIfNeededAsync()
