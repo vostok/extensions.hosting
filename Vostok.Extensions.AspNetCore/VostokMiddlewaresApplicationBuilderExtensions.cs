@@ -32,8 +32,6 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
         var options = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresOptions>>().Value;
         options.MiddlewaresAdded = true;
 
-        var middlewares = new List<Type>();
-
         applicationBuilder.UseBeaconPathBase();
 
         Add<HttpContextTweakMiddleware>();
@@ -46,18 +44,18 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
         Add<PingApiMiddleware>();
         Add<DiagnosticApiMiddleware>();
 
-        foreach (var middleware in middlewares)
-            applicationBuilder.UseMiddleware(middleware);
-
         return applicationBuilder;
 
         void Add<TMiddleware>()
         {
             if (options.PreVostokMiddlewares.TryGetValue(typeof(TMiddleware), out var injected))
-                middlewares.AddRange(injected);
+            {
+                foreach (var middleware in injected)
+                    applicationBuilder.UseMiddleware(middleware);
+            }
 
             if (options.IsEnabled<TMiddleware>())
-                middlewares.Add(typeof(TMiddleware));
+                applicationBuilder.UseMiddleware<TMiddleware>();
         }
     }
 
@@ -65,9 +63,7 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
     {
         var serviceBeacon = applicationBuilder.ApplicationServices.GetService<IServiceBeacon>();
 
-        if (serviceBeacon is null)
-            return;
-        if (!serviceBeacon.ReplicaInfo.TryGetUrl(out var url))
+        if (serviceBeacon is null || !serviceBeacon.ReplicaInfo.TryGetUrl(out var url))
             return;
 
         var urlPath = url.AbsolutePath;

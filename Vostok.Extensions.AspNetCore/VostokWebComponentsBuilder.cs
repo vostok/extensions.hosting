@@ -52,8 +52,7 @@ internal sealed class VostokWebComponentsBuilder(IServiceCollection services) : 
     public IVostokWebComponentsBuilder Configure(Action<VostokMiddlewaresOptions> configure) =>
         Configure<VostokMiddlewaresOptions>(configure);
 
-    private IVostokWebComponentsBuilder Configure<T>(Action<T> configure)
-        where T : class
+    private VostokWebComponentsBuilder Configure<T>(Action<T> configure) where T : class
     {
         services.Configure(configure);
         return this;

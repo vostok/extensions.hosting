@@ -17,14 +17,14 @@ internal static class HealthChecksServiceCollectionExtensions
             return;
 
         var descriptors = services.Where(service => service.ServiceType == typeof(HealthCheckService)).ToArray();
-        var defaultRegistration = descriptors.First();
+        var defaultRegistration = descriptors.First(d => d.ImplementationType is not null);
 
         var vostokRegistration = ServiceDescriptor.Singleton<HealthCheckService>(provider =>
             new VostokHealthCheckService(
                 provider.GetRequiredService<IOptions<HealthCheckServiceOptions>>(),
                 provider,
                 provider.GetRequiredService<IHealthTracker>(),
-                defaultRegistration.ImplementationType,
+                defaultRegistration.ImplementationType!,
                 provider.GetRequiredService<VostokDisposables>()));
 
         foreach (var descriptor in descriptors)

@@ -11,11 +11,11 @@ namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
 internal sealed class VostokHealthCheckService : HealthCheckService
 {
-    private readonly HealthCheckServiceOptions options;
-    private readonly IServiceProvider serviceProvider;
-    private readonly IHealthTracker vostokTracker;
-    private readonly Type defaultServiceType;
-    private readonly VostokDisposables disposables;
+    private readonly HealthCheckServiceOptions _options;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IHealthTracker _vostokTracker;
+    private readonly Type _defaultServiceType;
+    private readonly VostokDisposables _disposables;
 
     public VostokHealthCheckService(
         IOptions<HealthCheckServiceOptions> options,
@@ -24,11 +24,11 @@ internal sealed class VostokHealthCheckService : HealthCheckService
         Type defaultServiceType,
         VostokDisposables disposables)
     {
-        this.defaultServiceType = defaultServiceType ?? throw new ArgumentNullException(nameof(defaultServiceType));
-        this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        this.vostokTracker = vostokTracker ?? throw new ArgumentNullException(nameof(vostokTracker));
-        this.disposables = disposables ?? throw new ArgumentNullException(nameof(disposables));
-        this.options = (options ?? throw new ArgumentNullException(nameof(options))).Value;
+        _defaultServiceType = defaultServiceType ?? throw new ArgumentNullException(nameof(defaultServiceType));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        _vostokTracker = vostokTracker ?? throw new ArgumentNullException(nameof(vostokTracker));
+        _disposables = disposables ?? throw new ArgumentNullException(nameof(disposables));
+        _options = (options ?? throw new ArgumentNullException(nameof(options))).Value;
 
         RegisterMicrosoftChecksInVostokTracker();
     }
@@ -38,11 +38,11 @@ internal sealed class VostokHealthCheckService : HealthCheckService
 
     private void RegisterMicrosoftChecksInVostokTracker()
     {
-        foreach (var registration in options.Registrations)
+        foreach (var registration in _options.Registrations)
         {
-            var vostokCheck = registration.Factory(serviceProvider).ToVostokCheck(registration);
+            var vostokCheck = registration.Factory(_serviceProvider).ToVostokCheck(registration);
 
-            disposables.Add(vostokTracker.RegisterCheck(registration.Name, vostokCheck));
+            _disposables.Add(_vostokTracker.RegisterCheck(registration.Name, vostokCheck));
         }
     }
 
@@ -50,10 +50,10 @@ internal sealed class VostokHealthCheckService : HealthCheckService
     {
         var result = new HealthCheckServiceOptions();
 
-        foreach (var microsoftRegistration in options.Registrations)
+        foreach (var microsoftRegistration in _options.Registrations)
             result.Registrations.Add(microsoftRegistration);
 
-        foreach (var (name, check) in vostokTracker)
+        foreach (var (name, check) in _vostokTracker)
         {
             if (check.IsAdapter())
                 continue;
@@ -67,5 +67,5 @@ internal sealed class VostokHealthCheckService : HealthCheckService
     }
 
     private HealthCheckService CreateService(HealthCheckServiceOptions optionsToUse)
-        => (HealthCheckService)ActivatorUtilities.CreateInstance(serviceProvider, defaultServiceType, Options.Create(optionsToUse));
+        => (HealthCheckService)ActivatorUtilities.CreateInstance(_serviceProvider, _defaultServiceType, Options.Create(optionsToUse));
 }

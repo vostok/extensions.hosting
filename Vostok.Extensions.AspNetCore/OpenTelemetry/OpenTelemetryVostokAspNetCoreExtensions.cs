@@ -44,6 +44,7 @@ public static class OpenTelemetryVostokAspNetCoreExtensions
             if (request.ContentLength.HasValue)
                 activity.SetTag(WebSemanticConventions.AttributeHttpRequestContentLength, request.ContentLength.Value);
 
+            // note: Execute user's enrichment after all to allow him to overwrite some values if needed.
             previousRequestEnrichment?.Invoke(activity, request);
         };
 
