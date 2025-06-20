@@ -1,4 +1,5 @@
-﻿using Vostok.Hosting.Abstractions.Diagnostics;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Vostok.Metrics.System.Process;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
@@ -16,7 +17,7 @@ internal sealed class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProces
     public DnsResolutionCheck(CurrentProcessMonitor monitor) =>
         _subscription = monitor.ObserveMetrics(Period).Subscribe(this);
 
-    public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken _ = default)
     {
         if (_dnsStatistics.FailedLookupsFraction > FailedLookupsThreshold)
         {
@@ -47,7 +48,7 @@ internal sealed class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProces
         _subscription.Dispose();
     }
 
-    private struct DnsStatistics(int failedLookupsCount, int lookupsCount)
+    private readonly struct DnsStatistics(int failedLookupsCount, int lookupsCount)
     {
         public double FailedLookupsFraction => lookupsCount != 0 ? (double)failedLookupsCount / lookupsCount : 0;
     }

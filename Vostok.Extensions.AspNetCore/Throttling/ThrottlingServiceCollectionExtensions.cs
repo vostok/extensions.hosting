@@ -1,9 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
+using Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
@@ -36,6 +38,9 @@ public static class ThrottlingServiceCollectionExtensions
 
             return provider;
         });
+
+        serviceCollection.AddOptions<HealthCheckServiceOptions>()
+                         .Configure<IServiceProvider>(AddThrottlingHealthCheck);
     }
 
     private static void AddThrottlingCpuLimits(IVostokApplicationLimits applicationLimits, ThrottlingConfigurationBuilder builder)
@@ -69,9 +74,6 @@ public static class ThrottlingServiceCollectionExtensions
 
         if (options.AddThrottlingInfoProvider)
             AddThrottlingInfo(services, throttlingProvider);
-
-        if (options.AddThrottlingHealthCheck)
-            AddThrottlingHealthCheck(services, throttlingProvider);
     }
 
     private static void AddThrottlingMetrics(IServiceProvider services, ThrottlingProvider throttlingProvider)
@@ -98,14 +100,21 @@ public static class ThrottlingServiceCollectionExtensions
         services.RegisterDisposable(diagnostics.RegisterProvider(infoEntry, infoProvider));
     }
 
-    private static void AddThrottlingHealthCheck(IServiceProvider services, ThrottlingProvider throttlingProvider)
+    private static void AddThrottlingHealthCheck(
+        HealthCheckServiceOptions healthCheckServiceOptions,
+        IServiceProvider provider)
     {
-        var healthTracker = services.GetService<IHealthTracker>();
-        if (healthTracker == null)
+        var options = provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
+
+        if (!options.AddThrottlingHealthCheck)
             return;
 
-        var healthCheck = new ThrottlingHealthCheck(throttlingProvider);
+        if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)
+            return;
 
-        services.RegisterDisposable(healthTracker.RegisterCheck("Request throttling", healthCheck));
+        var check = new ThrottlingHealthCheck(actualProvider);
+
+        healthCheckServiceOptions.Registrations.Add(
+            VostokHealthCheckHelpers.RegisterWithVostokTag("Request throttling", check));
     }
 }

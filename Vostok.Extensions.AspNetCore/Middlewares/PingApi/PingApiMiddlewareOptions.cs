@@ -2,7 +2,7 @@
 
 using JetBrains.Annotations;
 
-using Vostok.Hosting.Abstractions.Diagnostics;
+using Vostok.Extensions.Hosting.Components.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 

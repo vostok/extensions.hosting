@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
 using OpenTelemetry.Trace;
@@ -12,8 +13,7 @@ using Vostok.Extensions.AspNetCore.HostedServices;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Extensions.AspNetCore.OpenTelemetry;
 using Vostok.Extensions.AspNetCore.Throttling;
-using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Abstractions.Diagnostics;
+using Vostok.Extensions.Hosting.Components.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore;
 
@@ -48,7 +48,7 @@ public static class VostokWebComponentsServiceCollectionExtensions
         services.ConfigureKestrelDefaults();
         services.AddRequestTrackingDefaults();
         services.AddThrottlingDefaults();
-        services.AddVostokHealthChecks();
+        services.AddHealthChecks();
 
         services.AddOptions<PingApiMiddlewareOptions>()
                 .Configure<IServiceProvider, IHostApplicationLifetime>((options, provider, lifetime) =>
@@ -56,9 +56,9 @@ public static class VostokWebComponentsServiceCollectionExtensions
                     options.CommitHashProvider = AssemblyCommitHashExtractor.ExtractFromEntryAssembly;
                     options.InitializationCheck = () => lifetime.ApplicationStarted.IsCancellationRequested;
 
-                    var diagnostics = provider.GetService<IVostokApplicationDiagnostics>();
-                    if (diagnostics is not null)
-                        options.HealthCheck = () => diagnostics.HealthTracker.CurrentStatus is HealthStatus.Healthy;
+                    var healthTracker = provider.GetService<IHealthTracker>();
+                    if (healthTracker is not null)
+                        options.HealthCheck = () => healthTracker.CurrentReport.Status is HealthStatus.Healthy;
                 });
 
         return new VostokWebComponentsBuilder(services);

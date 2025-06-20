@@ -1,11 +1,12 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Vostok.Configuration;
-using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 
 internal sealed class ConfigurationCheck(ConfigurationProvider configurationProvider) : IHealthCheck
 {
-    public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken _ = default)
     {
         var reason = configurationProvider.GetHealthCheckResult();
 
