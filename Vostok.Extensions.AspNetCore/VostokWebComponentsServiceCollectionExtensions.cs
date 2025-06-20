@@ -58,7 +58,7 @@ public static class VostokWebComponentsServiceCollectionExtensions
 
                     var healthTracker = provider.GetService<IHealthTracker>();
                     if (healthTracker is not null)
-                        options.HealthCheck = () => healthTracker.CurrentStatus is HealthStatus.Healthy;
+                        options.HealthCheck = () => healthTracker.CurrentReport.Status is HealthStatus.Healthy;
                 });
 
         return new VostokWebComponentsBuilder(services);

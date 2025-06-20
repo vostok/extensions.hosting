@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
+using Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
@@ -113,6 +114,7 @@ public static class ThrottlingServiceCollectionExtensions
 
         var check = new ThrottlingHealthCheck(actualProvider);
 
-        healthCheckServiceOptions.Registrations.Add(new HealthCheckRegistration("Request throttling", check, null, null));
+        healthCheckServiceOptions.Registrations.Add(
+            VostokHealthCheckHelpers.RegisterWithVostokTag("Request throttling", check));
     }
 }

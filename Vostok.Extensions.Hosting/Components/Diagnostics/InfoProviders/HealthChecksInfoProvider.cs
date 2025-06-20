@@ -16,7 +16,7 @@ internal sealed class HealthChecksInfoProvider(IHealthTracker healthTracker) : I
             CurrentStatus = report.Status,
             Duration = report.TotalDuration.ToPrettyString(),
             Timestamp = timestamp.ToString("O"),
-            Recency = (DateTime.UtcNow - timestamp).ToPrettyString() + " ago",
+            Recency = (DateTimeOffset.UtcNow - timestamp).ToPrettyString() + " ago",
             problems,
             report.Entries
         };

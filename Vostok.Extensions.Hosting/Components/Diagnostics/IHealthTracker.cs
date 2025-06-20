@@ -16,11 +16,6 @@ public interface IHealthTracker
     HealthReport CurrentReport { get; }
 
     /// <summary>
-    /// Returns current application health status from <see cref="CurrentReport"/>.
-    /// </summary>
-    HealthStatus CurrentStatus => CurrentReport.Status;
-
-    /// <summary>
     /// Timestamp the <see cref="CurrentReport"/> was published.
     /// </summary>
     DateTimeOffset CurrentReportTimestamp { get; }

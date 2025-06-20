@@ -66,5 +66,6 @@ internal static class HealthChecksRegistrationExtensions
         }
     }
 
-    private static HealthCheckRegistration Get(IHealthCheck check, string name) => new(name, check, null, null);
+    private static HealthCheckRegistration Get(IHealthCheck check, string name) =>
+        VostokHealthCheckHelpers.RegisterWithVostokTag(name, check);
 }
