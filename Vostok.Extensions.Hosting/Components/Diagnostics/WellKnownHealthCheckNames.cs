@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
+
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 /// <summary>
 /// Built-in hosting diagnostic health checks names.
 /// </summary>
-internal static class WellKnownHealthCheckNames
+[PublicAPI]
+public static class WellKnownHealthCheckNames
 {
     public const string DatacenterWhitelist = "Datacenter whitelist";
     public const string ThreadPoolStarvation = "Thread pool";
