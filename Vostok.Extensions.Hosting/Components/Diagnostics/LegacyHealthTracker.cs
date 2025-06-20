@@ -17,8 +17,10 @@ internal sealed class LegacyHealthTracker(IOptions<HealthCheckServiceOptions> op
 {
     public IDisposable RegisterCheck(string name, IHealthCheck check)
     {
-        var microsoftCheck = check.ToMicrosoftCheck();
-        options.Value.Registrations.Add(VostokHealthCheckHelpers.RegisterWithVostokTag(name, microsoftCheck));
+        var registration = VostokHealthCheckHelpers.RegisterWithVostokTag(name, check.ToMicrosoftCheck());
+        registration.Tags.Add(WellKnownHealthCheckNames.LegacyVostokHealthCheckTag);
+
+        options.Value.Registrations.Add(registration);
 
         return new EmptyDisposable();
     }

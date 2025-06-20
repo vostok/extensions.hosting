@@ -14,5 +14,7 @@ public static class WellKnownHealthCheckNames
     public const string DnsResolution = "DNS resolution";
     public const string Configuration = "Configuration";
 
+    // Tags names
     public const string VostokHealthCheckTag = "VostokHealthCheck";
+    public const string LegacyVostokHealthCheckTag = "LegacyVostokHealthCheck";
 }
