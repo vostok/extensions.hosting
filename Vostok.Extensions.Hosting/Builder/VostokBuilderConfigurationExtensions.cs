@@ -14,13 +14,10 @@ public static class VostokBuilderConfigurationExtensions
         this IVostokBuilder builder,
         Action<IVostokConfigurationBuilder>? configure = null)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddVostokConfiguration();
+        builder.Services.AddVostokConfiguration();
 
-            var configurationBuilder = new VostokConfigurationBuilder(services);
-            configure?.Invoke(configurationBuilder);
-        });
+        var configurationBuilder = new VostokConfigurationBuilder(builder.Services);
+        configure?.Invoke(configurationBuilder);
 
         return builder;
     }

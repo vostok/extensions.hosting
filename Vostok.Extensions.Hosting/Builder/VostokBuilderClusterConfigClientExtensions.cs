@@ -26,13 +26,10 @@ public static class VostokBuilderClusterConfigClientExtensions
         this IVostokBuilder builder,
         Action<ClusterConfigClientSettings, IServiceProvider>? configure = null)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddClusterConfigClient();
+        builder.Services.AddClusterConfigClient();
 
-            if (configure is not null)
-                services.AddOptions<ClusterConfigClientSettings>().Configure(configure);
-        });
+        if (configure is not null)
+            builder.Services.AddOptions<ClusterConfigClientSettings>().Configure(configure);
 
         return builder;
     }

@@ -18,22 +18,17 @@ public static class ServiceBeaconBuilderExtensions
 {
     public static IVostokBuilder WithServiceBeacon(this IVostokBuilder builder, Action<IServiceBeaconBuilder> configure)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddServiceBeacon();
+        builder.Services.AddServiceBeacon();
 
-            var serviceBeaconBuilder = new ServiceBeaconBuilder(services);
-            configure(serviceBeaconBuilder);
-        });
+        var serviceBeaconBuilder = new ServiceBeaconBuilder(builder.Services);
+        configure(serviceBeaconBuilder);
 
         return builder;
     }
 
     public static IVostokBuilder DisableServiceBeacon(this IVostokBuilder builder)
     {
-        builder.ConfigureServices(services =>
-            services.Replace(ServiceDescriptor.Singleton(ServiceBeaconFactory.CreateDisabled)));
-
+        builder.Services.Replace(ServiceDescriptor.Singleton(ServiceBeaconFactory.CreateDisabled));
         return builder;
     }
 
@@ -50,13 +45,10 @@ public static class ServiceBeaconBuilderExtensions
         this IVostokBuilder builder,
         Action<ServiceLocatorSettings, IServiceProvider>? configure = null)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddServiceLocator();
+        builder.Services.AddServiceLocator();
 
-            if (configure is not null)
-                services.AddOptions<ServiceLocatorSettings>().Configure(configure);
-        });
+        if (configure is not null)
+            builder.Services.AddOptions<ServiceLocatorSettings>().Configure(configure);
 
         return builder;
     }
@@ -65,22 +57,17 @@ public static class ServiceBeaconBuilderExtensions
         this IVostokBuilder builder,
         Action<IZooKeeperClientBuilder> configure)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddZooKeeperClient();
+        builder.Services.AddZooKeeperClient();
 
-            var zooKeeperClientBuilder = new ZooKeeperClientBuilder(services);
-            configure(zooKeeperClientBuilder);
-        });
+        var zooKeeperClientBuilder = new ZooKeeperClientBuilder(builder.Services);
+        configure(zooKeeperClientBuilder);
 
         return builder;
     }
 
     public static IVostokBuilder DisableZooKeeper(this IVostokBuilder builder)
     {
-        builder.ConfigureServices(services =>
-            services.Replace(ServiceDescriptor.Singleton<IZooKeeperClient>(new DevNullZooKeeperClient())));
-
+        builder.Services.Replace(ServiceDescriptor.Singleton<IZooKeeperClient>(new DevNullZooKeeperClient()));
         return builder;
     }
 

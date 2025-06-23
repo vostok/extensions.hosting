@@ -25,13 +25,10 @@ public static class VostokBuilderApplicationReplicationExtensions
         this IVostokBuilder builder,
         Action<ApplicationReplicationOptions, IServiceProvider>? configure = null)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddApplicationReplication();
+        builder.Services.AddApplicationReplication();
 
-            if (configure is not null)
-                services.AddOptions<ApplicationReplicationOptions>().Configure(configure);
-        });
+        if (configure is not null)
+            builder.Services.AddOptions<ApplicationReplicationOptions>().Configure(configure);
 
         return builder;
     }

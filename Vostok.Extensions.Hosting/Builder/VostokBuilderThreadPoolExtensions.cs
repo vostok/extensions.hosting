@@ -14,13 +14,13 @@ public static class VostokBuilderThreadPoolExtensions
         bool configureThreadPool,
         int? threadPoolTuningMultiplier = null)
     {
-        builder.ConfigureServices(services => services.Configure<ThreadPoolOptions>(options =>
+        builder.Services.Configure<ThreadPoolOptions>(options =>
         {
             options.ConfigureThreadPool = configureThreadPool;
 
             if (configureThreadPool && threadPoolTuningMultiplier.HasValue)
                 options.ThreadPoolTuningMultiplier = threadPoolTuningMultiplier.Value;
-        }));
+        });
 
         return builder;
     }

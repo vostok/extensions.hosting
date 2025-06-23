@@ -27,15 +27,11 @@ public static class VostokBuilderTelemetryExtensions
 
     public static IVostokBuilder WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
     {
-        builder.ConfigureServices(services =>
-        {
-            var descriptor =
-                ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
-            services.TryAddEnumerable(descriptor);
+        var descriptor = ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
+        builder.Services.TryAddEnumerable(descriptor);
 
-            var vostokLogBuilder = new VostokLogBuilder(services);
-            configure(vostokLogBuilder);
-        });
+        var vostokLogBuilder = new VostokLogBuilder(builder.Services);
+        configure(vostokLogBuilder);
 
         return builder;
     }
@@ -44,13 +40,10 @@ public static class VostokBuilderTelemetryExtensions
         this IVostokBuilder builder,
         Action<IVostokMetricsBuilder>? configure = null)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddMetrics();
+        builder.Services.AddMetrics();
 
-            var metricsBuilder = new VostokMetricsBuilder(services);
-            configure?.Invoke(metricsBuilder);
-        });
+        var metricsBuilder = new VostokMetricsBuilder(builder.Services);
+        configure?.Invoke(metricsBuilder);
 
         return builder;
     }
@@ -65,7 +58,7 @@ public static class VostokBuilderTelemetryExtensions
         var activitySourceTracer = new ActivitySourceTracer(settings);
         TracerProvider.Configure(activitySourceTracer, true);
 
-        builder.ConfigureServices(services => services.TryAddSingleton<ITracer>(activitySourceTracer));
+        builder.Services.TryAddSingleton<ITracer>(activitySourceTracer);
     }
 
     internal static void WithVostokLogAdapter(this IVostokBuilder builder)
@@ -73,16 +66,13 @@ public static class VostokBuilderTelemetryExtensions
         var substitutableLog = InitializationLogProvider.Get();
         LogProvider.Configure(substitutableLog, true);
 
-        builder.ConfigureServices(services =>
+        builder.Services.TryAddSingleton<ILog>(substitutableLog);
+        builder.Services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>
         {
-            services.TryAddSingleton<ILog>(substitutableLog);
-            services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>
-            {
-                var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
-                                              .CreateLogger(string.Empty);
+            var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
+                                          .CreateLogger(string.Empty);
 
-                return new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
-            });
+            return new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
         });
     }
 

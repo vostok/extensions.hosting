@@ -13,21 +13,39 @@ public static class VostokBuilderHostExtensions
     {
         ArgumentNullException.ThrowIfNull(hostApplicationBuilder);
 
-        var vostok = new HostApplicationVostokBuilder(hostApplicationBuilder);
+        var vostok = new VostokBuilder(hostApplicationBuilder.Services);
         if (!VostokBuilderCoreServices.IsAlreadyAdded(hostApplicationBuilder.Properties))
             VostokBuilderCoreServices.AddCoreServices(vostok, hostApplicationBuilder.Properties);
 
         return vostok;
     }
 
-    public static IVostokBuilder UseVostok(this IHostBuilder hostBuilder)
+    public static IHostBuilder UseVostok(
+        this IHostBuilder hostBuilder,
+        Action<IVostokBuilder>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(hostBuilder);
 
-        var vostok = new HostVostokBuilder(hostBuilder);
-        if (!VostokBuilderCoreServices.IsAlreadyAdded(hostBuilder.Properties))
-            VostokBuilderCoreServices.AddCoreServices(vostok, hostBuilder.Properties);
+        hostBuilder.UseVostok((_, builder) => configure?.Invoke(builder));
 
-        return vostok;
+        return hostBuilder;
+    }
+
+    public static IHostBuilder UseVostok(
+        this IHostBuilder hostBuilder,
+        Action<HostBuilderContext, IVostokBuilder> configure)
+    {
+        ArgumentNullException.ThrowIfNull(hostBuilder);
+
+        hostBuilder.ConfigureServices((context, services) =>
+        {
+            var vostok = new VostokBuilder(services);
+            if (!VostokBuilderCoreServices.IsAlreadyAdded(hostBuilder.Properties))
+                VostokBuilderCoreServices.AddCoreServices(vostok, hostBuilder.Properties);
+
+            configure.Invoke(context, vostok);
+        });
+
+        return hostBuilder;
     }
 }

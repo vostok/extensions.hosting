@@ -24,13 +24,10 @@ public static class VostokBuilderApplicationLimitsExtensions
         this IVostokBuilder builder,
         Action<ApplicationLimitsOptions, IServiceProvider>? configure = null)
     {
-        builder.ConfigureServices(services =>
-        {
-            services.AddApplicationLimits();
+        builder.Services.AddApplicationLimits();
 
-            if (configure is not null)
-                services.AddOptions<ApplicationLimitsOptions>().Configure(configure);
-        });
+        if (configure is not null)
+            builder.Services.AddOptions<ApplicationLimitsOptions>().Configure(configure);
 
         return builder;
     }
