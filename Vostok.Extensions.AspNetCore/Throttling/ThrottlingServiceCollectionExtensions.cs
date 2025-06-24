@@ -16,7 +16,7 @@ using Vostok.Throttling.Quotas;
 
 namespace Vostok.Extensions.AspNetCore.Throttling;
 
-public static class ThrottlingServiceCollectionExtensions
+internal static class ThrottlingServiceCollectionExtensions
 {
     public static void AddThrottlingDefaults(this IServiceCollection serviceCollection)
     {
