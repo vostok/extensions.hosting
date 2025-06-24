@@ -13,6 +13,7 @@ using Vostok.Extensions.AspNetCore.HostedServices;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Extensions.AspNetCore.OpenTelemetry;
 using Vostok.Extensions.AspNetCore.Throttling;
+using Vostok.Extensions.Hosting;
 using Vostok.Extensions.Hosting.Components.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore;
@@ -28,15 +29,27 @@ namespace Vostok.Extensions.AspNetCore;
 ///     <item>Setup request tracking defaults</item>
 ///     <item>Setup throttling defaults</item>
 /// </list>
-/// <para>Use returning <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
+/// <para>Use provided <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
 /// </summary>
 [PublicAPI]
-public static class VostokWebComponentsServiceCollectionExtensions
+public static class VostokBuilderWebComponentsExtensions
 {
-    /// <inheritdoc cref="VostokWebComponentsServiceCollectionExtensions"/>
-    public static IVostokWebComponentsBuilder AddVostokWebComponents(this IServiceCollection services)
+    /// <inheritdoc cref="VostokBuilderWebComponentsExtensions"/>
+    public static IVostokBuilder WithWebComponents(
+        this IVostokBuilder vostok,
+        Action<IVostokWebComponentsBuilder>? configure = null)
     {
-        // todo: idempotency
+        if (!vostok.CheckComponentAlreadyAdded("WebComponents"))
+            vostok.Services.AddWebComponents();
+
+        var webComponentsBuilder = new VostokWebComponentsBuilder(vostok.Services);
+        configure?.Invoke(webComponentsBuilder);
+
+        return vostok;
+    }
+
+    private static void AddWebComponents(this IServiceCollection services)
+    {
         services.ConfigureKestrelDefaults();
         services.ConfigureAspNetCoreTelemetry();
         services.AddRequestTrackingDefaults();
@@ -56,8 +69,6 @@ public static class VostokWebComponentsServiceCollectionExtensions
                     if (healthTracker is not null)
                         options.HealthCheck = () => healthTracker.CurrentReport.Status is HealthStatus.Healthy;
                 });
-
-        return new VostokWebComponentsBuilder(services);
     }
 
     private static void ConfigureKestrelDefaults(this IServiceCollection services) =>
