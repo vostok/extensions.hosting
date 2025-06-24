@@ -51,7 +51,8 @@ internal static class ServiceBeaconFactory
         var applicationIdentity = provider.GetRequiredService<IVostokApplicationIdentity>();
 
         var logsDirectory = GetLogsDirectory(provider);
-        var replicaCustomizations = provider.GetServices<ReplicaInfoSetup>();
+        var replicaCustomizations = provider.GetRequiredService<IOptions<ServiceBeaconMiscellaneousOptions>>().Value
+                                            .ReplicaCustomizations;
 
         return new ServiceBeacon(
             zooKeeperClient,

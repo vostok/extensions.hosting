@@ -49,17 +49,19 @@ public static class ServiceBeaconBuilderExtensions
 
     public static IServiceBeaconBuilder CustomizeReplicaInfo(
         this IServiceBeaconBuilder builder,
-        ReplicaInfoSetup configure)
-    {
-        builder.Services.AddSingleton(configure);
-        return builder;
-    }
+        ReplicaInfoSetup configure) =>
+        builder.CustomizeReplicaInfo(_ => configure);
 
     public static IServiceBeaconBuilder CustomizeReplicaInfo(
         this IServiceBeaconBuilder builder,
         Func<IServiceProvider, ReplicaInfoSetup> implementationFactory)
     {
-        builder.Services.AddSingleton(implementationFactory);
+        builder.Services.AddOptions<ServiceBeaconMiscellaneousOptions>()
+               .Configure<IServiceProvider>((options, provider) =>
+               {
+                   options.ReplicaCustomizations.Add(implementationFactory(provider));
+               });
+
         return builder;
     }
 

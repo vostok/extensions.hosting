@@ -10,28 +10,31 @@ namespace Vostok.Extensions.Hosting.Builder;
 internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilder
 {
     public IServiceCollection Services { get; } = services;
+}
 
-    public void AddCoreServices()
+internal static class VostokBuilderCoreServices
+{
+    private const string AddedKey = "_VostokCoreServicesAdded";
+
+    public static bool IsAlreadyAdded(IDictionary<object, object> hostProperties) =>
+        hostProperties.TryGetValue(AddedKey, out var value) && value is true;
+
+    public static void AddCoreServices(IVostokBuilder vostok, IDictionary<object, object> hostProperties)
     {
-        Services.TryAddSingleton<VostokAddedMarker>();
+        hostProperties[AddedKey] = true;
 
-        Services.TryAddSingleton<VostokWarmup>();
-        Services.DecorateHostLifetime();
+        vostok.Services.TryAddSingleton<VostokWarmup>();
+        vostok.Services.DecorateHostLifetime();
 
-        this.WithApplicationIdentity();
-        this.WithVostokLogAdapter();
-        this.WithVostokTracerAdapter();
+        vostok.WithApplicationIdentity();
+        vostok.WithVostokLogAdapter();
+        vostok.WithVostokTracerAdapter();
 
-        this.ConfigureOpenTelemetryForVostok();
+        vostok.Services.TryAddSingleton<VostokDisposables>();
+        vostok.Services.TryAddSingleton(ServiceNameProvider.Create);
 
-        Services.TryAddSingleton<VostokDisposables>();
-        Services.TryAddSingleton(ServiceNameProvider.Create);
+        vostok.ConfigureOpenTelemetryForVostok();
 
         VostokTypeConverterHelper.AddVostokAttributes();
     }
-
-    public bool IsAlreadyAdded() =>
-        Services.Any(service => service.ServiceType == typeof(VostokAddedMarker));
-
-    private sealed class VostokAddedMarker;
 }
