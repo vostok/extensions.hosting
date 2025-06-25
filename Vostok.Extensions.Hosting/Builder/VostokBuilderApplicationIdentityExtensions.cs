@@ -13,25 +13,25 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderApplicationIdentityExtensions
 {
     public static IVostokBuilder WithApplicationIdentity(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ApplicationIdentityOptions> configure)
     {
-        builder.WithApplicationIdentity((options, _) => configure(options));
+        vostok.WithApplicationIdentity((options, _) => configure(options));
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder WithApplicationIdentity(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ApplicationIdentityOptions, IServiceProvider>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("ApplicationIdentity"))
-            builder.Services.AddApplicationIdentity();
+        if (!vostok.CheckComponentAlreadyAdded("ApplicationIdentity"))
+            vostok.Services.AddApplicationIdentity();
 
         if (configure is not null)
-            builder.Services.AddOptions<ApplicationIdentityOptions>().Configure(configure);
+            vostok.Services.AddOptions<ApplicationIdentityOptions>().Configure(configure);
 
-        return builder;
+        return vostok;
     }
 
     private static void AddApplicationIdentity(this IServiceCollection services)

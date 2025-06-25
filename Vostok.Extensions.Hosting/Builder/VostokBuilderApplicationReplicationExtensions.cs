@@ -13,25 +13,25 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderApplicationReplicationExtensions
 {
     public static IVostokBuilder WithApplicationReplicationInfo(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ApplicationReplicationOptions> configure)
     {
-        builder.WithApplicationReplicationInfo((options, _) => configure(options));
+        vostok.WithApplicationReplicationInfo((options, _) => configure(options));
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder WithApplicationReplicationInfo(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ApplicationReplicationOptions, IServiceProvider>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("ApplicationReplication"))
-            builder.Services.AddApplicationReplication();
+        if (!vostok.CheckComponentAlreadyAdded("ApplicationReplication"))
+            vostok.Services.AddApplicationReplication();
 
         if (configure is not null)
-            builder.Services.AddOptions<ApplicationReplicationOptions>().Configure(configure);
+            vostok.Services.AddOptions<ApplicationReplicationOptions>().Configure(configure);
 
-        return builder;
+        return vostok;
     }
 
     private static void AddApplicationReplication(this IServiceCollection services)

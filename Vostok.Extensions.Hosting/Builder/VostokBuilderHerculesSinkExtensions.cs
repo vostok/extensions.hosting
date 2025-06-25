@@ -14,22 +14,22 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderHerculesSinkExtensions
 {
     public static IVostokBuilder WithHerculesSink(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<IHerculesSinkBuilder>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("HerculesSink"))
-            builder.Services.AddHerculesSink();
+        if (!vostok.CheckComponentAlreadyAdded("HerculesSink"))
+            vostok.Services.AddHerculesSink();
 
-        var sinkBuilder = new HerculesSinkBuilder(builder.Services);
+        var sinkBuilder = new HerculesSinkBuilder(vostok.Services);
         configure?.Invoke(sinkBuilder);
 
-        return builder;
+        return vostok;
     }
 
-    public static IVostokBuilder DisableHerculesSink(this IVostokBuilder builder)
+    public static IVostokBuilder DisableHerculesSink(this IVostokBuilder vostok)
     {
-        builder.Services.Replace(ServiceDescriptor.Singleton<IHerculesSink>(new DevNullHerculesSink()));
-        return builder;
+        vostok.Services.Replace(ServiceDescriptor.Singleton<IHerculesSink>(new DevNullHerculesSink()));
+        return vostok;
     }
 
     private static void AddHerculesSink(this IServiceCollection services)

@@ -17,15 +17,15 @@ namespace Vostok.Extensions.Hosting.Builder;
 [PublicAPI]
 public static class ServiceBeaconBuilderExtensions
 {
-    public static IVostokBuilder WithServiceBeacon(this IVostokBuilder builder, Action<IServiceBeaconBuilder> configure)
+    public static IVostokBuilder WithServiceBeacon(this IVostokBuilder vostok, Action<IServiceBeaconBuilder> configure)
     {
-        if (!builder.CheckComponentAlreadyAdded("ServiceBeacon"))
-            builder.Services.AddServiceBeacon();
+        if (!vostok.CheckComponentAlreadyAdded("ServiceBeacon"))
+            vostok.Services.AddServiceBeacon();
 
-        var serviceBeaconBuilder = new ServiceBeaconBuilder(builder.Services);
+        var serviceBeaconBuilder = new ServiceBeaconBuilder(vostok.Services);
         configure(serviceBeaconBuilder);
 
-        return builder;
+        return vostok;
     }
 
     /// <summary>
@@ -34,51 +34,51 @@ public static class ServiceBeaconBuilderExtensions
     /// <remarks>
     /// Configuration done with <see cref="IServiceBeaconBuilder"/> will still be applied and <see cref="IReplicaInfo"/> can still be consumed from disabled beacon.
     /// </remarks>
-    public static IVostokBuilder DisableServiceBeacon(this IVostokBuilder builder)
+    public static IVostokBuilder DisableServiceBeacon(this IVostokBuilder vostok)
     {
-        builder.Services.Replace(ServiceDescriptor.Singleton(ServiceBeaconFactory.CreateDisabled));
-        return builder;
+        vostok.Services.Replace(ServiceDescriptor.Singleton(ServiceBeaconFactory.CreateDisabled));
+        return vostok;
     }
 
     public static IVostokBuilder WithServiceLocator(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ServiceLocatorSettings> configure)
     {
-        builder.WithServiceLocator((settings, _) => configure(settings));
+        vostok.WithServiceLocator((settings, _) => configure(settings));
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder WithServiceLocator(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ServiceLocatorSettings, IServiceProvider>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("ServiceLocator"))
-            builder.Services.AddServiceLocator();
+        if (!vostok.CheckComponentAlreadyAdded("ServiceLocator"))
+            vostok.Services.AddServiceLocator();
 
         if (configure is not null)
-            builder.Services.AddOptions<ServiceLocatorSettings>().Configure(configure);
+            vostok.Services.AddOptions<ServiceLocatorSettings>().Configure(configure);
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder WithZooKeeperClient(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<IZooKeeperClientBuilder> configure)
     {
-        if (!builder.CheckComponentAlreadyAdded("ZooKeeperClient"))
-            builder.Services.AddZooKeeperClient();
+        if (!vostok.CheckComponentAlreadyAdded("ZooKeeperClient"))
+            vostok.Services.AddZooKeeperClient();
 
-        var zooKeeperClientBuilder = new ZooKeeperClientBuilder(builder.Services);
+        var zooKeeperClientBuilder = new ZooKeeperClientBuilder(vostok.Services);
         configure(zooKeeperClientBuilder);
 
-        return builder;
+        return vostok;
     }
 
-    public static IVostokBuilder DisableZooKeeper(this IVostokBuilder builder)
+    public static IVostokBuilder DisableZooKeeper(this IVostokBuilder vostok)
     {
-        builder.Services.Replace(ServiceDescriptor.Singleton<IZooKeeperClient>(new DevNullZooKeeperClient()));
-        return builder;
+        vostok.Services.Replace(ServiceDescriptor.Singleton<IZooKeeperClient>(new DevNullZooKeeperClient()));
+        return vostok;
     }
 
     private static void AddServiceBeacon(this IServiceCollection services)

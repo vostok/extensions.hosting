@@ -13,24 +13,24 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderSystemMetricsExtensions
 {
     public static IVostokBuilder WithSystemMetrics(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<SystemMetricsOptions> configure)
     {
-        builder.WithSystemMetrics((options, _) => configure(options));
-        return builder;
+        vostok.WithSystemMetrics((options, _) => configure(options));
+        return vostok;
     }
 
     public static IVostokBuilder WithSystemMetrics(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<SystemMetricsOptions, IServiceProvider>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("SystemMetrics"))
-            builder.Services.AddSystemMetrics();
+        if (!vostok.CheckComponentAlreadyAdded("SystemMetrics"))
+            vostok.Services.AddSystemMetrics();
 
         if (configure is not null)
-            builder.Services.AddOptions<SystemMetricsOptions>().Configure(configure);
+            vostok.Services.AddOptions<SystemMetricsOptions>().Configure(configure);
 
-        return builder;
+        return vostok;
     }
 
     private static void AddSystemMetrics(this IServiceCollection services)

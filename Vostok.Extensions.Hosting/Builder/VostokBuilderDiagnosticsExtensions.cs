@@ -19,22 +19,22 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderDiagnosticsExtensions
 {
     public static IVostokBuilder WithDiagnostics(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<IVostokDiagnosticsBuilder>? configure = null)
     {
         // todo (bogdanov.n) 17.02.2025: A `DiagnosticMetricsEnabled` check could take place here
 
-        if (!builder.CheckComponentAlreadyAdded("Diagnostics"))
+        if (!vostok.CheckComponentAlreadyAdded("Diagnostics"))
         {
-            builder.Services.AddDiagnosticInfo();
-            builder.Services.AddHealthTracker();
-            builder.Services.AddDiagnosticsHub();
+            vostok.Services.AddDiagnosticInfo();
+            vostok.Services.AddHealthTracker();
+            vostok.Services.AddDiagnosticsHub();
         }
 
-        var diagnosticsBuilder = new VostokDiagnosticsBuilder(builder.Services);
+        var diagnosticsBuilder = new VostokDiagnosticsBuilder(vostok.Services);
         configure?.Invoke(diagnosticsBuilder);
 
-        return builder;
+        return vostok;
     }
 
     private static void AddDiagnosticInfo(this IServiceCollection services)

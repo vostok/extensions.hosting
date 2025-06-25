@@ -10,11 +10,11 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderThreadPoolExtensions
 {
     public static IVostokBuilder ConfigureThreadPool(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         bool configureThreadPool,
         int? threadPoolTuningMultiplier = null)
     {
-        builder.Services.Configure<ThreadPoolOptions>(options =>
+        vostok.Services.Configure<ThreadPoolOptions>(options =>
         {
             options.ConfigureThreadPool = configureThreadPool;
 
@@ -22,6 +22,6 @@ public static class VostokBuilderThreadPoolExtensions
                 options.ThreadPoolTuningMultiplier = threadPoolTuningMultiplier.Value;
         });
 
-        return builder;
+        return vostok;
     }
 }

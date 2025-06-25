@@ -13,11 +13,11 @@ namespace Vostok.Extensions.Hosting.OpenTelemetry;
 
 internal static class VostokOpenTelemetryServicesExtensions
 {
-    public static void ConfigureOpenTelemetryForVostok(this IVostokBuilder builder) =>
-        builder.Services
-               .ConfigureOpenTelemetryTracerProvider(Configure)
-               .ConfigureOpenTelemetryMeterProvider(Configure)
-               .ConfigureOpenTelemetryLoggerProvider(Configure);
+    public static void ConfigureOpenTelemetryForVostok(this IVostokBuilder vostok) =>
+        vostok.Services
+              .ConfigureOpenTelemetryTracerProvider(Configure)
+              .ConfigureOpenTelemetryMeterProvider(Configure)
+              .ConfigureOpenTelemetryLoggerProvider(Configure);
 
     private static void Configure(TracerProviderBuilder tracing) =>
         tracing.AddSource(TracingConstants.VostokTracerActivitySourceName)

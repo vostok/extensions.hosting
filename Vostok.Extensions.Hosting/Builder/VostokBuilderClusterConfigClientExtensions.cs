@@ -14,32 +14,32 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderClusterConfigClientExtensions
 {
     public static IVostokBuilder WithClusterConfigClient(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ClusterConfigClientSettings> configure)
     {
-        builder.WithClusterConfigClient((options, _) => configure(options));
+        vostok.WithClusterConfigClient((options, _) => configure(options));
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder WithClusterConfigClient(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ClusterConfigClientSettings, IServiceProvider>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("ClusterConfigClient"))
-            builder.Services.AddClusterConfigClient();
+        if (!vostok.CheckComponentAlreadyAdded("ClusterConfigClient"))
+            vostok.Services.AddClusterConfigClient();
 
         if (configure is not null)
-            builder.Services.AddOptions<ClusterConfigClientSettings>().Configure(configure);
+            vostok.Services.AddOptions<ClusterConfigClientSettings>().Configure(configure);
 
-        return builder;
+        return vostok;
     }
 
     /// <summary>
     /// Disables <see cref="IClusterConfigClient"/> altogether.
     /// </summary>
-    public static IVostokBuilder DisableClusterConfig(this IVostokBuilder builder) =>
-        builder.WithClusterConfigClient(settings =>
+    public static IVostokBuilder DisableClusterConfig(this IVostokBuilder vostok) =>
+        vostok.WithClusterConfigClient(settings =>
         {
             settings.EnableLocalSettings = false;
             settings.EnableClusterSettings = false;
@@ -48,8 +48,8 @@ public static class VostokBuilderClusterConfigClientExtensions
     /// <summary>
     /// Enables <see cref="IClusterConfigClient"/> in case it was disabled.
     /// </summary>
-    public static IVostokBuilder EnableClusterConfig(this IVostokBuilder builder) =>
-        builder.WithClusterConfigClient(settings =>
+    public static IVostokBuilder EnableClusterConfig(this IVostokBuilder vostok) =>
+        vostok.WithClusterConfigClient(settings =>
         {
             settings.EnableLocalSettings = true;
             settings.EnableClusterSettings = true;

@@ -12,25 +12,25 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderApplicationLimitsExtensions
 {
     public static IVostokBuilder WithApplicationLimits(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ApplicationLimitsOptions> configure)
     {
-        builder.WithApplicationLimits((options, _) => configure(options));
+        vostok.WithApplicationLimits((options, _) => configure(options));
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder WithApplicationLimits(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<ApplicationLimitsOptions, IServiceProvider>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("ApplicationLimits"))
-            builder.Services.AddApplicationLimits();
+        if (!vostok.CheckComponentAlreadyAdded("ApplicationLimits"))
+            vostok.Services.AddApplicationLimits();
 
         if (configure is not null)
-            builder.Services.AddOptions<ApplicationLimitsOptions>().Configure(configure);
+            vostok.Services.AddOptions<ApplicationLimitsOptions>().Configure(configure);
 
-        return builder;
+        return vostok;
     }
 
     private static void AddApplicationLimits(this IServiceCollection services) =>

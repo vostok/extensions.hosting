@@ -11,25 +11,25 @@ namespace Vostok.Extensions.Hosting.Builder;
 public static class VostokBuilderDatacentersExtensions
 {
     public static IVostokBuilder WithDatacenters(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<DatacentersOptions> configure)
     {
-        builder.WithDatacenters((options, _) => configure(options));
+        vostok.WithDatacenters((options, _) => configure(options));
 
-        return builder;
+        return vostok;
     }
 
     public static IVostokBuilder WithDatacenters(
-        this IVostokBuilder builder,
+        this IVostokBuilder vostok,
         Action<DatacentersOptions, IServiceProvider>? configure = null)
     {
-        if (!builder.CheckComponentAlreadyAdded("Datacenters"))
-            builder.Services.AddDatacenters();
+        if (!vostok.CheckComponentAlreadyAdded("Datacenters"))
+            vostok.Services.AddDatacenters();
 
         if (configure is not null)
-            builder.Services.AddOptions<DatacentersOptions>().Configure(configure);
+            vostok.Services.AddOptions<DatacentersOptions>().Configure(configure);
 
-        return builder;
+        return vostok;
     }
 
     private static void AddDatacenters(this IServiceCollection services) =>
