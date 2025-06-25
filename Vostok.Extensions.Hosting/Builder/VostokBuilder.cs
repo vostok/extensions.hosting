@@ -12,7 +12,7 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
     public IServiceCollection Services { get; } = services;
 }
 
-internal static class VostokBuilderExtensions
+internal static class VostokBuilderCoreExtensions
 {
     public static void AddCoreServices(IVostokBuilder vostok)
     {

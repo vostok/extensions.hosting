@@ -4,48 +4,27 @@ using Vostok.Extensions.Hosting;
 using Vostok.Extensions.Hosting.Builder;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.Hosting;
+namespace Microsoft.Extensions.DependencyInjection;
 
 [PublicAPI]
 public static class VostokBuilderHostExtensions
 {
-    public static IVostokBuilder UseVostok(this IHostApplicationBuilder hostApplicationBuilder)
+    /// <summary>
+    /// Configures the service collection to host Vostok components.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns><see cref="IVostokBuilder"/> to configure components.</returns>
+    /// <remarks>
+    /// Calling this method multiple times on the same <see cref="IServiceCollection"/> instance will result in one <see cref="IVostokBuilder"/> configured.
+    /// </remarks>
+    public static IVostokBuilder AddVostok(this IServiceCollection services)
     {
-        ArgumentNullException.ThrowIfNull(hostApplicationBuilder);
+        ArgumentNullException.ThrowIfNull(services);
 
-        var vostok = new VostokBuilder(hostApplicationBuilder.Services);
+        var vostok = new VostokBuilder(services);
         if (!vostok.CheckComponentAlreadyAdded("CoreServices"))
-            VostokBuilderExtensions.AddCoreServices(vostok);
+            VostokBuilderCoreExtensions.AddCoreServices(vostok);
 
         return vostok;
-    }
-
-    public static IHostBuilder UseVostok(
-        this IHostBuilder hostBuilder,
-        Action<IVostokBuilder>? configure = null)
-    {
-        ArgumentNullException.ThrowIfNull(hostBuilder);
-
-        hostBuilder.UseVostok((_, builder) => configure?.Invoke(builder));
-
-        return hostBuilder;
-    }
-
-    public static IHostBuilder UseVostok(
-        this IHostBuilder hostBuilder,
-        Action<HostBuilderContext, IVostokBuilder> configure)
-    {
-        ArgumentNullException.ThrowIfNull(hostBuilder);
-
-        hostBuilder.ConfigureServices((context, services) =>
-        {
-            var vostok = new VostokBuilder(services);
-            if (!vostok.CheckComponentAlreadyAdded("CoreServices"))
-                VostokBuilderExtensions.AddCoreServices(vostok);
-
-            configure.Invoke(context, vostok);
-        });
-
-        return hostBuilder;
     }
 }
