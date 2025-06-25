@@ -17,7 +17,8 @@ public static class VostokBuilderHerculesSinkExtensions
         this IVostokBuilder builder,
         Action<IHerculesSinkBuilder>? configure = null)
     {
-        builder.Services.AddHerculesSink();
+        if (!builder.CheckComponentAlreadyAdded("HerculesSink"))
+            builder.Services.AddHerculesSink();
 
         var sinkBuilder = new HerculesSinkBuilder(builder.Services);
         configure?.Invoke(sinkBuilder);

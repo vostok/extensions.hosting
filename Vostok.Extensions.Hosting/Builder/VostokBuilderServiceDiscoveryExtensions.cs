@@ -18,7 +18,8 @@ public static class ServiceBeaconBuilderExtensions
 {
     public static IVostokBuilder WithServiceBeacon(this IVostokBuilder builder, Action<IServiceBeaconBuilder> configure)
     {
-        builder.Services.AddServiceBeacon();
+        if (!builder.CheckComponentAlreadyAdded("ServiceBeacon"))
+            builder.Services.AddServiceBeacon();
 
         var serviceBeaconBuilder = new ServiceBeaconBuilder(builder.Services);
         configure(serviceBeaconBuilder);
@@ -45,7 +46,8 @@ public static class ServiceBeaconBuilderExtensions
         this IVostokBuilder builder,
         Action<ServiceLocatorSettings, IServiceProvider>? configure = null)
     {
-        builder.Services.AddServiceLocator();
+        if (!builder.CheckComponentAlreadyAdded("ServiceLocator"))
+            builder.Services.AddServiceLocator();
 
         if (configure is not null)
             builder.Services.AddOptions<ServiceLocatorSettings>().Configure(configure);
@@ -57,7 +59,8 @@ public static class ServiceBeaconBuilderExtensions
         this IVostokBuilder builder,
         Action<IZooKeeperClientBuilder> configure)
     {
-        builder.Services.AddZooKeeperClient();
+        if (!builder.CheckComponentAlreadyAdded("ZooKeeperClient"))
+            builder.Services.AddZooKeeperClient();
 
         var zooKeeperClientBuilder = new ZooKeeperClientBuilder(builder.Services);
         configure(zooKeeperClientBuilder);

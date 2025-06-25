@@ -14,8 +14,8 @@ public static class VostokBuilderHostExtensions
         ArgumentNullException.ThrowIfNull(hostApplicationBuilder);
 
         var vostok = new VostokBuilder(hostApplicationBuilder.Services);
-        if (!VostokBuilderCoreServices.IsAlreadyAdded(hostApplicationBuilder.Properties))
-            VostokBuilderCoreServices.AddCoreServices(vostok, hostApplicationBuilder.Properties);
+        if (!vostok.CheckComponentAlreadyAdded("CoreServices"))
+            VostokBuilderExtensions.AddCoreServices(vostok);
 
         return vostok;
     }
@@ -40,8 +40,8 @@ public static class VostokBuilderHostExtensions
         hostBuilder.ConfigureServices((context, services) =>
         {
             var vostok = new VostokBuilder(services);
-            if (!VostokBuilderCoreServices.IsAlreadyAdded(hostBuilder.Properties))
-                VostokBuilderCoreServices.AddCoreServices(vostok, hostBuilder.Properties);
+            if (!vostok.CheckComponentAlreadyAdded("CoreServices"))
+                VostokBuilderExtensions.AddCoreServices(vostok);
 
             configure.Invoke(context, vostok);
         });

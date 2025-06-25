@@ -14,7 +14,8 @@ public static class VostokBuilderConfigurationExtensions
         this IVostokBuilder builder,
         Action<IVostokConfigurationBuilder>? configure = null)
     {
-        builder.Services.AddVostokConfiguration();
+        if (!builder.CheckComponentAlreadyAdded("Configuration"))
+            builder.Services.AddVostokConfiguration();
 
         var configurationBuilder = new VostokConfigurationBuilder(builder.Services);
         configure?.Invoke(configurationBuilder);

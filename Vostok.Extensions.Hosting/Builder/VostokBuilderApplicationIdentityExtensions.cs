@@ -25,7 +25,8 @@ public static class VostokBuilderApplicationIdentityExtensions
         this IVostokBuilder builder,
         Action<ApplicationIdentityOptions, IServiceProvider>? configure = null)
     {
-        builder.Services.AddApplicationIdentity();
+        if (!builder.CheckComponentAlreadyAdded("ApplicationIdentity"))
+            builder.Services.AddApplicationIdentity();
 
         if (configure is not null)
             builder.Services.AddOptions<ApplicationIdentityOptions>().Configure(configure);
@@ -35,7 +36,7 @@ public static class VostokBuilderApplicationIdentityExtensions
 
     private static void AddApplicationIdentity(this IServiceCollection services)
     {
-        services.AddOptionsWithValidateOnStart<ApplicationIdentityOptions>(); // Todo: Idempotency
+        services.AddOptionsWithValidateOnStart<ApplicationIdentityOptions>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<ApplicationIdentityOptions>, ConfigureApplicationIdentityOptionsFromEnv>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<ApplicationIdentityOptions>, ApplicationIdentityOptionsValidator>());
 

@@ -12,17 +12,10 @@ internal sealed class VostokBuilder(IServiceCollection services) : IVostokBuilde
     public IServiceCollection Services { get; } = services;
 }
 
-internal static class VostokBuilderCoreServices
+internal static class VostokBuilderExtensions
 {
-    private const string AddedKey = "_VostokCoreServicesAdded";
-
-    public static bool IsAlreadyAdded(IDictionary<object, object> hostProperties) =>
-        hostProperties.TryGetValue(AddedKey, out var value) && value is true;
-
-    public static void AddCoreServices(IVostokBuilder vostok, IDictionary<object, object> hostProperties)
+    public static void AddCoreServices(IVostokBuilder vostok)
     {
-        hostProperties[AddedKey] = true;
-
         vostok.Services.TryAddSingleton<VostokWarmup>();
         vostok.Services.DecorateHostLifetime();
 
@@ -37,4 +30,19 @@ internal static class VostokBuilderCoreServices
 
         VostokTypeConverterHelper.AddVostokAttributes();
     }
+
+    public static bool CheckComponentAlreadyAdded(this IVostokBuilder vostok, string componentName)
+    {
+        if (vostok.Services
+                  .SingleOrDefault(sd => sd.ServiceType == typeof(RegisteredVostokComponents))?
+                  .ImplementationInstance is not RegisteredVostokComponents registeredComponents)
+        {
+            registeredComponents = new RegisteredVostokComponents([]);
+            vostok.Services.TryAddSingleton(registeredComponents);
+        }
+
+        return !registeredComponents.Components.Add(componentName);
+    }
+
+    private sealed record RegisteredVostokComponents(HashSet<string> Components);
 }

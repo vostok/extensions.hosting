@@ -27,8 +27,8 @@ public static class VostokBuilderTelemetryExtensions
 
     public static IVostokBuilder WithLogging(this IVostokBuilder builder, Action<IVostokLogBuilder> configure)
     {
-        var descriptor = ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
-        builder.Services.TryAddEnumerable(descriptor);
+        if (!builder.CheckComponentAlreadyAdded("Logging"))
+            builder.Services.AddLogging();
 
         var vostokLogBuilder = new VostokLogBuilder(builder.Services);
         configure(vostokLogBuilder);
@@ -40,7 +40,8 @@ public static class VostokBuilderTelemetryExtensions
         this IVostokBuilder builder,
         Action<IVostokMetricsBuilder>? configure = null)
     {
-        builder.Services.AddMetrics();
+        if (!builder.CheckComponentAlreadyAdded("Metrics"))
+            builder.Services.AddMetrics();
 
         var metricsBuilder = new VostokMetricsBuilder(builder.Services);
         configure?.Invoke(metricsBuilder);
@@ -74,6 +75,13 @@ public static class VostokBuilderTelemetryExtensions
 
             return new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
         });
+    }
+
+    private static void AddLogging(this IServiceCollection services)
+    {
+        var descriptor =
+            ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
+        services.TryAddEnumerable(descriptor);
     }
 
     private static void AddMetrics(this IServiceCollection services)

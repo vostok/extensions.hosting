@@ -23,7 +23,8 @@ public static class VostokBuilderDatacentersExtensions
         this IVostokBuilder builder,
         Action<DatacentersOptions, IServiceProvider>? configure = null)
     {
-        builder.Services.AddDatacenters();
+        if (!builder.CheckComponentAlreadyAdded("Datacenters"))
+            builder.Services.AddDatacenters();
 
         if (configure is not null)
             builder.Services.AddOptions<DatacentersOptions>().Configure(configure);

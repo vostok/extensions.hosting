@@ -24,9 +24,12 @@ public static class VostokBuilderDiagnosticsExtensions
     {
         // todo (bogdanov.n) 17.02.2025: A `DiagnosticMetricsEnabled` check could take place here
 
-        builder.Services.AddDiagnosticInfo();
-        builder.Services.AddHealthTracker();
-        builder.Services.AddDiagnosticsHub();
+        if (!builder.CheckComponentAlreadyAdded("Diagnostics"))
+        {
+            builder.Services.AddDiagnosticInfo();
+            builder.Services.AddHealthTracker();
+            builder.Services.AddDiagnosticsHub();
+        }
 
         var diagnosticsBuilder = new VostokDiagnosticsBuilder(builder.Services);
         configure?.Invoke(diagnosticsBuilder);

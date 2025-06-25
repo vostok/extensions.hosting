@@ -24,7 +24,8 @@ public static class VostokBuilderSystemMetricsExtensions
         this IVostokBuilder builder,
         Action<SystemMetricsOptions, IServiceProvider>? configure = null)
     {
-        builder.Services.AddSystemMetrics();
+        if (!builder.CheckComponentAlreadyAdded("SystemMetrics"))
+            builder.Services.AddSystemMetrics();
 
         if (configure is not null)
             builder.Services.AddOptions<SystemMetricsOptions>().Configure(configure);
