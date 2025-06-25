@@ -98,13 +98,13 @@ public static class ServiceBeaconBuilderExtensions
     /// <summary>
     /// Applies given <paramref name="environment"/> name to <see cref="IServiceBeacon"/> configuration. Note this environment might differ from app identity <see cref="IVostokApplicationIdentity.Environment"/>.
     /// </summary>
-    public static IServiceBeaconBuilder SetBeaconEnvironment(this IServiceBeaconBuilder builder, string environment) =>
+    public static IServiceBeaconBuilder SetEnvironment(this IServiceBeaconBuilder builder, string environment) =>
         builder.CustomizeReplicaInfo(replica => replica.SetEnvironment(environment));
 
     /// <summary>
     /// Applies given <paramref name="application"/> name to <see cref="IServiceBeacon"/> configuration. Note this application might differ from app identity <see cref="IVostokApplicationIdentity.Application"/>.
     /// </summary>
-    public static IServiceBeaconBuilder SetBeaconApplication(this IServiceBeaconBuilder builder, string application) =>
+    public static IServiceBeaconBuilder SetApplication(this IServiceBeaconBuilder builder, string application) =>
         builder.CustomizeReplicaInfo(replica => replica.SetApplication(application));
 
     public static IServiceBeaconBuilder DenyRegistrationFromNonActiveDatacenters(this IServiceBeaconBuilder builder)

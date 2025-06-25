@@ -8,6 +8,7 @@ using Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 using Vostok.Extensions.Hosting.Components.ServiceDiscovery.EventsContext;
 using Vostok.Extensions.Hosting.Components.ZooKeeperClient;
 using Vostok.ServiceDiscovery;
+using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
 
@@ -27,6 +28,12 @@ public static class ServiceBeaconBuilderExtensions
         return builder;
     }
 
+    /// <summary>
+    /// Disables <see cref="IServiceBeacon"/> and forces it not to start.
+    /// </summary>
+    /// <remarks>
+    /// Configuration done with <see cref="IServiceBeaconBuilder"/> will still be applied and <see cref="IReplicaInfo"/> can still be consumed from disabled beacon.
+    /// </remarks>
     public static IVostokBuilder DisableServiceBeacon(this IVostokBuilder builder)
     {
         builder.Services.Replace(ServiceDescriptor.Singleton(ServiceBeaconFactory.CreateDisabled));
