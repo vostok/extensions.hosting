@@ -138,7 +138,7 @@ public static class ServiceBeaconBuilderExtensions
         this IServiceBeaconBuilder builder,
         Action<HerculesServiceDiscoveryEventsSenderOptions, IServiceProvider> configure)
     {
-        builder.Services.AddSingleton(HerculesServiceDiscoveryEventsSenderFactory.Create);
+        builder.SetEventSender(HerculesServiceDiscoveryEventsSenderFactory.Create);
         builder.Services.AddOptions<HerculesServiceDiscoveryEventsSenderOptions>().Configure(configure);
 
         return builder;

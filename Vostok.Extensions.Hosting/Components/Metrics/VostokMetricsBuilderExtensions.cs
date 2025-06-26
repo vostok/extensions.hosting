@@ -31,9 +31,9 @@ public static class VostokMetricsBuilderExtensions
 
     public static IVostokMetricsBuilder AddMetricSender(
         this IVostokMetricsBuilder builder,
-        IMetricEventSender metricEventSender)
+        Func<IServiceProvider, IMetricEventSender> implementationFactory)
     {
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton(metricEventSender));
+        builder.Services.AddSingleton(implementationFactory);
         return builder;
     }
 
