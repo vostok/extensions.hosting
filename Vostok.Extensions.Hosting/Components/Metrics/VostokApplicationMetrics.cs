@@ -1,4 +1,4 @@
-using Vostok.Commons.Environment;
+﻿using Vostok.Commons.Environment;
 using Vostok.Hosting.Abstractions;
 using Vostok.Metrics;
 

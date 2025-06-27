@@ -2,6 +2,8 @@
 
 internal sealed class ThreadPoolOptions
 {
+    private const int DefaultThreadPoolMultiplier = 32;
+
     public bool ConfigureThreadPool { get; set; } = true;
-    public int ThreadPoolTuningMultiplier { get; set; } = ThreadPoolConstants.DefaultThreadPoolMultiplier;
+    public int ThreadPoolTuningMultiplier { get; set; } = DefaultThreadPoolMultiplier;
 }

@@ -4,7 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Vostok.Commons.Helpers.Network;
 using Vostok.Datacenters;
-using Vostok.Extensions.Hosting.Components.ServiceDiscovery.EventsContext;
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ServiceBeacon;
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ServiceBeacon.EventsContext;
 using Vostok.Hosting.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Vostok.Commons.Threading;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;

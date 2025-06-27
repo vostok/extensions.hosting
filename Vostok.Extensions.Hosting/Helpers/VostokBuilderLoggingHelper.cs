@@ -1,5 +1,4 @@
-﻿using Vostok.Extensions.Hosting.Builder;
-using Vostok.Logging.Abstractions;
+﻿using Vostok.Logging.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Helpers;
 

@@ -3,7 +3,7 @@ using Vostok.Logging.Abstractions.Wrappers;
 
 namespace Vostok.Extensions.Hosting.Components.Logging.Substitution;
 
-public class SubstitutableLog : ILog
+internal sealed class SubstitutableLog : ILog
 {
     private ILog _baseLog = new BufferedLog();
 

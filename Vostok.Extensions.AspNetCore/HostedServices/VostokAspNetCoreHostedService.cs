@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 using Vostok.Extensions.AspNetCore.Helpers;
 using Vostok.Extensions.AspNetCore.Middlewares;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
-using Vostok.Extensions.Hosting.Components.ServiceDiscovery;
+using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ServiceBeacon;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.HostedServices;

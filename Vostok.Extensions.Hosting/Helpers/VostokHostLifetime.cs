@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using Vostok.Extensions.Hosting.HostedServices;
-
 namespace Vostok.Extensions.Hosting.Helpers;
 
 internal sealed class VostokHostLifetime(IHostLifetime baseHostLifetime, VostokWarmup warmup) : IHostLifetime
