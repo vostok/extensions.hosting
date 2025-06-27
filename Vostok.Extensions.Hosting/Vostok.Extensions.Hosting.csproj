@@ -45,7 +45,6 @@
     <ModuleReference Include="vostok.tracing.extensions" />
     <ModuleReference Include="vostok.hercules.client" />
     <ModuleReference Include="vostok.servicediscovery.telemetry" />
-    <ModuleReference Include="vostok.servicediscovery.telemetry.hercules" />
     <ModuleReference Include="vostok.servicediscovery" />
     <ModuleReference Include="vostok.zookeeper.client" />
   </ItemGroup>

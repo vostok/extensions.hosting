@@ -21,13 +21,13 @@ internal sealed class HerculesSinkDefaultSettingsFactory(
     protected override HerculesSinkSettings CreateInstance(string _)
     {
         var clusterProvider = provider.GetRequiredKeyedService<IClusterProvider>(HerculesSinkFactory.ClusterProviderKey);
-        var optionsMonitor = provider.GetRequiredService<IOptionsMonitor<HerculesSinkMiscellaneousOptions>>();
+        var optionsMonitor = provider.GetRequiredService<IOptionsMonitor<HerculesSinkAuthOptions>>();
 
         var tracer = provider.GetService<ITracer>();
         var applicationIdentity = provider.GetService<IVostokApplicationIdentity>();
 
         // Note(kungurtsev): allow null api key provider, streams can be configured later.
-        return new HerculesSinkSettings(clusterProvider, () => optionsMonitor.CurrentValue.DefaultApiKey)
+        return new HerculesSinkSettings(clusterProvider, () => optionsMonitor.CurrentValue.ApiKey)
         {
             AdditionalSetup = setup =>
             {
