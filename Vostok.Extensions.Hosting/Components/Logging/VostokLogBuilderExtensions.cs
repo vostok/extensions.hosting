@@ -17,13 +17,21 @@ namespace Vostok.Extensions.Hosting.Components.Logging;
 [PublicAPI]
 public static class VostokLogBuilderExtensions
 {
-    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder, ILog log, string? logName = null, Action? customDispose = null)
+    public static IVostokLogBuilder AddLog(
+        this IVostokLogBuilder builder,
+        ILog log,
+        string? logName = null,
+        Action? customDispose = null)
     {
         builder.AddLog(_ => log, logName, customDispose);
         return builder;
     }
 
-    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder, Func<IServiceProvider, ILog> implementationFactory, string? logName, Action? customDispose)
+    public static IVostokLogBuilder AddLog(
+        this IVostokLogBuilder builder,
+        Func<IServiceProvider, ILog> implementationFactory,
+        string? logName,
+        Action? customDispose)
     {
         logName ??= LogRegistrationFactory.GetNextName();
         var logRegistration = LogRegistration.For(logName);
