@@ -35,7 +35,7 @@ internal static class VostokOpenTelemetryServicesExtensions
                    options.IncludeFormattedMessage = true;
                    options.IncludeScopes = true;
                }))
-               .ConfigureResource(ConfigureLoggingResource);
+               .ConfigureResource(resourceBuilder => resourceBuilder.Clear());
 
     private static void ConfigureTracingResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear()
@@ -44,9 +44,4 @@ internal static class VostokOpenTelemetryServicesExtensions
 
     private static void ConfigureMetricsResource(ResourceBuilder resourceBuilder) =>
         resourceBuilder.Clear();
-
-    private static void ConfigureLoggingResource(ResourceBuilder resourceBuilder) =>
-        resourceBuilder.Clear()
-                       .AddDetector(provider => new VostokIdentityResourceDetector(provider))
-                       .AddDetector(new HostNameResourceDetector(VostokSemanticConventions.AttributeHostNameForLogs));
 }
