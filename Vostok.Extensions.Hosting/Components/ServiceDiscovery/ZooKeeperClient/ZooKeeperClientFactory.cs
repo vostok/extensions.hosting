@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ZooKeeper.Client;
@@ -16,7 +17,7 @@ internal static class ZooKeeperClientFactory
 
     public static IZooKeeperClient Create(IServiceProvider provider)
     {
-        var log = provider.GetRequiredService<ILog>();
+        var log = provider.GetInitializationLog();
         var settings = provider.GetRequiredService<IOptions<ZooKeeperClientSettings>>().Value;
         var authenticationInfos = provider.GetServices<AuthenticationInfo>();
 

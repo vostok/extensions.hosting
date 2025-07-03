@@ -5,7 +5,7 @@ using Microsoft.Extensions.Primitives;
 using Vostok.Configuration;
 using Vostok.Configuration.Logging;
 using Vostok.Configuration.Sources.Manual;
-using Vostok.Logging.Abstractions;
+using Vostok.Extensions.Hosting.Helpers;
 
 using ConfigurationProvider = Vostok.Configuration.ConfigurationProvider;
 using IConfigurationProvider = Vostok.Configuration.Abstractions.IConfigurationProvider;
@@ -37,7 +37,7 @@ internal static class ConfigurationFactory
         var setups = provider.GetServices<ConfigurationProviderSetup>();
         var configurationSource = provider.GetRequiredService<IConfigurationSource>();
 
-        var log = provider.GetService<ILog>() ?? new SilentLog();
+        var log = provider.GetInitializationLog();
         var settings = new ConfigurationProviderSettings()
                        .WithErrorLogging(log)
                        .WithUpdatesLogging(log);

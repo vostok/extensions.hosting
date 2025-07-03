@@ -20,7 +20,7 @@ internal static class ServiceBeaconFactory
     public static IServiceBeacon Create(IServiceProvider provider)
     {
         var settings = provider.GetRequiredService<IOptions<ServiceBeaconSettings>>().Value;
-        var log = provider.GetRequiredService<ILog>();
+        var log = provider.GetInitializationLog();
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
 
         if (zooKeeperClient is null or DevNullZooKeeperClient)
@@ -35,7 +35,7 @@ internal static class ServiceBeaconFactory
     public static IServiceBeacon CreateDisabled(IServiceProvider provider)
     {
         var settings = provider.GetRequiredService<IOptions<ServiceBeaconSettings>>().Value;
-        var log = provider.GetRequiredService<ILog>();
+        var log = provider.GetInitializationLog();
         return new DevNullServiceBeacon(CreateDevNullReplicaInfo(settings, log, provider));
     }
 

@@ -17,7 +17,6 @@ using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Primitives;
 using Vostok.Context;
 using Vostok.Datacenters;
-using Vostok.Extensions.Hosting.Components;
 using Vostok.Extensions.Hosting.Components.Logging.Substitution;
 using Vostok.Extensions.Hosting.Components.ThreadPool;
 using Vostok.Extensions.Hosting.Configuration;
@@ -98,27 +97,20 @@ internal sealed class VostokWarmup(
 
     private void WarmupVostokLog()
     {
-        var vostokLog = provider.GetService<ILog>();
-        if (vostokLog is null)
-            return;
-
+        var vostokLog = provider.GetRequiredService<ILog>();
         LogProvider.Configure(vostokLog, true);
 
-        var substitutableLog = vostokLog as SubstitutableLog;
-        var actualLog = provider.GetKeyedService<ILog>(VostokBuilderInternalExtensions.ActualLogKey);
-
-        if (substitutableLog is not null && actualLog is not null)
-            substitutableLog.SubstituteWith(actualLog);
+        var initializationLog = provider.GetInitializationLog() as SubstitutableLog;
+        initializationLog?.SubstituteWith(vostokLog);
 
         // note: We don't need static sharing after Vostok warmup.
-        InitializationLogProvider.Clear();
+        InitializationLog.Clear();
     }
 
     private void WarmupVostokTracer()
     {
-        var vostokTracer = provider.GetService<ITracer>();
-        if (vostokTracer is not null)
-            TracerProvider.Configure(vostokTracer, true);
+        var vostokTracer = provider.GetRequiredService<ITracer>();
+        TracerProvider.Configure(vostokTracer, true);
     }
 
     private void WarmupVostokMetricsContext()

@@ -14,8 +14,6 @@ namespace Vostok.Extensions.Hosting.Components;
 
 internal static class VostokBuilderInternalExtensions
 {
-    public const string ActualLogKey = "_ActualLog";
-
     public static void WithVostokTracerAdapter(this IVostokBuilder vostok)
     {
         var settings = new ActivitySourceTracerSettings
@@ -31,11 +29,11 @@ internal static class VostokBuilderInternalExtensions
 
     public static void WithVostokLogAdapter(this IVostokBuilder vostok)
     {
-        var substitutableLog = InitializationLogProvider.Get();
-        LogProvider.Configure(substitutableLog, true);
+        var initializationLog = InitializationLog.Get();
+        LogProvider.Configure(initializationLog, true);
 
-        vostok.Services.TryAddSingleton<ILog>(substitutableLog);
-        vostok.Services.TryAddKeyedSingleton<ILog>(ActualLogKey, (provider, _) =>
+        vostok.Services.TryAddKeyedSingleton<ILog>(InitializationLog.Key, initializationLog);
+        vostok.Services.TryAddSingleton<ILog>(provider =>
         {
             var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
                                           .CreateLogger(string.Empty);
