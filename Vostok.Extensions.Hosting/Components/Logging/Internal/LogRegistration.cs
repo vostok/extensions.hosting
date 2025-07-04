@@ -1,38 +1,47 @@
-﻿namespace Vostok.Extensions.Hosting.Components.Logging.Internal;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-internal sealed class LogRegistration
+using Vostok.Logging.Abstractions;
+
+namespace Vostok.Extensions.Hosting.Components.Logging.Internal;
+
+internal sealed class LogRegistration(string logName, Func<IServiceProvider, ILog> implementationFactory)
 {
-    private readonly string? _name;
-    public string Name => _name ?? throw new InvalidOperationException($"Cannot get a log name from '{nameof(All)}' registration.");
+    private static int unnamedLogsCounter;
 
-    public static readonly LogRegistration All = new();
-    public static LogRegistration For(string name) => new(name ?? throw new ArgumentNullException(nameof(name)));
+    public string LogName { get; } = logName;
 
-    private LogRegistration(string? name = null) => _name = name;
-
-    private bool Equals(LogRegistration? other)
+    public ILog Create(IServiceProvider provider)
     {
-        if (other is null)
-            return false;
-        if (ReferenceEquals(this, other))
-            return true;
+        var log = implementationFactory(provider);
 
-        if (_name is null || other._name is null)
-            return true;
-        return _name == other._name;
+        foreach (var customization in provider.GetKeyedServices<LogCustomization>(LogName))
+            log = customization(log, provider);
+
+        return log;
     }
 
-    public override bool Equals(object? obj)
-    {
-        if (obj is null)
-            return false;
-        if (ReferenceEquals(this, obj))
-            return true;
-        if (obj.GetType() != GetType())
-            return false;
-        return Equals((LogRegistration)obj);
-    }
+    public static string GetNextName() => $"Log-{Interlocked.Increment(ref unnamedLogsCounter)}";
 
-    public override int GetHashCode() =>
-        _name is null ? 0 : _name.GetHashCode();
+    public readonly struct Key : IEquatable<Key>
+    {
+        private readonly string? _name;
+
+        public static readonly Key All = new();
+        public static Key For(string name) => new(name);
+
+        private Key(string? name = null) => _name = name;
+
+        public bool Equals(Key other)
+        {
+            if (_name is null || other._name is null)
+                return true;
+            return _name == other._name;
+        }
+
+        public override bool Equals(object? obj) =>
+            obj is Key other && Equals(other);
+
+        public override int GetHashCode() =>
+            _name is null ? 0 : _name.GetHashCode();
+    }
 }

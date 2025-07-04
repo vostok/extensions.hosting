@@ -10,17 +10,34 @@ namespace Vostok.Extensions.Hosting.Components.Logging.Internal;
 
 internal static class VostokLogProviderFactory
 {
+    public const string InternalLogKey = "_InternalLog";
+
     public static VostokLoggerProvider Create(IServiceProvider provider)
     {
-        var logs = provider.GetKeyedServices<ILog>(LogRegistration.All).ToArray();
-        var names = provider.GetKeyedServices<LogRegistration>(LogRegistration.All).Select(r => r.Name).ToArray();
-        if (logs.Length != names.Length)
-            throw new InvalidOperationException("Logs and names collections lengths mismatch.");
+        var vostokLog = provider.GetRequiredKeyedService<ILog>(InternalLogKey);
+        var settings = provider.GetRequiredService<IOptions<VostokLoggerProviderSettings>>().Value;
+
+        return new VostokLoggerProvider(vostokLog, settings);
+    }
+
+    public static ILog CreateInternalVostokLog(IServiceProvider provider)
+    {
+        var vostokLog = GetVostokLog(provider);
+        return vostokLog is SilentLog
+            ? vostokLog
+            : new InternalDisposableVostokLog(vostokLog);
+    }
+
+    private static ILog GetVostokLog(IServiceProvider provider)
+    {
+        var logRegistrations = provider.GetKeyedServices<LogRegistration>(LogRegistration.Key.All).ToArray();
+        if (logRegistrations.Length is 0)
+            return new SilentLog();
 
         var builder = new ConfigurableLogBuilder();
 
-        foreach (var (log, name) in logs.Zip(names)) // Logs and names registered together so they are in same order
-            builder.AddLog(name, log);
+        foreach (var registration in logRegistrations)
+            builder.AddLog(registration.LogName, registration.Create(provider));
 
         var rulesMonitor = provider.GetRequiredService<IOptionsMonitor<VostokLogRulesOptions>>();
         var rulesObservable = GetRulesObservable(rulesMonitor);
@@ -34,8 +51,7 @@ internal static class VostokLogProviderFactory
         foreach (var customization in customizations)
             finalLog = customization(finalLog, provider);
 
-        var settings = provider.GetRequiredService<IOptions<VostokLoggerProviderSettings>>().Value;
-        return new VostokLoggerProvider(finalLog, settings);
+        return finalLog;
     }
 
     private static CachingObservable<LogConfigurationRule[]> GetRulesObservable(
