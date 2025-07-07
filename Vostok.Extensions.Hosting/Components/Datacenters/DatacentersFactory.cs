@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 
 using Vostok.Datacenters;
+using Vostok.Extensions.Hosting.Helpers;
 
 namespace Vostok.Extensions.Hosting.Components.Datacenters;
 
@@ -10,6 +11,12 @@ internal static class DatacentersFactory
     public static IDatacenters Create(IServiceProvider provider)
     {
         var options = provider.GetRequiredService<IOptions<DatacentersOptions>>().Value;
+
+        if (options.DatacenterMapping is null || options.ActiveDatacentersProvider is null)
+        {
+            provider.GetInitializationLog().LogDisabled("Datacenters", "unconfigured providers");
+            return new EmptyDatacenters();
+        }
 
         var settings = new DatacentersSettings(options.DatacenterMapping, options.ActiveDatacentersProvider)
         {

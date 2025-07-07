@@ -19,6 +19,13 @@ internal static class ZooKeeperClientFactory
     {
         var log = provider.GetInitializationLog();
         var settings = provider.GetRequiredService<IOptions<ZooKeeperClientSettings>>().Value;
+
+        if (settings is DevNullZookeeperClientSettings)
+        {
+            log.LogDisabled("ZooKeeperClient", "unconfigured ZooKeeper topology");
+            return new DevNullZooKeeperClient();
+        }
+
         var authenticationInfos = provider.GetServices<AuthenticationInfo>();
 
         var zooKeeperClient = new ZooKeeper.Client.ZooKeeperClient(
