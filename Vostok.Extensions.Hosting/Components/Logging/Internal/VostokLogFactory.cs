@@ -25,6 +25,7 @@ internal static class VostokLogFactory
 
         ILog logAdapter = new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
 
+        // note: Options for main ILog registered with default name.
         var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Value;
         foreach (var customization in options.Customizations)
             logAdapter = customization(logAdapter, provider);

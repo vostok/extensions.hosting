@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.Logging.Console;
 using Vostok.Extensions.Hosting.Components.Logging.File;
@@ -16,38 +17,34 @@ namespace Vostok.Extensions.Hosting.Components.Logging;
 [PublicAPI]
 public static class VostokLogBuilderExtensions
 {
-    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder, ILog log, string? logName = null) =>
-        builder.AddLog(_ => log, logName);
-
     public static IVostokLogBuilder AddLog(
         this IVostokLogBuilder builder,
+        ILog log,
+        string? logName = null,
+        Action<ILogConfigurator>? configure = null) =>
+        builder.AddLog(_ => log, logName, configure);
+
+    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder,
         Func<IServiceProvider, ILog> implementationFactory,
-        string? logName = null)
+        string? logName = null,
+        Action<ILogConfigurator>? configure = null)
     {
         logName ??= LogRegistration.GetNextName();
         var key = LogRegistration.Key.For(logName);
 
         builder.Services.TryAddKeyedSingleton(key, new LogRegistration(logName, implementationFactory));
-        return builder;
-    }
 
-    public static IVostokLogBuilder AddConsole(
-        this IVostokLogBuilder builder,
-        Action<ConsoleLogSettings>? configure = null)
-    {
-        builder.AddLog(ConsoleLogFactory.Create, ConsoleLogFactory.LogName);
-
-        if (configure is not null)
-            builder.Services.Configure(configure);
+        configure?.Invoke(new LogConfigurator(builder.Services, logName));
 
         return builder;
     }
 
-    public static IVostokLogBuilder AddFile(
+    public static IVostokLogBuilder WithConsole(
         this IVostokLogBuilder builder,
-        Action<FileLogSettings>? configureSettings = null)
+        Action<ConsoleLogSettings>? configureSettings = null,
+        Action<ILogConfigurator>? configureLog = null)
     {
-        builder.AddLog(FileLogFactory.Create, FileLogFactory.LogName);
+        builder.AddLog(ConsoleLogFactory.Create, ConsoleLogFactory.LogName, configureLog);
 
         if (configureSettings is not null)
             builder.Services.Configure(configureSettings);
@@ -55,24 +52,24 @@ public static class VostokLogBuilderExtensions
         return builder;
     }
 
-    /// <summary>
-    /// Enables file log with default settings.
-    /// </summary>
-    public static IVostokLogBuilder AddFileWithDefaults(this IVostokLogBuilder builder) =>
-        builder.AddFile(settings =>
-        {
-            settings.RollingStrategy.Type = RollingStrategyType.ByTime;
-            settings.RollingStrategy.Period = RollingPeriod.Day;
-        });
-
-    public static IVostokLogBuilder WithMinimumLevelProvider(
+    public static IVostokLogBuilder WithFile(
         this IVostokLogBuilder builder,
-        string name,
+        Action<FileLogSettings>? configureSettings = null,
+        Action<ILogConfigurator>? configureLog = null)
+    {
+        builder.AddLog(FileLogFactory.Create, FileLogFactory.LogName, configureLog);
+
+        if (configureSettings is not null)
+            builder.Services.Configure(configureSettings);
+
+        return builder;
+    }
+
+    public static IVostokLogBuilder SetMinimumLevelProvider(
+        this IVostokLogBuilder builder,
         Func<LogLevel> minLevelProvider)
     {
-        builder.Services.Configure<VostokLogMiscellaneousOptions>(name,
-            options => options.MinLevelProvider = minLevelProvider);
-
+        builder.Services.ConfigureMiscellaneousOptions(options => options.MinLevelProvider = minLevelProvider);
         return builder;
     }
 
@@ -84,25 +81,7 @@ public static class VostokLogBuilderExtensions
         Func<ILog, IServiceProvider, ILog> customize)
     {
         var customization = new LogCustomization(customize);
-        builder.Services.Configure<VostokLogMiscellaneousOptions>(options => options.Customizations.Add(customization));
-
-        return builder;
-    }
-
-    public static IVostokLogBuilder CustomizeLog(
-        this IVostokLogBuilder builder,
-        string name,
-        Func<ILog, ILog> customize) =>
-        builder.CustomizeLog(name, (log, _) => customize(log));
-
-    public static IVostokLogBuilder CustomizeLog(
-        this IVostokLogBuilder builder,
-        string name,
-        Func<ILog, IServiceProvider, ILog> customize)
-    {
-        var customization = new LogCustomization(customize);
-        builder.Services.Configure<VostokLogMiscellaneousOptions>(name,
-            options => options.Customizations.Add(customization));
+        builder.Services.ConfigureMiscellaneousOptions(options => options.Customizations.Add(customization));
 
         return builder;
     }
@@ -129,5 +108,14 @@ public static class VostokLogBuilderExtensions
     {
         builder.Services.Configure<VostokLogRulesOptions>(options => options.Rules.Clear());
         return builder;
+    }
+
+    internal static void ConfigureMiscellaneousOptions(
+        this IServiceCollection services,
+        Action<VostokLogMiscellaneousOptions> configure,
+        string? name = null)
+    {
+        name ??= Options.DefaultName;
+        services.Configure(name, configure);
     }
 }
