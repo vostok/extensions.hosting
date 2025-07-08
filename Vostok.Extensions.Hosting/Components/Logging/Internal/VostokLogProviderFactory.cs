@@ -47,9 +47,13 @@ internal static class VostokLogProviderFactory
         configurableLog.WaitForRulesInitialization(TimeSpan.FromSeconds(1));
 
         ILog finalLog = configurableLog;
-        var customizations = provider.GetServices<LogCustomization>();
-        foreach (var customization in customizations)
+
+        var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Value;
+        foreach (var customization in options.Customizations)
             finalLog = customization(finalLog, provider);
+
+        if (options.MinLevelProvider is not null)
+            finalLog = finalLog.WithMinimumLevel(options.MinLevelProvider);
 
         return finalLog;
     }

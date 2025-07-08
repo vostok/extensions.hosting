@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using Vostok.Logging.Abstractions;
 
@@ -14,8 +15,13 @@ internal sealed class LogRegistration(string logName, Func<IServiceProvider, ILo
     {
         var log = implementationFactory(provider);
 
-        foreach (var customization in provider.GetKeyedServices<LogCustomization>(LogName))
+        var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Get(LogName);
+
+        foreach (var customization in options.Customizations)
             log = customization(log, provider);
+
+        if (options.MinLevelProvider is not null)
+            log = log.WithMinimumLevel(options.MinLevelProvider);
 
         return log;
     }

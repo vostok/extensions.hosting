@@ -55,6 +55,27 @@ public static class VostokLogBuilderExtensions
         return builder;
     }
 
+    /// <summary>
+    /// Enables file log with default settings.
+    /// </summary>
+    public static IVostokLogBuilder AddFileWithDefaults(this IVostokLogBuilder builder) =>
+        builder.AddFile(settings =>
+        {
+            settings.RollingStrategy.Type = RollingStrategyType.ByTime;
+            settings.RollingStrategy.Period = RollingPeriod.Day;
+        });
+
+    public static IVostokLogBuilder WithMinimumLevelProvider(
+        this IVostokLogBuilder builder,
+        string name,
+        Func<LogLevel> minLevelProvider)
+    {
+        builder.Services.Configure<VostokLogMiscellaneousOptions>(name,
+            options => options.MinLevelProvider = minLevelProvider);
+
+        return builder;
+    }
+
     public static IVostokLogBuilder CustomizeLog(this IVostokLogBuilder builder, Func<ILog, ILog> customize) =>
         builder.CustomizeLog((log, _) => customize(log));
 
@@ -63,7 +84,7 @@ public static class VostokLogBuilderExtensions
         Func<ILog, IServiceProvider, ILog> customize)
     {
         var customization = new LogCustomization(customize);
-        builder.Services.AddSingleton(customization);
+        builder.Services.Configure<VostokLogMiscellaneousOptions>(options => options.Customizations.Add(customization));
 
         return builder;
     }
@@ -80,7 +101,8 @@ public static class VostokLogBuilderExtensions
         Func<ILog, IServiceProvider, ILog> customize)
     {
         var customization = new LogCustomization(customize);
-        builder.Services.AddKeyedSingleton(name, customization);
+        builder.Services.Configure<VostokLogMiscellaneousOptions>(name,
+            options => options.Customizations.Add(customization));
 
         return builder;
     }
