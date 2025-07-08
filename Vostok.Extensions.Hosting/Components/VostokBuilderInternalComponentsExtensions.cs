@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 
+using Vostok.Extensions.Hosting.Components.Logging.Internal;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Microsoft;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Diagnostics;
 
@@ -33,12 +31,6 @@ internal static class VostokBuilderInternalExtensions
         LogProvider.Configure(initializationLog, true);
 
         vostok.Services.TryAddKeyedSingleton<ILog>(InitializationLog.Key, initializationLog);
-        vostok.Services.TryAddSingleton<ILog>(provider =>
-        {
-            var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
-                                          .CreateLogger(string.Empty);
-
-            return new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
-        });
+        vostok.Services.TryAddSingleton(VostokLogFactory.CreateVostokLogAdapter);
     }
 }

@@ -26,13 +26,13 @@ public static class VostokBuilderLoggingExtensions
 
     private static void AddLogging(this IServiceCollection services)
     {
-        // note: Register ILog separately to let DI infrastructure dispose it if needed.
+        // note: Register ILog separately to let DI infrastructure dispose it.
         services.TryAddKeyedSingleton<ILog>(
-            VostokLogProviderFactory.InternalLogKey,
-            (provider, _) => VostokLogProviderFactory.CreateInternalVostokLog(provider));
+            VostokLogFactory.LogKey,
+            (provider, _) => VostokLogFactory.CreateVostokLogImplementation(provider));
 
         var descriptor =
-            ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
+            ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogFactory.CreateLoggerProvider);
         services.TryAddEnumerable(descriptor);
     }
 }

@@ -1,26 +1,49 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
 using Vostok.Logging.Microsoft;
+using Vostok.Logging.Tracing;
+using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.Logging.Internal;
 
-internal static class VostokLogProviderFactory
+/// <summary>
+/// Logging structure looks like: Vostok log adapter (ILog) -> VostokLoggerProvider (MS logger implementation) -> Actual Vostok log impl (ILog).
+/// </summary>
+internal static class VostokLogFactory
 {
-    public const string InternalLogKey = "_InternalLog";
+    public const string LogKey = "_LogImplementation";
 
-    public static VostokLoggerProvider Create(IServiceProvider provider)
+    public static ILog CreateVostokLogAdapter(IServiceProvider provider)
     {
-        var vostokLog = provider.GetRequiredKeyedService<ILog>(InternalLogKey);
+        var microsoftLogger = provider.GetRequiredService<ILoggerFactory>()
+                                      .CreateLogger(string.Empty);
+
+        ILog logAdapter = new MicrosoftLog(microsoftLogger, new MicrosoftLogSettings());
+
+        var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Value;
+        foreach (var customization in options.Customizations)
+            logAdapter = customization(logAdapter, provider);
+
+        if (options.MinLevelProvider is not null)
+            logAdapter = logAdapter.WithMinimumLevel(options.MinLevelProvider);
+
+        return logAdapter;
+    }
+    
+    public static VostokLoggerProvider CreateLoggerProvider(IServiceProvider provider)
+    {
+        var vostokLog = provider.GetRequiredKeyedService<ILog>(LogKey);
         var settings = provider.GetRequiredService<IOptions<VostokLoggerProviderSettings>>().Value;
 
         return new VostokLoggerProvider(vostokLog, settings);
     }
 
-    public static ILog CreateInternalVostokLog(IServiceProvider provider)
+    public static ILog CreateVostokLogImplementation(IServiceProvider provider)
     {
         var vostokLog = GetVostokLog(provider);
         return vostokLog is SilentLog
@@ -46,16 +69,7 @@ internal static class VostokLogProviderFactory
         var configurableLog = builder.Build();
         configurableLog.WaitForRulesInitialization(TimeSpan.FromSeconds(1));
 
-        ILog finalLog = configurableLog;
-
-        var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Value;
-        foreach (var customization in options.Customizations)
-            finalLog = customization(finalLog, provider);
-
-        if (options.MinLevelProvider is not null)
-            finalLog = finalLog.WithMinimumLevel(options.MinLevelProvider);
-
-        return finalLog;
+        return configurableLog.WithTracingProperties(provider.GetRequiredService<ITracer>());
     }
 
     private static CachingObservable<LogConfigurationRule[]> GetRulesObservable(
