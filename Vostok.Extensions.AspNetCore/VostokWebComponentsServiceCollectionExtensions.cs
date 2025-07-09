@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using OpenTelemetry.Trace;
 
@@ -39,12 +40,7 @@ public static class VostokWebComponentsServiceCollectionExtensions
     {
         services.AddHostedService<VostokAspNetCoreHostedService>();
 
-        services.ConfigureOpenTelemetryTracerProvider(tracing =>
-        {
-            tracing.AddAspNetCoreInstrumentation()
-                   .SetupAspNetCoreInstrumentationForVostok();
-        });
-
+        services.ConfigureAspNetCoreTelemetry();
         services.ConfigureKestrelDefaults();
         services.AddRequestTrackingDefaults();
         services.AddThrottlingDefaults();
@@ -64,8 +60,26 @@ public static class VostokWebComponentsServiceCollectionExtensions
         return new VostokWebComponentsBuilder(services);
     }
 
-    private static void ConfigureKestrelDefaults(this IServiceCollection serviceCollection) =>
-        serviceCollection.Configure<KestrelServerOptions>(options =>
+    private static void ConfigureAspNetCoreTelemetry(this IServiceCollection services)
+    {
+        services.ConfigureOpenTelemetryTracerProvider(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                   .SetupAspNetCoreInstrumentationForVostok();
+        });
+
+        services.Configure<LoggerFilterOptions>(options =>
+        {
+            options.Rules.Insert(0, new LoggerFilterRule(
+                providerName: null,
+                "Microsoft.AspNetCore",
+                LogLevel.Warning,
+                filter: null));
+        });
+    }
+
+    private static void ConfigureKestrelDefaults(this IServiceCollection services) =>
+        services.Configure<KestrelServerOptions>(options =>
         {
             options.AddServerHeader = false;
 
