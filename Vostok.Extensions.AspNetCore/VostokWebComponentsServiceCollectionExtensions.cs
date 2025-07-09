@@ -39,12 +39,7 @@ public static class VostokWebComponentsServiceCollectionExtensions
     {
         services.AddHostedService<VostokAspNetCoreHostedService>();
 
-        services.ConfigureOpenTelemetryTracerProvider(tracing =>
-        {
-            tracing.AddAspNetCoreInstrumentation()
-                   .SetupAspNetCoreInstrumentationForVostok();
-        });
-
+        services.ConfigureAspNetCoreTelemetry();
         services.ConfigureKestrelDefaults();
         services.AddRequestTrackingDefaults();
         services.AddThrottlingDefaults();
@@ -64,8 +59,17 @@ public static class VostokWebComponentsServiceCollectionExtensions
         return new VostokWebComponentsBuilder(services);
     }
 
-    private static void ConfigureKestrelDefaults(this IServiceCollection serviceCollection) =>
-        serviceCollection.Configure<KestrelServerOptions>(options =>
+    private static void ConfigureAspNetCoreTelemetry(this IServiceCollection services)
+    {
+        services.ConfigureOpenTelemetryTracerProvider(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                   .SetupAspNetCoreInstrumentationForVostok();
+        });
+    }
+
+    private static void ConfigureKestrelDefaults(this IServiceCollection services) =>
+        services.Configure<KestrelServerOptions>(options =>
         {
             options.AddServerHeader = false;
 

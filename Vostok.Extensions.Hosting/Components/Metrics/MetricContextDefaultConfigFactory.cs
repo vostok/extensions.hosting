@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Senders;
@@ -15,7 +16,7 @@ internal sealed class MetricContextDefaultConfigFactory(
 {
     protected override MetricContextConfig CreateInstance(string _)
     {
-        var log = provider.GetService<ILog>();
+        var log = provider.GetInitializationLog();
         var senders = provider.GetServices<IMetricEventSender>().ToArray();
 
         var compositeMetricEventSender = BuildCompositeMetricEventSender(senders);
@@ -23,7 +24,7 @@ internal sealed class MetricContextDefaultConfigFactory(
 
         return new MetricContextConfig(compositeMetricEventSender)
         {
-            ErrorCallback = e => log?.ForContext<MetricContext>().Error(e, "Failed to send metrics."),
+            ErrorCallback = e => log.ForContext<MetricContext>().Error(e, "Failed to send metrics."),
             AnnotationSender = annotationEventSender
         };
     }

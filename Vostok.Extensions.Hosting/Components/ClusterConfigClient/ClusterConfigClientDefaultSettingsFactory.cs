@@ -5,7 +5,7 @@ using Vostok.Clusterclient.Tracing;
 using Vostok.ClusterConfig.Client;
 using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Sources.Json;
-using Vostok.Logging.Abstractions;
+using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ClusterConfigClient;
@@ -18,11 +18,13 @@ internal sealed class ClusterConfigClientDefaultSettingsFactory(
 {
     protected override ClusterConfigClientSettings CreateInstance(string _)
     {
-        var log = provider.GetService<ILog>();
-        var tracer = provider.GetService<ITracer>();
+        var log = provider.GetInitializationLog();
+        var tracer = provider.GetRequiredService<ITracer>();
 
-        var settings = new ClusterConfigClientSettings
+        return new ClusterConfigClientSettings
         {
+            Log = log,
+            AdditionalSetup = setup => setup.SetupDistributedTracing(tracer),
             MergeOptions = new SettingsMergeOptions
             {
                 CustomMerge = (a, b) =>
@@ -32,13 +34,5 @@ internal sealed class ClusterConfigClientDefaultSettingsFactory(
                 }
             }
         };
-
-        if (log is not null)
-            settings.Log = log;
-
-        if (tracer is not null)
-            settings.AdditionalSetup = setup => setup.SetupDistributedTracing(tracer);
-
-        return settings;
     }
 }

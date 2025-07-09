@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ZooKeeperClient;
 using Vostok.Extensions.Hosting.Helpers;
-using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
@@ -16,7 +15,7 @@ internal static class ServiceLocatorFactory
     {
         var settings = provider.GetRequiredService<IOptions<ServiceLocatorSettings>>().Value;
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
-        var log = provider.GetRequiredService<ILog>();
+        var log = provider.GetInitializationLog();
 
         if (zooKeeperClient is null or DevNullZooKeeperClient)
         {

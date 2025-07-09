@@ -2,8 +2,10 @@
 
 namespace Vostok.Extensions.Hosting.Helpers;
 
-internal static class InitializationLogProvider
+internal static class InitializationLog
 {
+    public const string Key = "_InitializationLog";
+
     private static Lazy<SubstitutableLog> log = CreateNew();
 
     public static SubstitutableLog Get() => log.Value;

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 using JetBrains.Annotations;
 
@@ -15,8 +16,11 @@ namespace Vostok.Extensions.Hosting.Components.Datacenters;
 [PublicAPI]
 public sealed class DatacentersOptions
 {
-    public required Func<IPAddress, string> DatacenterMapping { get; set; }
-    public required Func<IReadOnlyCollection<string>> ActiveDatacentersProvider { get; set; }
+    [DisallowNull]
+    public required Func<IPAddress, string>? DatacenterMapping { get; set; }
+
+    [DisallowNull]
+    public required Func<IReadOnlyCollection<string>>? ActiveDatacentersProvider { get; set; }
 
     public TimeSpan DnsCacheTtl { get; set; } = TimeSpan.FromMinutes(30);
     public TimeSpan DnsResolveTimeout { get; set; } = TimeSpan.FromSeconds(1);

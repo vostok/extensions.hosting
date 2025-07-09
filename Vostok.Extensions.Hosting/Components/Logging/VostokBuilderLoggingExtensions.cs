@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 using Vostok.Extensions.Hosting.Components.Logging.Internal;
+using Vostok.Logging.Abstractions;
 using Vostok.Logging.Microsoft;
 
 namespace Vostok.Extensions.Hosting.Components.Logging;
@@ -25,7 +26,13 @@ public static class VostokBuilderLoggingExtensions
 
     private static void AddLogging(this IServiceCollection services)
     {
-        var descriptor = ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogProviderFactory.Create);
+        // note: Register ILog separately to let DI infrastructure dispose it.
+        services.TryAddKeyedSingleton<ILog>(
+            VostokLogFactory.LogKey,
+            (provider, _) => VostokLogFactory.CreateVostokLogImplementation(provider));
+
+        var descriptor =
+            ServiceDescriptor.Singleton<ILoggerProvider, VostokLoggerProvider>(VostokLogFactory.CreateLoggerProvider);
         services.TryAddEnumerable(descriptor);
     }
 }

@@ -23,6 +23,6 @@ internal sealed class ZooKeeperClientDefaultSettingsFactory(
         if (clusterProvider is not null)
             return new ZooKeeperClientSettings(() => clusterProvider.GetCluster());
 
-        throw new InvalidOperationException($"Topology for {nameof(ZooKeeper.Client.ZooKeeperClient)} was not configured");
+        return new DevNullZookeeperClientSettings();
     }
 }

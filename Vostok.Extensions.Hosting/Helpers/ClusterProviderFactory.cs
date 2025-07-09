@@ -4,7 +4,6 @@ using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Topology.CC;
 using Vostok.Clusterclient.Topology.SD;
 using Vostok.ClusterConfig.Client.Abstractions;
-using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Helpers;
@@ -14,7 +13,7 @@ internal static class ClusterProviderFactory
     public static IClusterProvider FromClusterConfig(IServiceProvider provider, string path)
     {
         var clusterConfigClient = provider.GetRequiredService<IClusterConfigClient>();
-        var log = provider.GetRequiredService<ILog>();
+        var log = provider.GetInitializationLog();
         return new ClusterConfigClusterProvider(clusterConfigClient, path, log);
     }
 
@@ -24,7 +23,7 @@ internal static class ClusterProviderFactory
         string application)
     {
         var serviceLocator = provider.GetRequiredService<IServiceLocator>();
-        var log = provider.GetRequiredService<ILog>();
+        var log = provider.GetInitializationLog();
         return new ServiceDiscoveryClusterProvider(serviceLocator, environment, application, log);
     }
 }

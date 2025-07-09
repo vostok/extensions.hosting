@@ -35,7 +35,7 @@
     <ModuleReference Include="vostok.configuration.sources.cc" />
     <ModuleReference Include="vostok.configuration.microsoft" />
     <ModuleReference Include="vostok.configuration.logging" />
-    <ModuleReference Include="vostok.logging.configuration" />
+    <ModuleReference Include="vostok.logging.tracing" />
     <ModuleReference Include="vostok.logging.console" />
     <ModuleReference Include="vostok.logging.file" />
     <ModuleReference Include="vostok.logging.microsoft" />

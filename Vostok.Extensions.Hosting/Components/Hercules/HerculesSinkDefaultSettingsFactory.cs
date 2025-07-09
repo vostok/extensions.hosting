@@ -23,8 +23,8 @@ internal sealed class HerculesSinkDefaultSettingsFactory(
         var clusterProvider = provider.GetRequiredKeyedService<IClusterProvider>(HerculesSinkFactory.ClusterProviderKey);
         var optionsMonitor = provider.GetRequiredService<IOptionsMonitor<HerculesSinkAuthOptions>>();
 
-        var tracer = provider.GetService<ITracer>();
-        var applicationIdentity = provider.GetService<IVostokApplicationIdentity>();
+        var tracer = provider.GetRequiredService<ITracer>();
+        var applicationIdentity = provider.GetRequiredService<IVostokApplicationIdentity>();
 
         // Note(kungurtsev): allow null api key provider, streams can be configured later.
         return new HerculesSinkSettings(clusterProvider, () => optionsMonitor.CurrentValue.ApiKey)
@@ -32,14 +32,12 @@ internal sealed class HerculesSinkDefaultSettingsFactory(
             AdditionalSetup = setup =>
             {
                 // note (ponomaryovigor): Do not use ServiceNameProvider.cs because of circular dependency between sink and beacon.
-                if (applicationIdentity is not null)
-                    setup.ClientApplicationName = applicationIdentity.FormatServiceName();
+                setup.ClientApplicationName = applicationIdentity.FormatServiceName();
 
-                if (tracer is not null)
-                    setup.SetupDistributedTracing(new TracingConfiguration(tracer)
-                    {
-                        SetAdditionalRequestDetails = SetStreamName
-                    });
+                setup.SetupDistributedTracing(new TracingConfiguration(tracer)
+                {
+                    SetAdditionalRequestDetails = SetStreamName
+                });
             }
         };
     }

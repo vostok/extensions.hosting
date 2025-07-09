@@ -28,7 +28,7 @@ internal static class VostokBuilderCoreExtensions
         vostok.Services.TryAddSingleton<VostokDisposables>();
         vostok.Services.TryAddSingleton(ServiceNameProvider.Create);
 
-        vostok.ConfigureOpenTelemetryForVostok();
+        vostok.Services.ConfigureOpenTelemetryForVostok();
 
         VostokTypeConverterHelper.AddVostokAttributes();
     }
