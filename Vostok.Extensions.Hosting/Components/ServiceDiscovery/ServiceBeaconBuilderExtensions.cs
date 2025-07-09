@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Vostok.Commons.Helpers.Network;
 using Vostok.Datacenters;
 using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ServiceBeacon;
-using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ServiceBeacon.EventsContext;
 using Vostok.Hosting.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -132,16 +131,6 @@ public static class ServiceBeaconBuilderExtensions
         Func<IServiceProvider, IServiceDiscoveryEventsSender> implementationFactory)
     {
         builder.Services.AddSingleton(implementationFactory);
-        return builder;
-    }
-
-    public static IServiceBeaconBuilder SetHerculesEventsSender(
-        this IServiceBeaconBuilder builder,
-        Action<HerculesServiceDiscoveryEventsSenderOptions, IServiceProvider> configure)
-    {
-        builder.SetEventSender(HerculesServiceDiscoveryEventsSenderFactory.Create);
-        builder.Services.AddOptions<HerculesServiceDiscoveryEventsSenderOptions>().Configure(configure);
-
         return builder;
     }
 }

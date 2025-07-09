@@ -28,9 +28,9 @@ public static class HerculesSinkBuilderExtensions
         return builder;
     }
 
-    public static IHerculesSinkBuilder SetDefaultApiKey(this IHerculesSinkBuilder builder, string? defaultApiKey)
+    public static IHerculesSinkBuilder SetApiKey(this IHerculesSinkBuilder builder, string? apiKey)
     {
-        builder.Services.Configure<HerculesSinkMiscellaneousOptions>(o => o.DefaultApiKey = defaultApiKey);
+        builder.Services.Configure<HerculesSinkAuthOptions>(o => o.ApiKey = apiKey);
         return builder;
     }
 
