@@ -2,9 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Vostok.Commons.Helpers.Observable;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Configuration;
 using Vostok.Logging.Microsoft;
 using Vostok.Logging.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -58,29 +56,9 @@ internal static class VostokLogFactory
         if (logRegistrations.Length is 0)
             return new SilentLog();
 
-        var builder = new ConfigurableLogBuilder();
+        var baseLogs = logRegistrations.Select(r => r.Create(provider)).ToArray();
+        var compositeLog = new CompositeLog(baseLogs);
 
-        foreach (var registration in logRegistrations)
-            builder.AddLog(registration.LogName, registration.Create(provider));
-
-        var rulesMonitor = provider.GetRequiredService<IOptionsMonitor<VostokLogRulesOptions>>();
-        var rulesObservable = GetRulesObservable(rulesMonitor);
-        builder.SetRules(rulesObservable);
-
-        var configurableLog = builder.Build();
-        configurableLog.WaitForRulesInitialization(TimeSpan.FromSeconds(1));
-
-        return configurableLog.WithTracingProperties(provider.GetRequiredService<ITracer>());
-    }
-
-    private static CachingObservable<LogConfigurationRule[]> GetRulesObservable(
-        IOptionsMonitor<VostokLogRulesOptions> optionsMonitor)
-    {
-        var initialOptions = optionsMonitor.CurrentValue;
-        var observable = new CachingObservable<LogConfigurationRule[]>(initialOptions.Rules.ToArray());
-
-        optionsMonitor.OnChange(newOptions => observable.Next(newOptions.Rules.ToArray()));
-
-        return observable;
+        return compositeLog.WithTracingProperties(provider.GetRequiredService<ITracer>());
     }
 }

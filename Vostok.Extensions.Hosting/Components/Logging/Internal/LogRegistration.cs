@@ -9,13 +9,11 @@ internal sealed class LogRegistration(string logName, Func<IServiceProvider, ILo
 {
     private static int unnamedLogsCounter;
 
-    public string LogName { get; } = logName;
-
     public ILog Create(IServiceProvider provider)
     {
         var log = implementationFactory(provider);
 
-        var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Get(LogName);
+        var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Get(logName);
 
         foreach (var customization in options.Customizations)
             log = customization(log, provider);

@@ -8,7 +8,6 @@ using Vostok.Extensions.Hosting.Components.Logging.Console;
 using Vostok.Extensions.Hosting.Components.Logging.File;
 using Vostok.Extensions.Hosting.Components.Logging.Internal;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
 using Vostok.Logging.File.Configuration;
 
@@ -95,18 +94,6 @@ public static class VostokLogBuilderExtensions
     public static IVostokLogBuilder DisableLog(this IVostokLogBuilder builder, string name)
     {
         builder.Services.RemoveAllKeyed<LogRegistration>(LogRegistration.Key.For(name));
-        return builder;
-    }
-
-    public static IVostokLogBuilder AddRule(this IVostokLogBuilder builder, LogConfigurationRule rule)
-    {
-        builder.Services.Configure<VostokLogRulesOptions>(options => options.Rules.Add(rule));
-        return builder;
-    }
-
-    public static IVostokLogBuilder ClearRules(this IVostokLogBuilder builder)
-    {
-        builder.Services.Configure<VostokLogRulesOptions>(options => options.Rules.Clear());
         return builder;
     }
 

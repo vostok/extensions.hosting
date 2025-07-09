@@ -1,10 +1,7 @@
 ﻿using JetBrains.Annotations;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Vostok.Extensions.Hosting.Components.Logging.Internal;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Configuration;
 
 namespace Vostok.Extensions.Hosting.Components.Logging;
 
@@ -35,14 +32,6 @@ public static class LogConfiguratorExtensions
         configurator.Services.ConfigureMiscellaneousOptions(
             options => options.Customizations.Add(customization),
             configurator.Name);
-
-        return configurator;
-    }
-
-    public static ILogConfigurator AddRule(this ILogConfigurator configurator, LogConfigurationRule rule)
-    {
-        rule = rule.WithLog(configurator.Name);
-        configurator.Services.Configure<VostokLogRulesOptions>(options => options.Rules.Add(rule));
 
         return configurator;
     }
