@@ -2,7 +2,6 @@ using JetBrains.Annotations;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.Hosting.Components.Logging.Console;
 using Vostok.Extensions.Hosting.Components.Logging.File;
@@ -16,74 +15,46 @@ namespace Vostok.Extensions.Hosting.Components.Logging;
 [PublicAPI]
 public static class VostokLogBuilderExtensions
 {
-    public static IVostokLogBuilder AddLog(
+    public static ILogConfigurator AddLog(
         this IVostokLogBuilder builder,
         ILog log,
-        string? logName = null,
-        Action<ILogConfigurator>? configure = null) =>
-        builder.AddLog(_ => log, logName, configure);
+        string? logName = null) =>
+        builder.AddLog(_ => log, logName);
 
-    public static IVostokLogBuilder AddLog(this IVostokLogBuilder builder,
+    public static ILogConfigurator AddLog(this IVostokLogBuilder builder,
         Func<IServiceProvider, ILog> implementationFactory,
-        string? logName = null,
-        Action<ILogConfigurator>? configure = null)
+        string? logName = null)
     {
         logName ??= LogRegistration.GetNextName();
         var key = LogRegistration.Key.For(logName);
 
         builder.Services.TryAddKeyedSingleton(key, new LogRegistration(logName, implementationFactory));
 
-        configure?.Invoke(new LogConfigurator(builder.Services, logName));
-
-        return builder;
+        return new LogConfigurator(builder.Services, logName);
     }
 
-    public static IVostokLogBuilder WithConsole(
+    public static ILogConfigurator WithConsole(
         this IVostokLogBuilder builder,
-        Action<ConsoleLogSettings>? configureSettings = null,
-        Action<ILogConfigurator>? configureLog = null)
+        Action<ConsoleLogSettings>? configureSettings = null)
     {
-        builder.AddLog(ConsoleLogFactory.Create, ConsoleLogFactory.LogName, configureLog);
-
         if (configureSettings is not null)
             builder.Services.Configure(configureSettings);
 
-        return builder;
+        return builder.AddLog(ConsoleLogFactory.Create, ConsoleLogFactory.LogName);
     }
 
-    public static IVostokLogBuilder WithFile(
+    public static ILogConfigurator WithFile(
         this IVostokLogBuilder builder,
-        Action<FileLogSettings>? configureSettings = null,
-        Action<ILogConfigurator>? configureLog = null)
+        Action<FileLogSettings>? configureSettings = null)
     {
-        builder.AddLog(FileLogFactory.Create, FileLogFactory.LogName, configureLog);
-
         if (configureSettings is not null)
             builder.Services.Configure(configureSettings);
 
-        return builder;
+        return builder.AddLog(FileLogFactory.Create, FileLogFactory.LogName);
     }
 
-    public static IVostokLogBuilder SetMinimumLevelProvider(
-        this IVostokLogBuilder builder,
-        Func<LogLevel> minLevelProvider)
-    {
-        builder.Services.ConfigureMiscellaneousOptions(options => options.MinLevelProvider = minLevelProvider);
-        return builder;
-    }
-
-    public static IVostokLogBuilder CustomizeLog(this IVostokLogBuilder builder, Func<ILog, ILog> customize) =>
-        builder.CustomizeLog((log, _) => customize(log));
-
-    public static IVostokLogBuilder CustomizeLog(
-        this IVostokLogBuilder builder,
-        Func<ILog, IServiceProvider, ILog> customize)
-    {
-        var customization = new LogCustomization(customize);
-        builder.Services.ConfigureMiscellaneousOptions(options => options.Customizations.Add(customization));
-
-        return builder;
-    }
+    public static ILogConfigurator Configure(this IVostokLogBuilder builder) =>
+        new LogConfigurator(builder.Services, null);
 
     public static IVostokLogBuilder ClearLogs(this IVostokLogBuilder builder)
     {
@@ -95,14 +66,5 @@ public static class VostokLogBuilderExtensions
     {
         builder.Services.RemoveAllKeyed<LogRegistration>(LogRegistration.Key.For(name));
         return builder;
-    }
-
-    internal static void ConfigureMiscellaneousOptions(
-        this IServiceCollection services,
-        Action<VostokLogMiscellaneousOptions> configure,
-        string? name = null)
-    {
-        name ??= Options.DefaultName;
-        services.Configure(name, configure);
     }
 }

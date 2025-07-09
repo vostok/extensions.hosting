@@ -44,21 +44,20 @@ internal static class VostokLogFactory
 
     public static ILog CreateVostokLogImplementation(IServiceProvider provider)
     {
-        var vostokLog = GetVostokLog(provider);
-        return vostokLog is SilentLog
-            ? vostokLog
-            : new InternalDisposableVostokLog(vostokLog);
-    }
-
-    private static ILog GetVostokLog(IServiceProvider provider)
-    {
-        var logRegistrations = provider.GetKeyedServices<LogRegistration>(LogRegistration.Key.All).ToArray();
-        if (logRegistrations.Length is 0)
-            return new SilentLog();
-
+        var logRegistrations = provider.GetKeyedServices<LogRegistration>(LogRegistration.Key.All);
         var baseLogs = logRegistrations.Select(r => r.Create(provider)).ToArray();
-        var compositeLog = new CompositeLog(baseLogs);
 
-        return compositeLog.WithTracingProperties(provider.GetRequiredService<ITracer>());
+        var vostokLog = baseLogs switch
+        {
+            [] => new SilentLog(),
+            [var singleLog] => singleLog,
+            _ => new CompositeLog(baseLogs)
+        };
+
+        if (vostokLog is SilentLog)
+            return vostokLog;
+
+        vostokLog = vostokLog.WithTracingProperties(provider.GetRequiredService<ITracer>());
+        return new InternalDisposableVostokLog(vostokLog);
     }
 }
