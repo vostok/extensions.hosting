@@ -13,7 +13,7 @@ internal sealed class LogRegistration(string logName, Func<IServiceProvider, ILo
     {
         var log = implementationFactory(provider);
 
-        var options = provider.GetRequiredService<IOptionsSnapshot<VostokLogMiscellaneousOptions>>().Get(logName);
+        var options = provider.GetRequiredService<IOptionsMonitor<VostokLogMiscellaneousOptions>>().Get(logName);
 
         foreach (var customization in options.Customizations)
             log = customization(log, provider);
