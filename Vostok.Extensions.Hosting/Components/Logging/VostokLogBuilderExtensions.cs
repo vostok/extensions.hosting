@@ -53,8 +53,19 @@ public static class VostokLogBuilderExtensions
         return builder.AddLog(FileLogFactory.Create, FileLogFactory.LogName);
     }
 
-    public static ILogConfigurator Configure(this IVostokLogBuilder builder) =>
-        new LogConfigurator(builder.Services, null);
+    public static IVostokLogBuilder CustomizeLog(this IVostokLogBuilder builder, Func<ILog, ILog> customize) =>
+        builder.CustomizeLog((log, _) => customize(log));
+
+    public static IVostokLogBuilder CustomizeLog(
+        this IVostokLogBuilder builder,
+        Func<ILog, IServiceProvider, ILog> customize)
+    {
+        // note: `null` name is for main log.
+        var configurator = new LogConfigurator(builder.Services, null);
+        configurator.CustomizeLog(customize);
+
+        return builder;
+    }
 
     public static IVostokLogBuilder ClearLogs(this IVostokLogBuilder builder)
     {
