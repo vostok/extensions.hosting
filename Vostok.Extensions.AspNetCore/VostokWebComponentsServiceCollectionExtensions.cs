@@ -21,12 +21,12 @@ namespace Vostok.Extensions.AspNetCore;
 /// Register Vostok web components and their configuration in DI container:
 /// <list type="bullet">
 ///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
+///     <item>Register Vostok middlewares</item>
 ///     <item>Enable AspNetCore tracing instrumentation</item>
-///     <item>Configure Kestrel defaults</item>
+///     <item>Enable HealthChecks</item>
+///     <item>Setup Kestrel defaults</item>
 ///     <item>Setup request tracking defaults</item>
 ///     <item>Setup throttling defaults</item>
-///     <item>Setup HealthChecks</item>
-///     <item>Add Vostok middlewares</item>
 /// </list>
 /// <para>Use returning <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
 /// <para>Applies reasonable Kestrel defaults.</para>
@@ -37,13 +37,14 @@ public static class VostokWebComponentsServiceCollectionExtensions
     /// <inheritdoc cref="VostokWebComponentsServiceCollectionExtensions"/>
     public static IVostokWebComponentsBuilder AddVostokWebComponents(this IServiceCollection services)
     {
-        services.AddHostedService<VostokAspNetCoreHostedService>();
-
-        services.ConfigureAspNetCoreTelemetry();
         services.ConfigureKestrelDefaults();
+        services.ConfigureAspNetCoreTelemetry();
         services.AddRequestTrackingDefaults();
         services.AddThrottlingDefaults();
+
         services.AddHealthChecks();
+
+        services.AddHostedService<VostokAspNetCoreHostedService>();
 
         services.AddOptions<PingApiMiddlewareOptions>()
                 .Configure<IServiceProvider, IHostApplicationLifetime>((options, provider, lifetime) =>
@@ -59,15 +60,6 @@ public static class VostokWebComponentsServiceCollectionExtensions
         return new VostokWebComponentsBuilder(services);
     }
 
-    private static void ConfigureAspNetCoreTelemetry(this IServiceCollection services)
-    {
-        services.ConfigureOpenTelemetryTracerProvider(tracing =>
-        {
-            tracing.AddAspNetCoreInstrumentation()
-                   .SetupAspNetCoreInstrumentationForVostok();
-        });
-    }
-
     private static void ConfigureKestrelDefaults(this IServiceCollection services) =>
         services.Configure<KestrelServerOptions>(options =>
         {
@@ -81,4 +73,13 @@ public static class VostokWebComponentsServiceCollectionExtensions
             options.Limits.MaxRequestHeadersTotalSize = 64 * 1024;
             options.Limits.MaxConcurrentUpgradedConnections = 10000;
         });
+
+    private static void ConfigureAspNetCoreTelemetry(this IServiceCollection services)
+    {
+        services.ConfigureOpenTelemetryTracerProvider(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                   .SetupAspNetCoreInstrumentationForVostok();
+        });
+    }
 }

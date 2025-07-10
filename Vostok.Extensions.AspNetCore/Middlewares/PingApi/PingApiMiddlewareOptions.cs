@@ -19,7 +19,7 @@ public sealed class PingApiMiddlewareOptions
 
     /// <summary>
     /// <para>An optional delegate that returns <c>true</c> if the application is currently healthy or <c>false</c> if there are some warnings.</para>
-    /// <para>By default, uses built-in health-check <see cref="IHealthTracker.CurrentStatus"/>.</para>
+    /// <para>By default, uses built-in health-check <see cref="IHealthTracker.CurrentReport"/>.</para>
     /// </summary>
     public Func<bool>? HealthCheck { get; set; }
 
