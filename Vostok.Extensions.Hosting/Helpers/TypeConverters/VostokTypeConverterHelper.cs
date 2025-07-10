@@ -6,7 +6,7 @@ namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
 internal static class VostokTypeConverterHelper
 {
-    public static void AddVostokAttributes()
+    public static void AddVostokTypeConverters()
     {
         // todo: Type descriptors
 

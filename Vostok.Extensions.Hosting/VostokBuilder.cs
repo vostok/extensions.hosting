@@ -30,7 +30,7 @@ internal static class VostokBuilderCoreExtensions
 
         vostok.Services.ConfigureOpenTelemetryForVostok();
 
-        VostokTypeConverterHelper.AddVostokAttributes();
+        VostokTypeConverterHelper.AddVostokTypeConverters();
     }
 
     public static bool CheckComponentAlreadyAdded(this IVostokBuilder vostok, string componentName)
