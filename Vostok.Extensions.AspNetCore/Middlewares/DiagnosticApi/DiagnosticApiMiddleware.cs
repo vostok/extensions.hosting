@@ -164,7 +164,9 @@ public sealed class DiagnosticApiMiddleware
         return true;
     }
 
-    private static bool IsLocalRequest(HttpContext context) =>
-        context.Connection.RemoteIpAddress.Equals(context.Connection.LocalIpAddress) ||
-        IPAddress.IsLoopback(context.Connection.RemoteIpAddress);
+    private static bool IsLocalRequest(HttpContext context)
+    {
+        var remoteIpAddress = context.Connection.RemoteIpAddress!;
+        return remoteIpAddress.Equals(context.Connection.LocalIpAddress) || IPAddress.IsLoopback(remoteIpAddress);
+    }
 }
