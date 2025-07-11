@@ -18,9 +18,10 @@ internal sealed class MetricContextDefaultConfigFactory(
     {
         var log = provider.GetInitializationLog();
         var senders = provider.GetServices<IMetricEventSender>().ToArray();
+        var miscellaneousOptions = provider.GetRequiredService<IOptions<VostokMetricsMiscellaneousOptions>>().Value;
 
         var compositeMetricEventSender = BuildCompositeMetricEventSender(senders);
-        var annotationEventSender = BuildCompositeAnnotationEventSender(senders);
+        var annotationEventSender = BuildCompositeAnnotationEventSender(senders, miscellaneousOptions);
 
         return new MetricContextConfig(compositeMetricEventSender)
         {
@@ -37,7 +38,9 @@ internal sealed class MetricContextDefaultConfigFactory(
             _ => new CompositeMetricEventSender(senders)
         };
 
-    private static IAnnotationEventSender? BuildCompositeAnnotationEventSender(IMetricEventSender[] senders)
+    private static IAnnotationEventSender? BuildCompositeAnnotationEventSender(
+        IMetricEventSender[] senders,
+        VostokMetricsMiscellaneousOptions miscellaneousOptions)
     {
         var annotationSenders = senders.OfType<IAnnotationEventSender>().ToArray();
 
@@ -47,6 +50,12 @@ internal sealed class MetricContextDefaultConfigFactory(
             [var sender] => sender,
             _ => new CompositeAnnotationEventSender(annotationSenders)
         };
+
+        if (annotationSender is not null)
+        {
+            foreach (var customization in miscellaneousOptions.AnnotationsSenderCustomizations)
+                annotationSender = customization(annotationSender);
+        }
 
         return annotationSender;
     }
