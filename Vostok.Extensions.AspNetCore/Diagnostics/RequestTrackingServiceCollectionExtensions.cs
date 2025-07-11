@@ -9,29 +9,29 @@ namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
 internal static class RequestTrackingServiceCollectionExtensions
 {
-    public static void AddRequestTrackingDefaults(this IServiceCollection serviceCollection) =>
-        serviceCollection.TryAddSingleton<IRequestTracker>(services =>
+    public static void AddRequestTrackingDefaults(this IServiceCollection services) =>
+        services.TryAddSingleton<IRequestTracker>(provider =>
         {
-            var options = services.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
+            var options = provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
 
             if (!options.AddCurrentRequestsInfoProvider)
                 return new DevNullRequestTracker();
 
             var requestTracker = new RequestTracker();
-            AddRequestTrackingInfo(services, requestTracker);
+            AddRequestTrackingInfo(provider, requestTracker);
 
             return requestTracker;
         });
 
-    private static void AddRequestTrackingInfo(IServiceProvider services, RequestTracker requestTracker)
+    private static void AddRequestTrackingInfo(IServiceProvider provider, RequestTracker requestTracker)
     {
-        var diagnostics = services.GetService<IDiagnosticInfo>();
+        var diagnostics = provider.GetService<IDiagnosticInfo>();
         if (diagnostics == null)
             return;
 
         var infoEntry = new DiagnosticEntry(DiagnosticConstants.Component, DiagnosticConstants.RequestsInProgressEntry);
         var infoProvider = new CurrentRequestsInfoProvider(requestTracker);
 
-        services.RegisterDisposable(diagnostics.RegisterProvider(infoEntry, infoProvider));
+        provider.RegisterDisposable(diagnostics.RegisterProvider(infoEntry, infoProvider));
     }
 }

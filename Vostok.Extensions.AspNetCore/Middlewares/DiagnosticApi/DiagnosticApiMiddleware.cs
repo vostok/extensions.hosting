@@ -33,12 +33,12 @@ public sealed class DiagnosticApiMiddleware
         RequestDelegate next,
         IOptions<DiagnosticApiMiddlewareOptions> options,
         ILogger<DiagnosticApiMiddleware> logger,
-        IServiceProvider serviceProvider)
+        IServiceProvider provider)
     {
         _next = next;
         _options = options.Value;
         _logger = logger;
-        _diagnostics = serviceProvider.GetService<IVostokApplicationDiagnostics>();
+        _diagnostics = provider.GetService<IVostokApplicationDiagnostics>();
 
         _pathPrefix = _options.PathPrefix.TrimEnd('/');
     }
