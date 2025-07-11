@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Vostok.Hercules.Client;
-using Vostok.Hercules.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.Hercules;
 
@@ -27,7 +26,7 @@ public static class VostokBuilderHerculesSinkExtensions
 
     public static IVostokBuilder DisableHerculesSink(this IVostokBuilder vostok)
     {
-        vostok.Services.Replace(ServiceDescriptor.Singleton<IHerculesSink>(new DevNullHerculesSink()));
+        vostok.Services.Replace(ServiceDescriptor.Singleton(HerculesSinkFactory.CreateDisabled));
         return vostok;
     }
 

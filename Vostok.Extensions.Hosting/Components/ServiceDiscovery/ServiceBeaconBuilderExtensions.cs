@@ -130,6 +130,7 @@ public static class ServiceBeaconBuilderExtensions
         this IServiceBeaconBuilder builder,
         Func<IServiceProvider, IServiceDiscoveryEventsSender> implementationFactory)
     {
+        // Note: Don't use TryAdd or TryAddEnumerable because we have no 'composite' sender and always use last registered. 
         builder.Services.AddSingleton(implementationFactory);
         return builder;
     }

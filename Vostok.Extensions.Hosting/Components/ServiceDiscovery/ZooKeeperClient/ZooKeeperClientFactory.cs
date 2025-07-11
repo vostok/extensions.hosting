@@ -18,24 +18,31 @@ internal static class ZooKeeperClientFactory
     public static IZooKeeperClient Create(IServiceProvider provider)
     {
         var log = provider.GetInitializationLog();
-        var settings = provider.GetRequiredService<IOptions<ZooKeeperClientSettings>>().Value;
 
-        if (settings is DevNullZookeeperClientSettings)
+        try
         {
-            log.LogDisabled("ZooKeeperClient", "unconfigured ZooKeeper topology");
+            var settings = provider.GetRequiredService<IOptions<ZooKeeperClientSettings>>().Value;
+
+            var zooKeeperClient = new ZooKeeper.Client.ZooKeeperClient(
+                settings,
+                log.WithEventsDroppedByProperties(IsDataChangedLog));
+
+            foreach (var authenticationInfo in provider.GetServices<AuthenticationInfo>())
+                zooKeeperClient.AddAuthenticationInfo(authenticationInfo);
+
+            return zooKeeperClient;
+        }
+        catch (Exception e)
+        {
+            log.LogDisabled("ZooKeeperClient", e.Message);
             return new DevNullZooKeeperClient();
         }
+    }
 
-        var authenticationInfos = provider.GetServices<AuthenticationInfo>();
-
-        var zooKeeperClient = new ZooKeeper.Client.ZooKeeperClient(
-            settings,
-            log.WithEventsDroppedByProperties(IsDataChangedLog));
-
-        foreach (var authenticationInfo in authenticationInfos)
-            zooKeeperClient.AddAuthenticationInfo(authenticationInfo);
-
-        return zooKeeperClient;
+    public static IZooKeeperClient CreateDisabled(IServiceProvider provider)
+    {
+        provider.GetInitializationLog().LogDisabled("ZooKeeperClient");
+        return new DevNullZooKeeperClient();
     }
 
     private static bool IsDataChangedLog(IReadOnlyDictionary<string, object> properties)
@@ -45,7 +52,7 @@ internal static class ZooKeeperClientFactory
         if (!properties.TryGetValue("NodePath", out var path))
             return false;
         return
-            eventType is NodeChangedEventType castedEventType && castedEventType == NodeChangedEventType.DataChanged &&
+            eventType is NodeChangedEventType.DataChanged &&
             path is string castedPath && castedPath.StartsWith(new ServiceLocatorSettings().ZooKeeperNodesPrefix);
     }
 }

@@ -15,7 +15,7 @@ internal static class RootMetricsContextFactory
 
         if (config.Sender is DevNullMetricEventSender)
         {
-            provider.GetInitializationLog().LogDisabled("MetricsContext", "unconfigured sender");
+            provider.GetInitializationLog().LogDisabled("MetricsContext", "Unconfigured sender");
             return new DevNullMetricContext();
         }
 

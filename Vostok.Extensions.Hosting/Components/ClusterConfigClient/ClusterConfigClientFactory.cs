@@ -17,7 +17,11 @@ internal static class ClusterConfigClientFactory
         if (settings is not { EnableLocalSettings: false, EnableClusterSettings: false })
             return new ClusterConfig.Client.ClusterConfigClient(settings);
 
-        log.LogDisabled("ClusterConfigClient", "explicit configuration");
-        return new DisabledClusterConfigClient();
+        log.LogDisabled("ClusterConfigClient");
+        return new ClusterConfig.Client.ClusterConfigClient(new ClusterConfigClientSettings
+        {
+            EnableLocalSettings = false,
+            EnableClusterSettings = false
+        });
     }
 }

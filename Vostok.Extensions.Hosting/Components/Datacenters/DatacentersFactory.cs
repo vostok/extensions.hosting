@@ -14,7 +14,7 @@ internal static class DatacentersFactory
 
         if (options.DatacenterMapping is null || options.ActiveDatacentersProvider is null)
         {
-            provider.GetInitializationLog().LogDisabled("Datacenters", "unconfigured providers");
+            provider.GetInitializationLog().LogDisabled("Datacenters", "Unconfigured providers");
             return new EmptyDatacenters();
         }
 

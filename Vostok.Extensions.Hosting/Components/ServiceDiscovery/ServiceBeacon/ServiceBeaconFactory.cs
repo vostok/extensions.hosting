@@ -25,7 +25,7 @@ internal static class ServiceBeaconFactory
 
         if (zooKeeperClient is null or DevNullZooKeeperClient)
         {
-            log.LogDisabled("ServiceLocator", "disabled ZooKeeperClient");
+            log.LogDisabled("ServiceBeacon", "Disabled ZooKeeperClient");
             return new DevNullServiceBeacon(CreateDevNullReplicaInfo(settings, log, provider));
         }
 
@@ -36,6 +36,8 @@ internal static class ServiceBeaconFactory
     {
         var settings = provider.GetRequiredService<IOptions<ServiceBeaconSettings>>().Value;
         var log = provider.GetInitializationLog();
+        log.LogDisabled("ServiceBeacon");
+
         return new DevNullServiceBeacon(CreateDevNullReplicaInfo(settings, log, provider));
     }
 

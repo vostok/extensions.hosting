@@ -19,7 +19,7 @@ internal static class ServiceLocatorFactory
 
         if (zooKeeperClient is null or DevNullZooKeeperClient)
         {
-            log.LogDisabled("ServiceLocator", "disabled ZooKeeperClient");
+            log.LogDisabled("ServiceLocator", "Disabled ZooKeeperClient");
             return new DevNullServiceLocator();
         }
 

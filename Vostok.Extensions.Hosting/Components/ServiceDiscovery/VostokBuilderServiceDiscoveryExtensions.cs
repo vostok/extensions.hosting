@@ -11,7 +11,6 @@ using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ZooKeeperClient;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ZooKeeper.Client;
-using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 
@@ -78,7 +77,7 @@ public static class VostokBuilderServiceDiscoveryExtensions
 
     public static IVostokBuilder DisableZooKeeper(this IVostokBuilder vostok)
     {
-        vostok.Services.Replace(ServiceDescriptor.Singleton<IZooKeeperClient>(new DevNullZooKeeperClient()));
+        vostok.Services.Replace(ServiceDescriptor.Singleton(ZooKeeperClientFactory.CreateDisabled));
         return vostok;
     }
 

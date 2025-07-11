@@ -14,12 +14,26 @@ internal static class HerculesSinkFactory
 
     public static IHerculesSink Create(IServiceProvider provider)
     {
-        var settings = provider.GetRequiredService<IOptions<HerculesSinkSettings>>().Value;
-        var log = provider.GetInitializationLog();
+        try
+        {
+            var settings = provider.GetRequiredService<IOptions<HerculesSinkSettings>>().Value;
+            var log = provider.GetInitializationLog();
 
-        if (settings.SuppressVerboseLogging)
-            log = log.WithMinimumLevel(LogLevel.Warn);
+            if (settings.SuppressVerboseLogging)
+                log = log.WithMinimumLevel(LogLevel.Warn);
 
-        return new HerculesSink(settings, log);
+            return new HerculesSink(settings, log);
+        }
+        catch (Exception e)
+        {
+            provider.GetInitializationLog().LogDisabled("HerculesSink", e.Message);
+            return new DevNullHerculesSink();
+        }
+    }
+
+    public static IHerculesSink CreateDisabled(IServiceProvider provider)
+    {
+        provider.GetInitializationLog().LogDisabled("HerculesSink");
+        return new DevNullHerculesSink();
     }
 }

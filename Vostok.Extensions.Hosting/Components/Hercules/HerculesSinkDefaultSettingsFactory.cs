@@ -20,7 +20,10 @@ internal sealed class HerculesSinkDefaultSettingsFactory(
 {
     protected override HerculesSinkSettings CreateInstance(string _)
     {
-        var clusterProvider = provider.GetRequiredKeyedService<IClusterProvider>(HerculesSinkFactory.ClusterProviderKey);
+        var clusterProvider = provider.GetKeyedService<IClusterProvider>(HerculesSinkFactory.ClusterProviderKey);
+        if (clusterProvider is null)
+            throw new InvalidOperationException("Unconfigured topology");
+
         var optionsMonitor = provider.GetRequiredService<IOptionsMonitor<HerculesSinkAuthOptions>>();
 
         var tracer = provider.GetRequiredService<ITracer>();
