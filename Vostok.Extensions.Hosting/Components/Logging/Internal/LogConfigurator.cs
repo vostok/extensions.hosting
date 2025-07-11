@@ -15,8 +15,7 @@ internal sealed class LogConfigurator(IServiceCollection services, string? name)
 
     public ILogConfigurator CustomizeLog(Func<ILog, IServiceProvider, ILog> customize)
     {
-        var customization = new LogCustomization(customize);
-        Configure(options => options.Customizations.Add(customization));
+        Configure(options => options.Customizations.Add(customize));
 
         return this;
     }
