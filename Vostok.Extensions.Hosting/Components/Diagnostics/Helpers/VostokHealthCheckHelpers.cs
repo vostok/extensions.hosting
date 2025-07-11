@@ -34,7 +34,7 @@ internal static class VostokHealthCheckHelpers
             _ => VostokHealthStatus.Failing,
         };
 
-    private class VostokToMicrosoftAdapter(VostokHealthCheck check) : MicrosoftHealthCheck
+    private sealed class VostokToMicrosoftAdapter(VostokHealthCheck check) : MicrosoftHealthCheck
     {
         public async Task<MicrosoftHealthCheckResult> CheckHealthAsync(
             MicrosoftHealthCheckContext context,

@@ -97,7 +97,7 @@ internal sealed class VostokContextPropagatorTests
             });
     }
 
-    internal class IntSerializer : IContextSerializer<int>
+    private sealed class IntSerializer : IContextSerializer<int>
     {
         public string Serialize(int value) =>
             value.ToString();
@@ -106,7 +106,7 @@ internal sealed class VostokContextPropagatorTests
             int.Parse(input);
     }
 
-    internal class StringSerializer : IContextSerializer<string>
+    private sealed class StringSerializer : IContextSerializer<string>
     {
         public string Serialize(string value) =>
             value;

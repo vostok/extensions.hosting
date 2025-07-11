@@ -4,7 +4,7 @@ using Vostok.Logging.Abstractions.Wrappers;
 
 namespace Vostok.Extensions.Hosting.Components.Logging.Substitution;
 
-internal class BufferedLog : ILog
+internal sealed class BufferedLog : ILog
 {
     private const int Capacity = 1_000;
     private readonly ConcurrentBoundedQueue<LogEvent> _queue = new(Capacity);
