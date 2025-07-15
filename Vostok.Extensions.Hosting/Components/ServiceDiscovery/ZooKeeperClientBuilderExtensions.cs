@@ -1,7 +1,6 @@
 ﻿using JetBrains.Annotations;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ZooKeeperClient;
@@ -41,12 +40,13 @@ public static class ZooKeeperClientBuilderExtensions
 
     public static IZooKeeperClientBuilder SetClusterProvider(
         this IZooKeeperClientBuilder builder,
-        Func<IServiceProvider, IClusterProvider> implementationFactory)
+        Func<IServiceProvider, IClusterProvider?> implementationFactory)
     {
-        builder.Services.AddKeyedSingleton(
-            ZooKeeperClientFactory.ClusterProviderKey,
-            (provider, _) => implementationFactory(provider));
-        builder.Services.Configure<ZooKeeperClientConnectionStringOptions>(o => o.ConnectionString = null);
+        builder.Services.ConfigureMisc(options =>
+        {
+            options.ConnectionString = null;
+            options.ClusterProvider = implementationFactory;
+        });
 
         return builder;
     }
@@ -55,8 +55,12 @@ public static class ZooKeeperClientBuilderExtensions
         this IZooKeeperClientBuilder builder,
         string connectionString)
     {
-        builder.Services.Configure<ZooKeeperClientConnectionStringOptions>(o => o.ConnectionString = connectionString);
-        builder.Services.RemoveAllKeyed<IClusterProvider>(ZooKeeperClientFactory.ClusterProviderKey);
+        builder.Services.ConfigureMisc(options =>
+        {
+            options.ConnectionString = connectionString;
+            options.ClusterProvider = null;
+        });
+
         return builder;
     }
 
@@ -67,7 +71,12 @@ public static class ZooKeeperClientBuilderExtensions
         this IZooKeeperClientBuilder builder,
         AuthenticationInfo authenticationInfo)
     {
-        builder.Services.AddSingleton(authenticationInfo);
+        builder.Services.ConfigureMisc(options => options.AuthenticationInfos.Add(authenticationInfo));
         return builder;
     }
+
+    private static void ConfigureMisc(
+        this IServiceCollection services,
+        Action<ZooKeeperClientMiscellaneousOptions> configure) =>
+        services.Configure(configure);
 }

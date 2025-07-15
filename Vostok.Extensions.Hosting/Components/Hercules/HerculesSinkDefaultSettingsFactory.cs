@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 
 using Vostok.Clusterclient.Core.Model;
-using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Tracing;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hercules.Client;
@@ -20,7 +19,8 @@ internal sealed class HerculesSinkDefaultSettingsFactory(
 {
     protected override HerculesSinkSettings CreateInstance(string _)
     {
-        var clusterProvider = provider.GetKeyedService<IClusterProvider>(HerculesSinkFactory.ClusterProviderKey);
+        var miscOptions = provider.GetRequiredService<IOptions<HerculesSinkMiscellaneousOptions>>().Value;
+        var clusterProvider = miscOptions.ClusterProvider?.Invoke(provider);
         if (clusterProvider is null)
             throw new InvalidOperationException("Unconfigured topology");
 

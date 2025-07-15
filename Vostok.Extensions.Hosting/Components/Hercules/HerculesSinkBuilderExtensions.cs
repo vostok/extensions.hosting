@@ -44,11 +44,10 @@ public static class HerculesSinkBuilderExtensions
 
     public static IHerculesSinkBuilder SetClusterProvider(
         this IHerculesSinkBuilder builder,
-        Func<IServiceProvider, IClusterProvider> implementationFactory)
+        Func<IServiceProvider, IClusterProvider?> implementationFactory)
     {
-        builder.Services.AddKeyedSingleton(
-            HerculesSinkFactory.ClusterProviderKey,
-            (provider, _) => implementationFactory(provider));
+        builder.Services.Configure<HerculesSinkMiscellaneousOptions>(options =>
+            options.ClusterProvider = implementationFactory);
 
         return builder;
     }
@@ -59,6 +58,10 @@ public static class HerculesSinkBuilderExtensions
     public static IHerculesSinkBuilder SetClusterConfigTopology(this IHerculesSinkBuilder builder, string path) =>
         builder.SetClusterProvider(provider => ClusterProviderFactory.FromClusterConfig(provider, path));
 
-    public static IHerculesSinkBuilder SetServiceDiscoveryTopology(this IHerculesSinkBuilder builder, string environment, string application) =>
-        builder.SetClusterProvider(provider => ClusterProviderFactory.FromServiceDiscovery(provider, environment, application));
+    public static IHerculesSinkBuilder SetServiceDiscoveryTopology(
+        this IHerculesSinkBuilder builder,
+        string environment,
+        string application) =>
+        builder.SetClusterProvider(provider =>
+            ClusterProviderFactory.FromServiceDiscovery(provider, environment, application));
 }

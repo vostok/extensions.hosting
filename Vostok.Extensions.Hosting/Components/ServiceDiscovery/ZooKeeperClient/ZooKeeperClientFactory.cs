@@ -7,14 +7,11 @@ using Vostok.ServiceDiscovery;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
-using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 
 namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery.ZooKeeperClient;
 
 internal static class ZooKeeperClientFactory
 {
-    public const string ClusterProviderKey = "ZooKeeperClientClusterProvider";
-
     public static IZooKeeperClient Create(IServiceProvider provider)
     {
         var log = provider.GetInitializationLog();
@@ -27,8 +24,13 @@ internal static class ZooKeeperClientFactory
                 settings,
                 log.WithEventsDroppedByProperties(IsDataChangedLog));
 
-            foreach (var authenticationInfo in provider.GetServices<AuthenticationInfo>())
+            foreach (var authenticationInfo in provider
+                                               .GetRequiredService<IOptions<ZooKeeperClientMiscellaneousOptions>>()
+                                               .Value
+                                               .AuthenticationInfos)
+            {
                 zooKeeperClient.AddAuthenticationInfo(authenticationInfo);
+            }
 
             return zooKeeperClient;
         }

@@ -10,8 +10,6 @@ namespace Vostok.Extensions.Hosting.Components.Hercules;
 
 internal static class HerculesSinkFactory
 {
-    public const string ClusterProviderKey = "HerculesSinkClusterProvider";
-
     public static IHerculesSink Create(IServiceProvider provider)
     {
         try
