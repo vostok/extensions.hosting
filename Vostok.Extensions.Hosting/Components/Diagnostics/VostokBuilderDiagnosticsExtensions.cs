@@ -31,6 +31,7 @@ public static class VostokBuilderDiagnosticsExtensions
         }
 
         var diagnosticsBuilder = new VostokDiagnosticsBuilder(vostok.Services);
+        diagnosticsBuilder.AddHealthChecksMetrics(); // todo: Move to Kontur extensions?
         configure?.Invoke(diagnosticsBuilder);
 
         return vostok;
@@ -43,18 +44,19 @@ public static class VostokBuilderDiagnosticsExtensions
             p.GetRequiredService<ApplicationMetricsProvider>());
         services.TryAddEnumerable(metricsProviderSender);
 
+        services.RegisterBuiltInDiagnostics();
+
         services.TryAddSingleton(DiagnosticInfoFactory.Create);
     }
 
     private static void AddHealthTracker(this IServiceCollection services)
     {
         services.AddHealthChecks();
-        services.RegisterVostokHealthChecks();
+        services.RegisterBuiltInHealthChecks();
 
         var tracker = new HealthTracker();
         services.TryAddSingleton<IHealthTracker>(tracker);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, HealthTracker>(_ => tracker));
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, MetricsHealthCheckPublisher>()); // todo: Move to Kontur extensions?
     }
 
     private static void AddDiagnosticsHub(this IServiceCollection services) =>

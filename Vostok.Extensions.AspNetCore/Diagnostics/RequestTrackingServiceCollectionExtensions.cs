@@ -2,36 +2,36 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-using Vostok.Extensions.Hosting.Helpers;
+using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore.Diagnostics;
 
 internal static class RequestTrackingServiceCollectionExtensions
 {
-    public static void AddRequestTrackingDefaults(this IServiceCollection services) =>
+    public static void AddRequestTrackingDefaults(this IServiceCollection services)
+    {
         services.TryAddSingleton<IRequestTracker>(provider =>
         {
             var options = provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
 
-            if (!options.AddCurrentRequestsInfoProvider)
-                return new DevNullRequestTracker();
-
-            var requestTracker = new RequestTracker();
-            AddRequestTrackingInfo(provider, requestTracker);
-
-            return requestTracker;
+            return options.AddCurrentRequestsInfoProvider
+                ? new RequestTracker()
+                : new DevNullRequestTracker();
         });
 
-    private static void AddRequestTrackingInfo(IServiceProvider provider, RequestTracker requestTracker)
+        services.AddOptions<VostokDiagnosticsOptions>()
+                .Configure<IRequestTracker>(AddRequestTrackingInfo);
+    }
+
+    private static void AddRequestTrackingInfo(VostokDiagnosticsOptions options, IRequestTracker tracker)
     {
-        var diagnostics = provider.GetService<IDiagnosticInfo>();
-        if (diagnostics == null)
+        if (tracker is not RequestTracker actualTracker)
             return;
 
-        var infoEntry = new DiagnosticEntry(DiagnosticConstants.Component, DiagnosticConstants.RequestsInProgressEntry);
-        var infoProvider = new CurrentRequestsInfoProvider(requestTracker);
+        var entry = new DiagnosticEntry(DiagnosticConstants.Component, DiagnosticConstants.RequestsInProgressEntry);
+        var infoProvider = new CurrentRequestsInfoProvider(actualTracker);
 
-        provider.RegisterDisposable(diagnostics.RegisterProvider(infoEntry, infoProvider));
+        options.Registrations.Add(new VostokDiagnosticInfoRegistration(entry, infoProvider));
     }
 }

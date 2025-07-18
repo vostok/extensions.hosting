@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 [PublicAPI]
-public sealed class DiagnosticsInfoOptions
+public sealed class BuiltInDiagnosticInfoOptions
 {
     public bool AddEnvironmentInfo { get; set; } = true;
     public bool AddLoadedAssembliesInfo { get; set; } = true;

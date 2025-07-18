@@ -14,20 +14,17 @@ using static Vostok.Extensions.Hosting.Components.Diagnostics.WellKnownHealthChe
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 
-internal static class HealthChecksRegistrationExtensions
+internal static class BuiltInHealthChecksExtensions
 {
-    public static void RegisterVostokHealthChecks(this IServiceCollection services) =>
+    public static void RegisterBuiltInHealthChecks(this IServiceCollection services) =>
         services.AddOptions<HealthCheckServiceOptions>()
-                .Configure<IOptions<VostokHealthChecksOptions>, IServiceProvider>(ConfigureHealthChecks);
+                .Configure<IServiceProvider>(ConfigureHealthChecks);
 
-    private static void ConfigureHealthChecks(
-        HealthCheckServiceOptions options,
-        IOptions<VostokHealthChecksOptions> vostokHealthChecksOptions,
-        IServiceProvider provider)
+    private static void ConfigureHealthChecks(HealthCheckServiceOptions options, IServiceProvider provider)
     {
         var checks = options.Registrations;
 
-        var vostokOptions = vostokHealthChecksOptions.Value;
+        var vostokOptions = provider.GetRequiredService<IOptions<BuiltInHealthChecksOptions>>().Value;
 
         var datacenters = provider.GetService<IDatacenters>();
         if (vostokOptions.AddDatacenterWhitelistCheck && datacenters is not null)

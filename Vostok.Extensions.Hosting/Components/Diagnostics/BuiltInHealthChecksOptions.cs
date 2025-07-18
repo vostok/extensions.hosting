@@ -3,7 +3,7 @@
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
 [PublicAPI]
-public sealed class VostokHealthChecksOptions
+public sealed class BuiltInHealthChecksOptions
 {
     public bool AddDatacenterWhitelistCheck { get; set; } = true;
     public bool AddThreadPoolStarvationCheck { get; set; } = true;
