@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
@@ -18,7 +17,6 @@ internal static class DiagnosticInfoFactory
         foreach (var registration in options.Registrations)
         {
             var infoProvider = registration.ImplementationFactory(provider);
-
             provider.RegisterDisposable(info.RegisterProvider(registration.Entry, infoProvider));
         }
 

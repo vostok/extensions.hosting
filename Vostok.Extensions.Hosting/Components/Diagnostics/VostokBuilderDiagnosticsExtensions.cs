@@ -31,7 +31,6 @@ public static class VostokBuilderDiagnosticsExtensions
         }
 
         var diagnosticsBuilder = new VostokDiagnosticsBuilder(vostok.Services);
-        diagnosticsBuilder.AddHealthChecksMetrics(); // todo: Move to Kontur extensions?
         configure?.Invoke(diagnosticsBuilder);
 
         return vostok;
