@@ -21,8 +21,6 @@ public static class VostokBuilderDiagnosticsExtensions
         this IVostokBuilder vostok,
         Action<IVostokDiagnosticsBuilder>? configure = null)
     {
-        // todo (bogdanov.n) 17.02.2025: A `DiagnosticMetricsEnabled` check could take place here
-
         if (!vostok.CheckComponentAlreadyAdded("Diagnostics"))
         {
             vostok.Services.AddDiagnosticInfo();
