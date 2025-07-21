@@ -82,7 +82,10 @@ internal static class ThrottlingServiceCollectionExtensions
         if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)
             return;
 
-        var metrics = provider.GetRequiredService<IVostokApplicationMetrics>();
+        var metrics = provider.GetService<IVostokApplicationMetrics>();
+        if (metrics is null)
+            return;
+
         var metricsOptions = provider.GetRequiredService<IOptions<ThrottlingMetricsOptions>>().Value;
 
         provider.RegisterDisposable(metrics.Instance.CreateThrottlingMetrics(actualProvider, metricsOptions));
