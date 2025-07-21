@@ -75,8 +75,7 @@ internal static class ThrottlingServiceCollectionExtensions
 
     private static void AddThrottlingMetrics(IServiceProvider provider)
     {
-        var options = provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value;
-        if (!options.EnableMetrics)
+        if (!provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value.EnableMetrics)
             return;
 
         if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)
@@ -93,7 +92,7 @@ internal static class ThrottlingServiceCollectionExtensions
 
     private static void AddThrottlingInfo(VostokDiagnosticsOptions options, IServiceProvider provider)
     {
-        if (!provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value.AddThrottlingInfoProvider)
+        if (!provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value.AddInfoProvider)
             return;
 
         if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)
@@ -109,7 +108,7 @@ internal static class ThrottlingServiceCollectionExtensions
         HealthCheckServiceOptions healthCheckServiceOptions,
         IServiceProvider provider)
     {
-        if (!provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value.AddThrottlingHealthCheck)
+        if (!provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value.AddHealthCheck)
             return;
 
         if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)

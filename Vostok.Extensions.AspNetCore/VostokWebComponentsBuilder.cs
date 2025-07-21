@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Middlewares;
 using Vostok.Extensions.AspNetCore.Middlewares.DatacentersAwareness;
 using Vostok.Extensions.AspNetCore.Middlewares.DiagnosticApi;
@@ -44,9 +43,6 @@ internal sealed class VostokWebComponentsBuilder(IServiceCollection services) : 
         Configure(configure);
 
     public IVostokWebComponentsBuilder ConfigureDiagnosticApi(Action<DiagnosticApiMiddlewareOptions> configure) =>
-        Configure(configure);
-
-    public IVostokWebComponentsBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesOptions> configure) =>
         Configure(configure);
 
     public IVostokWebComponentsBuilder Configure(Action<VostokMiddlewaresOptions> configure) =>

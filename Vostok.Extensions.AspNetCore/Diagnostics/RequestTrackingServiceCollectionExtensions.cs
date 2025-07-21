@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
+using Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
@@ -13,7 +14,7 @@ internal static class RequestTrackingServiceCollectionExtensions
     {
         services.TryAddSingleton<IRequestTracker>(provider =>
         {
-            var options = provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
+            var options = provider.GetRequiredService<IOptions<FillRequestInfoMiddlewareOptions>>().Value;
 
             return options.AddCurrentRequestsInfoProvider
                 ? new RequestTracker()
