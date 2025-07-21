@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
@@ -16,11 +17,18 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 
 internal static class BuiltInHealthChecksExtensions
 {
-    public static void RegisterBuiltInHealthChecks(this IServiceCollection services) =>
-        services.AddOptions<HealthCheckServiceOptions>()
-                .Configure<IServiceProvider>(ConfigureHealthChecks);
+    public static void RegisterBuiltInHealthChecks(this IServiceCollection services)
+    {
+        var configure =
+            ServiceDescriptor.Singleton<IConfigureOptions<HealthCheckServiceOptions>, ConfigureBuiltInHealthChecks>();
 
-    private static void ConfigureHealthChecks(HealthCheckServiceOptions options, IServiceProvider provider)
+        services.TryAddEnumerable(configure);
+    }
+}
+
+file sealed class ConfigureBuiltInHealthChecks(IServiceProvider provider) : IConfigureOptions<HealthCheckServiceOptions>
+{
+    public void Configure(HealthCheckServiceOptions options)
     {
         var checks = options.Registrations;
 
@@ -30,27 +38,27 @@ internal static class BuiltInHealthChecksExtensions
         if (vostokOptions.AddDatacenterWhitelistCheck && datacenters is not null)
         {
             var check = new DatacenterWhitelistCheck(datacenters);
-            checks.Add(Get(check, DatacenterWhitelist));
+            Add(check, DatacenterWhitelist);
         }
 
         if (vostokOptions.AddThreadPoolStarvationCheck)
         {
             var check = new ThreadPoolStarvationCheck();
-            checks.Add(Get(check, ThreadPoolStarvation));
+            Add(check, ThreadPoolStarvation);
         }
 
         var zooKeeperClient = provider.GetService<IZooKeeperClient>();
         if (vostokOptions.AddZooKeeperConnectionCheck && zooKeeperClient is ZooKeeper.Client.ZooKeeperClient actualClient)
         {
             var check = new ZooKeeperConnectionCheck(actualClient);
-            checks.Add(Get(check, ZooKeeperConnection));
+            Add(check, ZooKeeperConnection);
         }
 
         var processMonitor = provider.GetService<CurrentProcessMonitor>();
         if (vostokOptions.AddDnsResolutionCheck && processMonitor is not null)
         {
             var check = new DnsResolutionCheck(processMonitor);
-            checks.Add(Get(check, DnsResolution));
+            Add(check, DnsResolution);
 
             provider.RegisterDisposable(check);
         }
@@ -59,10 +67,12 @@ internal static class BuiltInHealthChecksExtensions
         if (vostokOptions.AddConfigurationCheck && configurationProvider is ConfigurationProvider actualProvider)
         {
             var check = new ConfigurationCheck(actualProvider);
-            checks.Add(Get(check, WellKnownHealthCheckNames.Configuration));
+            Add(check, WellKnownHealthCheckNames.Configuration);
         }
-    }
 
-    private static HealthCheckRegistration Get(IHealthCheck check, string name) =>
-        VostokHealthCheckHelpers.RegisterWithVostokTag(name, check);
+        return;
+
+        void Add(IHealthCheck check, string name) =>
+            checks.Add(VostokHealthCheckHelpers.RegisterWithVostokTag(name, check));
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 using Vostok.Datacenters;
@@ -14,11 +15,18 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 
 internal static class BuiltInDiagnosticInfoProvidersExtensions
 {
-    public static void RegisterBuiltInDiagnostics(this IServiceCollection services) =>
-        services.AddOptions<VostokDiagnosticsOptions>()
-                .Configure<IServiceProvider>(ConfigureProviders);
+    public static void RegisterBuiltInDiagnostics(this IServiceCollection services)
+    {
+        var configure =
+            ServiceDescriptor.Singleton<IConfigureOptions<VostokDiagnosticsOptions>, ConfigureBuiltInDiagnostics>();
 
-    private static void ConfigureProviders(VostokDiagnosticsOptions options, IServiceProvider provider)
+        services.TryAddEnumerable(configure);
+    }
+}
+
+file sealed class ConfigureBuiltInDiagnostics(IServiceProvider provider) : IConfigureOptions<VostokDiagnosticsOptions>
+{
+    public void Configure(VostokDiagnosticsOptions options)
     {
         var registrations = options.Registrations;
         var vostokOptions = provider.GetRequiredService<IOptions<BuiltInDiagnosticInfoOptions>>().Value;

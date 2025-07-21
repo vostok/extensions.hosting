@@ -5,12 +5,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo;
-using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo.Providers;
 using Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
-using Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
-using Vostok.Metrics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
@@ -34,22 +31,12 @@ public static class VostokBuilderDiagnosticsExtensions
         return vostok;
     }
 
-    private static void AddDiagnosticInfo(this IServiceCollection services)
-    {
-        services.TryAddSingleton<ApplicationMetricsProvider>();
-        var metricsProviderSender = ServiceDescriptor.Singleton<IMetricEventSender, ApplicationMetricsProvider>(p =>
-            p.GetRequiredService<ApplicationMetricsProvider>());
-        services.TryAddEnumerable(metricsProviderSender);
-
-        services.RegisterBuiltInDiagnostics();
-
+    private static void AddDiagnosticInfo(this IServiceCollection services) =>
         services.TryAddSingleton(DiagnosticInfoFactory.Create);
-    }
 
     private static void AddHealthTracker(this IServiceCollection services)
     {
         services.AddHealthChecks();
-        services.RegisterBuiltInHealthChecks();
 
         var tracker = new HealthTracker();
         services.TryAddSingleton<IHealthTracker>(tracker);
