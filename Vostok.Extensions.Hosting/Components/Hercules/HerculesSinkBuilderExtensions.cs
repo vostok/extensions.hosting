@@ -64,4 +64,10 @@ public static class HerculesSinkBuilderExtensions
         string application) =>
         builder.SetClusterProvider(provider =>
             ClusterProviderFactory.FromServiceDiscovery(provider, environment, application));
+
+    public static IHerculesSinkBuilder EnableMetrics(this IHerculesSinkBuilder builder)
+    {
+        builder.Services.AddHostedService<HerculesSinkMetricsHostedService>();
+        return builder;
+    }
 }

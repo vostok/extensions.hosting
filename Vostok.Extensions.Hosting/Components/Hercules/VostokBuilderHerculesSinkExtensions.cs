@@ -34,6 +34,5 @@ public static class VostokBuilderHerculesSinkExtensions
     {
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IOptionsFactory<HerculesSinkSettings>, HerculesSinkDefaultSettingsFactory>());
         services.TryAddSingleton(HerculesSinkFactory.Create);
-        services.AddHostedService<HerculesSinkMetricsHostedService>(); // todo: Move to Kontur extensions?
     }
 }
