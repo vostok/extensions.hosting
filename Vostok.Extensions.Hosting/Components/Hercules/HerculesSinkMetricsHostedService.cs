@@ -14,7 +14,6 @@ using Vostok.Metrics.Primitives.Gauge;
 
 namespace Vostok.Extensions.Hosting.Components.Hercules;
 
-// todo: Replace with OTel metrics
 internal sealed class HerculesSinkMetricsHostedService(IServiceProvider provider, ILogger<HerculesSink> logger)
     : IHostedService
 {
