@@ -12,12 +12,8 @@ public static class VostokBuilderApplicationLimitsExtensions
 {
     public static IVostokBuilder WithApplicationLimits(
         this IVostokBuilder vostok,
-        Action<ApplicationLimitsOptions> configure)
-    {
+        Action<ApplicationLimitsOptions> configure) =>
         vostok.WithApplicationLimits((options, _) => configure(options));
-
-        return vostok;
-    }
 
     public static IVostokBuilder WithApplicationLimits(
         this IVostokBuilder vostok,

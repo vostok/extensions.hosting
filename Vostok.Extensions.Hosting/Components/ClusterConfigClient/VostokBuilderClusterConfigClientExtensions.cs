@@ -14,12 +14,8 @@ public static class VostokBuilderClusterConfigClientExtensions
 {
     public static IVostokBuilder WithClusterConfigClient(
         this IVostokBuilder vostok,
-        Action<ClusterConfigClientSettings> configure)
-    {
+        Action<ClusterConfigClientSettings> configure) =>
         vostok.WithClusterConfigClient((options, _) => configure(options));
-
-        return vostok;
-    }
 
     public static IVostokBuilder WithClusterConfigClient(
         this IVostokBuilder vostok,

@@ -13,11 +13,8 @@ public static class HerculesSinkBuilderExtensions
 {
     public static IHerculesSinkBuilder Configure(
         this IHerculesSinkBuilder builder,
-        Action<HerculesSinkSettings> configure)
-    {
+        Action<HerculesSinkSettings> configure) =>
         builder.Configure((settings, _) => configure(settings));
-        return builder;
-    }
 
     public static IHerculesSinkBuilder Configure(
         this IHerculesSinkBuilder builder,
@@ -25,6 +22,7 @@ public static class HerculesSinkBuilderExtensions
     {
         if (configure is not null)
             builder.Services.AddOptions<HerculesSinkSettings>().Configure(configure);
+
         return builder;
     }
 
@@ -36,11 +34,8 @@ public static class HerculesSinkBuilderExtensions
 
     public static IHerculesSinkBuilder SetClusterProvider(
         this IHerculesSinkBuilder builder,
-        IClusterProvider clusterProvider)
-    {
+        IClusterProvider clusterProvider) =>
         builder.SetClusterProvider(_ => clusterProvider);
-        return builder;
-    }
 
     public static IHerculesSinkBuilder SetClusterProvider(
         this IHerculesSinkBuilder builder,

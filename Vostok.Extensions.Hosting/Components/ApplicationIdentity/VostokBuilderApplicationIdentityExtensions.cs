@@ -13,12 +13,8 @@ public static class VostokBuilderApplicationIdentityExtensions
 {
     public static IVostokBuilder WithApplicationIdentity(
         this IVostokBuilder vostok,
-        Action<ApplicationIdentityOptions> configure)
-    {
+        Action<ApplicationIdentityOptions> configure) =>
         vostok.WithApplicationIdentity((options, _) => configure(options));
-
-        return vostok;
-    }
 
     public static IVostokBuilder WithApplicationIdentity(
         this IVostokBuilder vostok,

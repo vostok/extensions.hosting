@@ -17,11 +17,8 @@ public static class ServiceBeaconBuilderExtensions
 {
     public static IServiceBeaconBuilder Configure(
         this IServiceBeaconBuilder builder,
-        Action<ServiceBeaconSettings> configure)
-    {
+        Action<ServiceBeaconSettings> configure) =>
         builder.Configure((settings, _) => configure(settings));
-        return builder;
-    }
 
     public static IServiceBeaconBuilder Configure(
         this IServiceBeaconBuilder builder,
@@ -29,6 +26,7 @@ public static class ServiceBeaconBuilderExtensions
     {
         if (configure is not null)
             builder.Services.AddOptions<ServiceBeaconSettings>().Configure(configure);
+
         return builder;
     }
 
@@ -120,11 +118,8 @@ public static class ServiceBeaconBuilderExtensions
 
     public static IServiceBeaconBuilder SetEventSender(
         this IServiceBeaconBuilder builder,
-        IServiceDiscoveryEventsSender eventsSender)
-    {
+        IServiceDiscoveryEventsSender eventsSender) =>
         builder.SetEventSender(_ => eventsSender);
-        return builder;
-    }
 
     public static IServiceBeaconBuilder SetEventSender(
         this IServiceBeaconBuilder builder,

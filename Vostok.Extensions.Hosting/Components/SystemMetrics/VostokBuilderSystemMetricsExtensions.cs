@@ -13,11 +13,8 @@ public static class VostokBuilderSystemMetricsExtensions
 {
     public static IVostokBuilder WithSystemMetrics(
         this IVostokBuilder vostok,
-        Action<SystemMetricsOptions> configure)
-    {
+        Action<SystemMetricsOptions> configure) =>
         vostok.WithSystemMetrics((options, _) => configure(options));
-        return vostok;
-    }
 
     public static IVostokBuilder WithSystemMetrics(
         this IVostokBuilder vostok,

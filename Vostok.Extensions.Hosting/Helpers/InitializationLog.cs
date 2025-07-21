@@ -2,6 +2,10 @@
 
 namespace Vostok.Extensions.Hosting.Helpers;
 
+/// <summary>
+/// Substitutable log for Vostok configuration.
+/// Used in other components configs/factories to get rid of potential circular dependencies.
+/// </summary>
 internal static class InitializationLog
 {
     public const string Key = "_InitializationLog";

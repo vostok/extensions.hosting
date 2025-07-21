@@ -13,12 +13,8 @@ public static class VostokBuilderApplicationReplicationExtensions
 {
     public static IVostokBuilder WithApplicationReplicationInfo(
         this IVostokBuilder vostok,
-        Action<ApplicationReplicationOptions> configure)
-    {
+        Action<ApplicationReplicationOptions> configure) =>
         vostok.WithApplicationReplicationInfo((options, _) => configure(options));
-
-        return vostok;
-    }
 
     public static IVostokBuilder WithApplicationReplicationInfo(
         this IVostokBuilder vostok,

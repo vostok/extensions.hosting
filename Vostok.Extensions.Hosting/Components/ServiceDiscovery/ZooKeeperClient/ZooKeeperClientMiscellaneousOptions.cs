@@ -8,5 +8,5 @@ internal sealed class ZooKeeperClientMiscellaneousOptions
     public string? ConnectionString { get; set; }
     public Func<IServiceProvider, IClusterProvider?>? ClusterProvider { get; set; }
 
-    public List<AuthenticationInfo> AuthenticationInfos { get; set; } = [];
+    public List<AuthenticationInfo> AuthenticationInfos { get; } = [];
 }

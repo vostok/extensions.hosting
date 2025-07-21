@@ -10,12 +10,8 @@ public static class VostokBuilderDatacentersExtensions
 {
     public static IVostokBuilder WithDatacenters(
         this IVostokBuilder vostok,
-        Action<DatacentersOptions> configure)
-    {
+        Action<DatacentersOptions> configure) =>
         vostok.WithDatacenters((options, _) => configure(options));
-
-        return vostok;
-    }
 
     public static IVostokBuilder WithDatacenters(
         this IVostokBuilder vostok,

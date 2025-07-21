@@ -15,11 +15,8 @@ public static class ZooKeeperClientBuilderExtensions
 {
     public static IZooKeeperClientBuilder Configure(
         this IZooKeeperClientBuilder builder,
-        Action<ZooKeeperClientSettings> configure)
-    {
+        Action<ZooKeeperClientSettings> configure) =>
         builder.Configure((settings, _) => configure(settings));
-        return builder;
-    }
 
     public static IZooKeeperClientBuilder Configure(
         this IZooKeeperClientBuilder builder,
@@ -27,16 +24,14 @@ public static class ZooKeeperClientBuilderExtensions
     {
         if (configure is not null)
             builder.Services.AddOptions<ZooKeeperClientSettings>().Configure(configure);
+
         return builder;
     }
 
     public static IZooKeeperClientBuilder SetClusterProvider(
         this IZooKeeperClientBuilder builder,
-        IClusterProvider clusterProvider)
-    {
+        IClusterProvider clusterProvider) =>
         builder.SetClusterProvider(_ => clusterProvider);
-        return builder;
-    }
 
     public static IZooKeeperClientBuilder SetClusterProvider(
         this IZooKeeperClientBuilder builder,

@@ -42,12 +42,8 @@ public static class VostokBuilderServiceDiscoveryExtensions
 
     public static IVostokBuilder WithServiceLocator(
         this IVostokBuilder vostok,
-        Action<ServiceLocatorSettings> configure)
-    {
+        Action<ServiceLocatorSettings> configure) =>
         vostok.WithServiceLocator((settings, _) => configure(settings));
-
-        return vostok;
-    }
 
     public static IVostokBuilder WithServiceLocator(
         this IVostokBuilder vostok,
