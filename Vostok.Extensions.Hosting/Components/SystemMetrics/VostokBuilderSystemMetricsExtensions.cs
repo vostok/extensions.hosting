@@ -34,8 +34,6 @@ public static class VostokBuilderSystemMetricsExtensions
 
     private static void AddSystemMetrics(this IServiceCollection services)
     {
-        // todo: Check system metrics enabled
-
         services.TryAddSingleton<GarbageCollectionMonitor>();
         services.TryAddSingleton<DnsMonitor>();
         services.TryAddSingleton(SystemMetricsFactory.CreateProcessMonitor);

@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 
-using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Middlewares;
 using Vostok.Extensions.AspNetCore.Middlewares.DatacentersAwareness;
 using Vostok.Extensions.AspNetCore.Middlewares.DiagnosticApi;
@@ -65,11 +64,6 @@ public interface IVostokWebComponentsBuilder
     /// Customizes built-in <see cref="DiagnosticApiMiddleware"/>.
     /// </summary>
     IVostokWebComponentsBuilder ConfigureDiagnosticApi(Action<DiagnosticApiMiddlewareOptions> configure);
-
-    /// <summary>
-    /// Customizes built-in diagnostic features (info providers and health checks).
-    /// </summary>
-    IVostokWebComponentsBuilder ConfigureDiagnosticFeatures(Action<DiagnosticFeaturesOptions> configure);
 
     /// <summary>
     /// Allows to customize <see cref="VostokMiddlewaresOptions"/>.

@@ -37,6 +37,7 @@ public static class VostokWebComponentsServiceCollectionExtensions
     /// <inheritdoc cref="VostokWebComponentsServiceCollectionExtensions"/>
     public static IVostokWebComponentsBuilder AddVostokWebComponents(this IServiceCollection services)
     {
+        // todo: idempotency
         services.ConfigureKestrelDefaults();
         services.ConfigureAspNetCoreTelemetry();
         services.AddRequestTrackingDefaults();

@@ -13,6 +13,11 @@ namespace Vostok.Extensions.AspNetCore.Middlewares.FillRequestInfo;
 public sealed class FillRequestInfoMiddlewareOptions
 {
     /// <summary>
+    /// <para>If set to <c>true</c>, enables current requests diagnostic info provider.</para>
+    /// </summary>
+    public bool AddCurrentRequestsInfoProvider { get; set; } = true;
+
+    /// <summary>
     /// <para>A delegate that provides a default value for <see cref="Timeout"/>.</para>
     /// <para>Used when the request does not contain any supported headers with timeout value.</para>
     /// <para>Executed after built-in provider and <see cref="AdditionalTimeoutProviders"/>.</para>

@@ -23,6 +23,18 @@ public static class VostokThrottlingBuilderExtensions
         configurator.ConfigureOptions(options => options.EnableMetrics = false);
 
     /// <summary>
+    /// Disables registration of diagnostic info provider.
+    /// </summary>
+    public static IVostokThrottlingBuilder DisableDiagnosticInfoProvider(this IVostokThrottlingBuilder configurator) =>
+        configurator.ConfigureOptions(options => options.AddInfoProvider = false);
+
+    /// <summary>
+    /// Disables registration of health check.
+    /// </summary>
+    public static IVostokThrottlingBuilder DisableHealthCheck(this IVostokThrottlingBuilder configurator) =>
+        configurator.ConfigureOptions(options => options.AddHealthCheck = false);
+
+    /// <summary>
     /// <para>If set to <c>true</c>, adds an instance of <see cref="ThreadPoolOverloadQuota"/> to the throttling provider.</para>
     /// </summary>
     public static IVostokThrottlingBuilder DisableThreadPoolOverloadQuota(this IVostokThrottlingBuilder configurator) =>

@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 
 using Vostok.Extensions.AspNetCore.Diagnostics;
 using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
+using Vostok.Extensions.Hosting;
+using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo;
 using Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 using Vostok.Extensions.Hosting.Helpers;
 using Vostok.Hosting.Abstractions;
@@ -32,12 +34,13 @@ internal static class ThrottlingServiceCollectionExtensions
         services.AddSingleton<IThrottlingProvider>(provider =>
         {
             var builder = provider.GetRequiredService<IOptions<ThrottlingConfigurationBuilder>>().Value;
-
-            var throttlingProvider = new ThrottlingProvider(builder.Build());
-            AddThrottlingObservability(provider, throttlingProvider);
-
-            return throttlingProvider;
+            return new ThrottlingProvider(builder.Build());
         });
+
+        services.AddSingleton<VostokWarmup.CustomWarmupAction>(AddThrottlingMetrics);
+
+        services.AddOptions<VostokDiagnosticsOptions>()
+                .Configure<IServiceProvider>(AddThrottlingInfo);
 
         services.AddOptions<HealthCheckServiceOptions>()
                 .Configure<IServiceProvider>(AddThrottlingHealthCheck);
@@ -70,47 +73,42 @@ internal static class ThrottlingServiceCollectionExtensions
         builder.AddCustomQuota(threadPoolQuota);
     }
 
-    private static void AddThrottlingObservability(IServiceProvider provider, ThrottlingProvider throttlingProvider)
+    private static void AddThrottlingMetrics(IServiceProvider provider)
     {
-        var options = provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
-
-        AddThrottlingMetrics(provider, throttlingProvider);
-
-        if (options.AddThrottlingInfoProvider)
-            AddThrottlingInfo(provider, throttlingProvider);
-    }
-
-    private static void AddThrottlingMetrics(IServiceProvider provider, ThrottlingProvider throttlingProvider)
-    {
-        var options = provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value;
-        if (!options.EnableMetrics)
+        if (!provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value.EnableMetrics)
             return;
 
-        var metrics = provider.GetRequiredService<IVostokApplicationMetrics>();
+        if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)
+            return;
+
+        var metrics = provider.GetService<IVostokApplicationMetrics>();
+        if (metrics is null)
+            return;
+
         var metricsOptions = provider.GetRequiredService<IOptions<ThrottlingMetricsOptions>>().Value;
 
-        provider.RegisterDisposable(metrics.Instance.CreateThrottlingMetrics(throttlingProvider, metricsOptions));
+        provider.RegisterDisposable(metrics.Instance.CreateThrottlingMetrics(actualProvider, metricsOptions));
     }
 
-    private static void AddThrottlingInfo(IServiceProvider provider, ThrottlingProvider throttlingProvider)
+    private static void AddThrottlingInfo(VostokDiagnosticsOptions options, IServiceProvider provider)
     {
-        var diagnostics = provider.GetService<IDiagnosticInfo>();
-        if (diagnostics == null)
+        if (!provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value.AddInfoProvider)
             return;
 
-        var infoEntry = new DiagnosticEntry(DiagnosticConstants.Component, DiagnosticConstants.RequestThrottlingEntry);
-        var infoProvider = new ThrottlingInfoProvider(throttlingProvider);
+        if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)
+            return;
 
-        provider.RegisterDisposable(diagnostics.RegisterProvider(infoEntry, infoProvider));
+        var entry = new DiagnosticEntry(DiagnosticConstants.Component, DiagnosticConstants.RequestThrottlingEntry);
+        var infoProvider = new ThrottlingInfoProvider(actualProvider);
+
+        options.Registrations.Add(new VostokDiagnosticInfoRegistration(entry, infoProvider));
     }
 
     private static void AddThrottlingHealthCheck(
         HealthCheckServiceOptions healthCheckServiceOptions,
         IServiceProvider provider)
     {
-        var options = provider.GetRequiredService<IOptions<DiagnosticFeaturesOptions>>().Value;
-
-        if (!options.AddThrottlingHealthCheck)
+        if (!provider.GetRequiredService<IOptions<VostokThrottlingOptions>>().Value.AddHealthCheck)
             return;
 
         if (provider.GetService<IThrottlingProvider>() is not ThrottlingProvider actualProvider)

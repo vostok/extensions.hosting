@@ -5,12 +5,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo;
-using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo.Providers;
 using Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
-using Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
-using Vostok.Metrics;
 
 namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 
@@ -21,8 +18,6 @@ public static class VostokBuilderDiagnosticsExtensions
         this IVostokBuilder vostok,
         Action<IVostokDiagnosticsBuilder>? configure = null)
     {
-        // todo (bogdanov.n) 17.02.2025: A `DiagnosticMetricsEnabled` check could take place here
-
         if (!vostok.CheckComponentAlreadyAdded("Diagnostics"))
         {
             vostok.Services.AddDiagnosticInfo();
@@ -36,25 +31,16 @@ public static class VostokBuilderDiagnosticsExtensions
         return vostok;
     }
 
-    private static void AddDiagnosticInfo(this IServiceCollection services)
-    {
-        services.TryAddSingleton<ApplicationMetricsProvider>();
-        var metricsProviderSender = ServiceDescriptor.Singleton<IMetricEventSender, ApplicationMetricsProvider>(p =>
-            p.GetRequiredService<ApplicationMetricsProvider>());
-        services.TryAddEnumerable(metricsProviderSender);
-
+    private static void AddDiagnosticInfo(this IServiceCollection services) =>
         services.TryAddSingleton(DiagnosticInfoFactory.Create);
-    }
 
     private static void AddHealthTracker(this IServiceCollection services)
     {
         services.AddHealthChecks();
-        services.RegisterVostokHealthChecks();
 
         var tracker = new HealthTracker();
         services.TryAddSingleton<IHealthTracker>(tracker);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, HealthTracker>(_ => tracker));
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, MetricsHealthCheckPublisher>()); // todo: Move to Kontur extensions?
     }
 
     private static void AddDiagnosticsHub(this IServiceCollection services) =>

@@ -17,4 +17,14 @@ internal sealed class VostokThrottlingOptions
     /// <para>If set to <c>true</c>, sends throttling metrics.</para>
     /// </summary>
     public bool EnableMetrics { get; set; } = true;
+
+    /// <summary>
+    /// <para>If set to <c>true</c>, enables throttling diagnostic info provider.</para>
+    /// </summary>
+    public bool AddInfoProvider { get; set; } = true;
+
+    /// <summary>
+    /// <para>If set to <c>true</c>, enables throttling health checks.</para>
+    /// </summary>
+    public bool AddHealthCheck { get; set; } = true;
 }
