@@ -16,36 +16,10 @@ public static class HerculesSinkBuilderExtensions
         Action<HerculesSinkSettings> configure) =>
         builder.Configure((settings, _) => configure(settings));
 
-    public static IHerculesSinkBuilder Configure(
-        this IHerculesSinkBuilder builder,
-        Action<HerculesSinkSettings, IServiceProvider>? configure = null)
-    {
-        if (configure is not null)
-            builder.Services.AddOptions<HerculesSinkSettings>().Configure(configure);
-
-        return builder;
-    }
-
-    public static IHerculesSinkBuilder SetApiKey(this IHerculesSinkBuilder builder, string? apiKey)
-    {
-        builder.Services.Configure<HerculesSinkAuthOptions>(o => o.ApiKey = apiKey);
-        return builder;
-    }
-
     public static IHerculesSinkBuilder SetClusterProvider(
         this IHerculesSinkBuilder builder,
         IClusterProvider clusterProvider) =>
         builder.SetClusterProvider(_ => clusterProvider);
-
-    public static IHerculesSinkBuilder SetClusterProvider(
-        this IHerculesSinkBuilder builder,
-        Func<IServiceProvider, IClusterProvider?> implementationFactory)
-    {
-        builder.Services.Configure<HerculesSinkMiscellaneousOptions>(options =>
-            options.ClusterProvider = implementationFactory);
-
-        return builder;
-    }
 
     public static IHerculesSinkBuilder SetExternalUrlTopology(this IHerculesSinkBuilder builder, string url) =>
         builder.SetClusterProvider(new FixedClusterProvider(url));

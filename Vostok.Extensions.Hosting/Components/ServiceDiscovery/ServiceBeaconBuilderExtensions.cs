@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Vostok.Commons.Helpers.Network;
 using Vostok.Datacenters;
-using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ServiceBeacon;
 using Vostok.Hosting.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -20,48 +19,10 @@ public static class ServiceBeaconBuilderExtensions
         Action<ServiceBeaconSettings> configure) =>
         builder.Configure((settings, _) => configure(settings));
 
-    public static IServiceBeaconBuilder Configure(
-        this IServiceBeaconBuilder builder,
-        Action<ServiceBeaconSettings, IServiceProvider>? configure = null)
-    {
-        if (configure is not null)
-            builder.Services.AddOptions<ServiceBeaconSettings>().Configure(configure);
-
-        return builder;
-    }
-
-    public static IServiceBeaconBuilder ConfigureRegistration(
-        this IServiceBeaconBuilder builder,
-        bool waitRegistration,
-        TimeSpan? registrationWaitTimeout = null)
-    {
-        builder.Services.Configure<ServiceBeaconMiscellaneousOptions>(options =>
-        {
-            options.WaitRegistration = waitRegistration;
-            if (registrationWaitTimeout.HasValue)
-                options.RegistrationWaitTimeout = registrationWaitTimeout.Value;
-        });
-
-        return builder;
-    }
-
     public static IServiceBeaconBuilder CustomizeReplicaInfo(
         this IServiceBeaconBuilder builder,
         ReplicaInfoSetup configure) =>
         builder.CustomizeReplicaInfo(_ => configure);
-
-    public static IServiceBeaconBuilder CustomizeReplicaInfo(
-        this IServiceBeaconBuilder builder,
-        Func<IServiceProvider, ReplicaInfoSetup> implementationFactory)
-    {
-        builder.Services.AddOptions<ServiceBeaconMiscellaneousOptions>()
-               .Configure<IServiceProvider>((options, provider) =>
-               {
-                   options.ReplicaCustomizations.Add(implementationFactory(provider));
-               });
-
-        return builder;
-    }
 
     /// <summary>
     /// Applies given <paramref name="port"/> to <see cref="IServiceBeacon"/> configuration.
@@ -86,7 +47,7 @@ public static class ServiceBeaconBuilderExtensions
     /// </summary>
     public static IServiceBeaconBuilder SetUrlScheme(this IServiceBeaconBuilder builder, string scheme) =>
         builder.CustomizeReplicaInfo(replica => replica.SetScheme(scheme));
-    
+
     /// <summary>
     /// Enables HTTPS scheme in <see cref="IServiceBeacon"/> configuration.
     /// </summary>
@@ -120,13 +81,4 @@ public static class ServiceBeaconBuilderExtensions
         this IServiceBeaconBuilder builder,
         IServiceDiscoveryEventsSender eventsSender) =>
         builder.SetEventSender(_ => eventsSender);
-
-    public static IServiceBeaconBuilder SetEventSender(
-        this IServiceBeaconBuilder builder,
-        Func<IServiceProvider, IServiceDiscoveryEventsSender> implementationFactory)
-    {
-        // Note: Don't use TryAdd or TryAddEnumerable because we have no 'composite' sender and always use last registered. 
-        builder.Services.AddSingleton(implementationFactory);
-        return builder;
-    }
 }

@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo;
 using Vostok.Extensions.Hosting.Components.Diagnostics.DiagnosticInfo.Providers;
 using Vostok.Extensions.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Extensions.Hosting.Components.Diagnostics.Helpers;
@@ -21,17 +20,6 @@ public static class VostokDiagnosticsBuilderExtensions
         DiagnosticEntry entry,
         IDiagnosticInfoProvider provider) =>
         builder.AddDiagnosticInfoProvider(entry, _ => provider);
-
-    public static IVostokDiagnosticsBuilder AddDiagnosticInfoProvider(
-        this IVostokDiagnosticsBuilder builder,
-        DiagnosticEntry entry,
-        Func<IServiceProvider, IDiagnosticInfoProvider> implementationFactory)
-    {
-        var registration = new VostokDiagnosticInfoRegistration(entry, implementationFactory);
-        builder.Services.Configure<VostokDiagnosticsOptions>(options => options.Registrations.Add(registration));
-
-        return builder;
-    }
 
     public static IVostokDiagnosticsBuilder WithBuiltInDiagnostics(
         this IVostokDiagnosticsBuilder builder,

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 using Vostok.Configuration;
@@ -12,8 +13,6 @@ using IConfigurationProvider = Vostok.Configuration.Abstractions.IConfigurationP
 using IConfigurationSource = Vostok.Configuration.Abstractions.IConfigurationSource;
 
 namespace Vostok.Extensions.Hosting.Components.Configuration;
-
-internal delegate void ConfigurationProviderSetup(IConfigurationProvider provider, IConfigurationSource source);
 
 internal static class ConfigurationFactory
 {
@@ -34,7 +33,7 @@ internal static class ConfigurationFactory
 
     public static IConfigurationProvider CreateProvider(IServiceProvider provider)
     {
-        var setups = provider.GetServices<ConfigurationProviderSetup>();
+        var options = provider.GetRequiredService<IOptions<VostokConfigurationMiscellaneousOptions>>().Value;
         var configurationSource = provider.GetRequiredService<IConfigurationSource>();
 
         var log = provider.GetInitializationLog();
@@ -43,8 +42,8 @@ internal static class ConfigurationFactory
                        .WithUpdatesLogging(log);
 
         var configurationProvider = new ConfigurationProvider(settings);
-        foreach (var setup in setups)
-            setup(configurationProvider, configurationSource);
+        foreach (var customize in options.Customizations)
+            customize(configurationProvider, configurationSource);
 
         return configurationProvider;
     }

@@ -17,43 +17,16 @@ public static class VostokMetricsBuilderExtensions
         Action<MetricContextConfig> configure) =>
         builder.Configure((options, _) => configure(options));
 
-    public static IVostokMetricsBuilder Configure(
-        this IVostokMetricsBuilder builder,
-        Action<MetricContextConfig, IServiceProvider> configure)
-    {
-        builder.Services.AddOptions<MetricContextConfig>().Configure(configure);
-        return builder;
-    }
-
-    public static IVostokMetricsBuilder AddMetricSender(
-        this IVostokMetricsBuilder builder,
-        Func<IServiceProvider, IMetricEventSender> implementationFactory)
-    {
-        builder.Services.AddSingleton(implementationFactory);
-        return builder;
-    }
-
     public static IVostokMetricsBuilder AddLoggingMetricSender(this IVostokMetricsBuilder builder)
     {
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricEventSender, LoggingMetricEventSender>());
         return builder;
     }
 
-    public static IVostokMetricsBuilder ClearMetricSenders(this IVostokMetricsBuilder builder)
-    {
-        builder.Services.RemoveAll<IMetricEventSender>();
-        return builder;
-    }
-
     public static IVostokMetricsBuilder CustomizeAnnotationEventSender(
         this IVostokMetricsBuilder builder,
-        Func<IAnnotationEventSender, IAnnotationEventSender> senderCustomization)
-    {
-        builder.Services.Configure<VostokMetricsMiscellaneousOptions>(options =>
-            options.AnnotationsSenderCustomizations.Add(senderCustomization));
-
-        return builder;
-    }
+        Func<IAnnotationEventSender, IAnnotationEventSender> customize) =>
+        builder.CustomizeAnnotationEventSender((sender, _) => customize(sender));
 
     /// <inheritdoc cref="EnrichInstanceAnnotationTags(IVostokMetricsBuilder,Vostok.Metrics.Models.MetricTags)" />
     public static IVostokMetricsBuilder EnrichInstanceAnnotationTags(

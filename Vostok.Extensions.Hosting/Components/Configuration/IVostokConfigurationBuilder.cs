@@ -8,4 +8,6 @@ namespace Vostok.Extensions.Hosting.Components.Configuration;
 public interface IVostokConfigurationBuilder
 {
     IServiceCollection Services { get; }
+
+    IVostokConfigurationBuilder SetupSourceFor<T>(params string[]? scope);
 }
