@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -12,14 +10,13 @@ using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
 
-[PublicAPI]
-public static class OpenTelemetryVostokAspNetCoreExtensions
+internal static class OpenTelemetryVostokAspNetCoreExtensions
 {
     public static void SetupAspNetCoreInstrumentationForVostok(this TracerProviderBuilder tracing) =>
         tracing.ConfigureServices(services => services.AddOptions<AspNetCoreTraceInstrumentationOptions>()
-                                                      .PostConfigure<IServiceProvider>(Configure));
+                                                      .PostConfigure<IServiceProvider>(PostConfigure));
 
-    private static void Configure(AspNetCoreTraceInstrumentationOptions options, IServiceProvider provider)
+    private static void PostConfigure(AspNetCoreTraceInstrumentationOptions options, IServiceProvider provider)
     {
         VostokContextPropagator.Use(provider.GetRequiredService<ILoggerFactory>());
 

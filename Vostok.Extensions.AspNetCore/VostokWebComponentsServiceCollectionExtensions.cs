@@ -24,12 +24,11 @@ namespace Vostok.Extensions.AspNetCore;
 ///     <item>Register Vostok middlewares</item>
 ///     <item>Enable AspNetCore tracing instrumentation</item>
 ///     <item>Enable HealthChecks</item>
-///     <item>Setup Kestrel defaults</item>
+///     <item>Setup reasonable Kestrel defaults</item>
 ///     <item>Setup request tracking defaults</item>
 ///     <item>Setup throttling defaults</item>
 /// </list>
 /// <para>Use returning <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
-/// <para>Applies reasonable Kestrel defaults.</para>
 /// </summary>
 [PublicAPI]
 public static class VostokWebComponentsServiceCollectionExtensions

@@ -8,11 +8,11 @@ namespace Vostok.Extensions.Hosting.Components.Configuration;
 [PublicAPI]
 public static class VostokBuilderConfigurationExtensions
 {
-    public static IVostokBuilder WithConfiguration(
+    public static IVostokBuilder WithVostokConfiguration(
         this IVostokBuilder vostok,
         Action<IVostokConfigurationBuilder>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("Configuration"))
+        if (!vostok.CheckComponentAlreadyAdded("VostokConfiguration"))
             vostok.Services.AddVostokConfiguration();
 
         var configurationBuilder = new VostokConfigurationBuilder(vostok.Services);

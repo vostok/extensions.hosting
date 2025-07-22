@@ -37,11 +37,14 @@ internal sealed class VostokWarmup(
     IEnumerable<VostokWarmup.CustomWarmupAction> customStartupActions,
     ILogger<VostokWarmup> logger)
 {
+    /// <summary>
+    /// Allows to add additional warmup action that will be called in <see cref="VostokWarmup"/>.
+    /// </summary>
     public delegate void CustomWarmupAction(IServiceProvider provider);
 
     public async Task WarmupVostokAsync()
     {
-        // note (ponomaryovigor, 01.04.2025): Order is important to prevent cyclic dependencies.
+        // note: Order is important to prevent cyclic dependencies.
         ConfigureThreadPool();
         WarmupConfiguration();
         await WarmupClusterConfigClientAsync();
