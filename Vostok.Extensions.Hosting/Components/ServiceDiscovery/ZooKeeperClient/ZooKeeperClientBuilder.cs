@@ -10,9 +10,9 @@ internal sealed class ZooKeeperClientBuilder(IServiceCollection services) : IZoo
 {
     public IServiceCollection Services { get; } = services;
 
-    public IZooKeeperClientBuilder Configure(Action<ZooKeeperClientSettings, IServiceProvider> configure)
+    public IZooKeeperClientBuilder Configure(Action<ZooKeeperClientSettings> configure)
     {
-        Services.AddOptions<ZooKeeperClientSettings>().Configure(configure);
+        Services.Configure(configure);
         return this;
     }
 

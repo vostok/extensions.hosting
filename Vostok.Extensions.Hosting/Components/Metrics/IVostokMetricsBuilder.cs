@@ -11,7 +11,7 @@ public interface IVostokMetricsBuilder
 {
     IServiceCollection Services { get; }
 
-    IVostokMetricsBuilder Configure(Action<MetricContextConfig, IServiceProvider> configure);
+    IVostokMetricsBuilder Configure(Action<MetricContextConfig> configure);
     IVostokMetricsBuilder AddMetricSender(Func<IServiceProvider, IMetricEventSender> implementationFactory);
     IVostokMetricsBuilder ClearMetricSenders();
     IVostokMetricsBuilder CustomizeAnnotationEventSender(Func<IAnnotationEventSender, IServiceProvider, IAnnotationEventSender> senderCustomization);

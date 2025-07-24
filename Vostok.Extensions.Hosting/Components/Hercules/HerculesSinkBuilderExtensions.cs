@@ -4,18 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Extensions.Hosting.Helpers;
-using Vostok.Hercules.Client;
 
 namespace Vostok.Extensions.Hosting.Components.Hercules;
 
 [PublicAPI]
 public static class HerculesSinkBuilderExtensions
 {
-    public static IHerculesSinkBuilder Configure(
-        this IHerculesSinkBuilder builder,
-        Action<HerculesSinkSettings> configure) =>
-        builder.Configure((settings, _) => configure(settings));
-
     public static IHerculesSinkBuilder SetClusterProvider(
         this IHerculesSinkBuilder builder,
         IClusterProvider clusterProvider) =>

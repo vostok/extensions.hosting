@@ -12,11 +12,6 @@ namespace Vostok.Extensions.Hosting.Components.Metrics;
 [PublicAPI]
 public static class VostokMetricsBuilderExtensions
 {
-    public static IVostokMetricsBuilder Configure(
-        this IVostokMetricsBuilder builder,
-        Action<MetricContextConfig> configure) =>
-        builder.Configure((options, _) => configure(options));
-
     public static IVostokMetricsBuilder AddLoggingMetricSender(this IVostokMetricsBuilder builder)
     {
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricEventSender, LoggingMetricEventSender>());

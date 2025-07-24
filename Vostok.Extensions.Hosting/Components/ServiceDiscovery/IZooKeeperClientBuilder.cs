@@ -13,7 +13,7 @@ public interface IZooKeeperClientBuilder
 {
     IServiceCollection Services { get; }
 
-    IZooKeeperClientBuilder Configure(Action<ZooKeeperClientSettings, IServiceProvider> configure);
+    IZooKeeperClientBuilder Configure(Action<ZooKeeperClientSettings> configure);
     IZooKeeperClientBuilder SetConnectionString(string connectionString);
     IZooKeeperClientBuilder SetClusterProvider(Func<IServiceProvider, IClusterProvider?> implementationFactory);
     IZooKeeperClientBuilder AddAuthenticationInfo(AuthenticationInfo authenticationInfo);

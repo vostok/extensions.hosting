@@ -42,18 +42,13 @@ public static class VostokBuilderServiceDiscoveryExtensions
 
     public static IVostokBuilder WithServiceLocator(
         this IVostokBuilder vostok,
-        Action<ServiceLocatorSettings> configure) =>
-        vostok.WithServiceLocator((settings, _) => configure(settings));
-
-    public static IVostokBuilder WithServiceLocator(
-        this IVostokBuilder vostok,
-        Action<ServiceLocatorSettings, IServiceProvider>? configure = null)
+        Action<ServiceLocatorSettings>? configure = null)
     {
         if (!vostok.CheckComponentAlreadyAdded("ServiceLocator"))
             vostok.Services.AddServiceLocator();
 
         if (configure is not null)
-            vostok.Services.AddOptions<ServiceLocatorSettings>().Configure(configure);
+            vostok.Services.Configure(configure);
 
         return vostok;
     }

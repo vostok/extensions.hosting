@@ -9,9 +9,9 @@ internal sealed class HerculesSinkBuilder(IServiceCollection services) : IHercul
 {
     public IServiceCollection Services { get; } = services;
 
-    public IHerculesSinkBuilder Configure(Action<HerculesSinkSettings, IServiceProvider> configure)
+    public IHerculesSinkBuilder Configure(Action<HerculesSinkSettings> configure)
     {
-        Services.AddOptions<HerculesSinkSettings>().Configure(configure);
+        Services.Configure(configure);
         return this;
     }
 

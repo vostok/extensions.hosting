@@ -9,9 +9,9 @@ internal sealed class ServiceBeaconBuilder(IServiceCollection services) : IServi
 {
     public IServiceCollection Services { get; } = services;
 
-    public IServiceBeaconBuilder Configure(Action<ServiceBeaconSettings, IServiceProvider> configure)
+    public IServiceBeaconBuilder Configure(Action<ServiceBeaconSettings> configure)
     {
-        Services.AddOptions<ServiceBeaconSettings>().Configure(configure);
+        Services.Configure(configure);
         return this;
     }
 

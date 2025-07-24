@@ -9,9 +9,9 @@ internal sealed class VostokMetricsBuilder(IServiceCollection services) : IVosto
 {
     public IServiceCollection Services { get; } = services;
 
-    public IVostokMetricsBuilder Configure(Action<MetricContextConfig, IServiceProvider> configure)
+    public IVostokMetricsBuilder Configure(Action<MetricContextConfig> configure)
     {
-        Services.AddOptions<MetricContextConfig>().Configure(configure);
+        Services.Configure(configure);
         return this;
     }
 

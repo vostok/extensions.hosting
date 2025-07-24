@@ -10,18 +10,13 @@ public static class VostokBuilderDatacentersExtensions
 {
     public static IVostokBuilder WithDatacenters(
         this IVostokBuilder vostok,
-        Action<DatacentersOptions> configure) =>
-        vostok.WithDatacenters((options, _) => configure(options));
-
-    public static IVostokBuilder WithDatacenters(
-        this IVostokBuilder vostok,
-        Action<DatacentersOptions, IServiceProvider>? configure = null)
+        Action<DatacentersOptions>? configure = null)
     {
         if (!vostok.CheckComponentAlreadyAdded("Datacenters"))
             vostok.Services.AddDatacenters();
 
         if (configure is not null)
-            vostok.Services.AddOptions<DatacentersOptions>().Configure(configure);
+            vostok.Services.Configure(configure);
 
         return vostok;
     }

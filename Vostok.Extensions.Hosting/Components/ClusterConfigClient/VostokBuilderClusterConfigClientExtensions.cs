@@ -14,18 +14,13 @@ public static class VostokBuilderClusterConfigClientExtensions
 {
     public static IVostokBuilder WithClusterConfigClient(
         this IVostokBuilder vostok,
-        Action<ClusterConfigClientSettings> configure) =>
-        vostok.WithClusterConfigClient((options, _) => configure(options));
-
-    public static IVostokBuilder WithClusterConfigClient(
-        this IVostokBuilder vostok,
-        Action<ClusterConfigClientSettings, IServiceProvider>? configure = null)
+        Action<ClusterConfigClientSettings>? configure = null)
     {
         if (!vostok.CheckComponentAlreadyAdded("ClusterConfigClient"))
             vostok.Services.AddClusterConfigClient();
 
         if (configure is not null)
-            vostok.Services.AddOptions<ClusterConfigClientSettings>().Configure(configure);
+            vostok.Services.Configure(configure);
 
         return vostok;
     }

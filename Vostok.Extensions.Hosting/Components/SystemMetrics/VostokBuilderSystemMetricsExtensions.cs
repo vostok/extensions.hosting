@@ -13,18 +13,13 @@ public static class VostokBuilderSystemMetricsExtensions
 {
     public static IVostokBuilder WithSystemMetrics(
         this IVostokBuilder vostok,
-        Action<SystemMetricsOptions> configure) =>
-        vostok.WithSystemMetrics((options, _) => configure(options));
-
-    public static IVostokBuilder WithSystemMetrics(
-        this IVostokBuilder vostok,
-        Action<SystemMetricsOptions, IServiceProvider>? configure = null)
+        Action<SystemMetricsOptions>? configure = null)
     {
         if (!vostok.CheckComponentAlreadyAdded("SystemMetrics"))
             vostok.Services.AddSystemMetrics();
 
         if (configure is not null)
-            vostok.Services.AddOptions<SystemMetricsOptions>().Configure(configure);
+            vostok.Services.Configure(configure);
 
         return vostok;
     }

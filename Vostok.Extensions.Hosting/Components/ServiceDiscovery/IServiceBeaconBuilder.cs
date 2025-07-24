@@ -12,7 +12,7 @@ public interface IServiceBeaconBuilder
 {
     IServiceCollection Services { get; }
 
-    IServiceBeaconBuilder Configure(Action<ServiceBeaconSettings, IServiceProvider> configure);
+    IServiceBeaconBuilder Configure(Action<ServiceBeaconSettings> configure);
     IServiceBeaconBuilder ConfigureRegistration(bool waitRegistration, TimeSpan? registrationWaitTimeout = null);
     IServiceBeaconBuilder CustomizeReplicaInfo(Func<IServiceProvider, ReplicaInfoSetup> implementationFactory);
     IServiceBeaconBuilder SetEventSender(Func<IServiceProvider, IServiceDiscoveryEventsSender> implementationFactory);

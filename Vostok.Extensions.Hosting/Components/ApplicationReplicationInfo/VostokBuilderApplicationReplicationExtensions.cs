@@ -13,18 +13,13 @@ public static class VostokBuilderApplicationReplicationExtensions
 {
     public static IVostokBuilder WithApplicationReplicationInfo(
         this IVostokBuilder vostok,
-        Action<ApplicationReplicationOptions> configure) =>
-        vostok.WithApplicationReplicationInfo((options, _) => configure(options));
-
-    public static IVostokBuilder WithApplicationReplicationInfo(
-        this IVostokBuilder vostok,
-        Action<ApplicationReplicationOptions, IServiceProvider>? configure = null)
+        Action<ApplicationReplicationOptions>? configure = null)
     {
         if (!vostok.CheckComponentAlreadyAdded("ApplicationReplication"))
             vostok.Services.AddApplicationReplication();
 
         if (configure is not null)
-            vostok.Services.AddOptions<ApplicationReplicationOptions>().Configure(configure);
+            vostok.Services.Configure(configure);
 
         return vostok;
     }

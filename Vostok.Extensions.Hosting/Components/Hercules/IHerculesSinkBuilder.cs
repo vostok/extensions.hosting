@@ -12,7 +12,7 @@ public interface IHerculesSinkBuilder
 {
     IServiceCollection Services { get; }
 
-    IHerculesSinkBuilder Configure(Action<HerculesSinkSettings, IServiceProvider> configure);
+    IHerculesSinkBuilder Configure(Action<HerculesSinkSettings> configure);
     IHerculesSinkBuilder SetApiKey(string? apiKey);
     IHerculesSinkBuilder SetClusterProvider(Func<IServiceProvider, IClusterProvider?> implementationFactory);
 }

@@ -12,18 +12,13 @@ public static class VostokBuilderApplicationLimitsExtensions
 {
     public static IVostokBuilder WithApplicationLimits(
         this IVostokBuilder vostok,
-        Action<ApplicationLimitsOptions> configure) =>
-        vostok.WithApplicationLimits((options, _) => configure(options));
-
-    public static IVostokBuilder WithApplicationLimits(
-        this IVostokBuilder vostok,
-        Action<ApplicationLimitsOptions, IServiceProvider>? configure = null)
+        Action<ApplicationLimitsOptions>? configure = null)
     {
         if (!vostok.CheckComponentAlreadyAdded("ApplicationLimits"))
             vostok.Services.AddApplicationLimits();
 
         if (configure is not null)
-            vostok.Services.AddOptions<ApplicationLimitsOptions>().Configure(configure);
+            vostok.Services.Configure(configure);
 
         return vostok;
     }

@@ -14,11 +14,6 @@ namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 [PublicAPI]
 public static class ServiceBeaconBuilderExtensions
 {
-    public static IServiceBeaconBuilder Configure(
-        this IServiceBeaconBuilder builder,
-        Action<ServiceBeaconSettings> configure) =>
-        builder.Configure((settings, _) => configure(settings));
-
     public static IServiceBeaconBuilder CustomizeReplicaInfo(
         this IServiceBeaconBuilder builder,
         ReplicaInfoSetup configure) =>
@@ -68,11 +63,12 @@ public static class ServiceBeaconBuilderExtensions
 
     public static IServiceBeaconBuilder DenyRegistrationFromNonActiveDatacenters(this IServiceBeaconBuilder builder)
     {
-        builder.Configure((settings, provider) =>
-        {
-            if (provider.GetService<IDatacenters>() is { } datacenters)
-                settings.RegistrationAllowedProvider = datacenters.LocalDatacenterIsActive;
-        });
+        builder.Services.AddOptions<ServiceBeaconSettings>()
+               .Configure<IServiceProvider>((settings, provider) =>
+               {
+                   if (provider.GetService<IDatacenters>() is { } datacenters)
+                       settings.RegistrationAllowedProvider = datacenters.LocalDatacenterIsActive;
+               });
 
         return builder;
     }
