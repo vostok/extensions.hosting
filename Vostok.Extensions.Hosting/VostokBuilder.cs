@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vostok.Extensions.Hosting.Components;
 using Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 using Vostok.Extensions.Hosting.Helpers;
+using Vostok.Extensions.Hosting.Helpers.HostLifetime;
 using Vostok.Extensions.Hosting.Helpers.TypeConverters;
 using Vostok.Extensions.Hosting.OpenTelemetry;
 

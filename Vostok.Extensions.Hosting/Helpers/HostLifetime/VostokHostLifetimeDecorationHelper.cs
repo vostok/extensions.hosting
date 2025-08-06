@@ -1,19 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Vostok.Extensions.Hosting.Helpers;
-
-internal sealed class VostokHostLifetime(IHostLifetime baseHostLifetime, VostokWarmup warmup) : IHostLifetime
-{
-    public async Task WaitForStartAsync(CancellationToken cancellationToken)
-    {
-        await baseHostLifetime.WaitForStartAsync(cancellationToken);
-        await warmup.WarmupVostokAsync();
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken) =>
-        baseHostLifetime.StopAsync(cancellationToken);
-}
+namespace Vostok.Extensions.Hosting.Helpers.HostLifetime;
 
 // note(ponomaryovigor): Decoration logic with some simplifications copied from Scrutor package.
 internal static class VostokHostLifetimeDecorationHelper
@@ -29,16 +17,25 @@ internal static class VostokHostLifetimeDecorationHelper
             if (serviceDescriptor.ServiceType != typeof(IHostLifetime))
                 continue;
 
-            var serviceKey = GetDecoratorKey(serviceDescriptor);
+            var baseLifetimeServiceKey = GetDecoratorKey(serviceDescriptor);
 
-            // Insert decorated
-            services.Add(serviceDescriptor.WithServiceKey(serviceKey));
-
-            // Replace decorator
-            services[i] = serviceDescriptor.WithImplementationFactory(provider =>
+            var vostokLifetimeServiceKey = GetDecoratorKey(serviceDescriptor);
+            
+            // Insert vostok lifetime between
+            services.Add(serviceDescriptor.WithServiceKey(vostokLifetimeServiceKey).WithImplementationFactory((provider, _) =>
             {
-                var baseHostLifetime = provider.GetRequiredKeyedService<IHostLifetime>(serviceKey);
+                var baseHostLifetime = provider.GetRequiredKeyedService<IHostLifetime>(baseLifetimeServiceKey);
                 return ActivatorUtilities.CreateInstance<VostokHostLifetime>(provider, baseHostLifetime);
+            }));
+            
+            // Insert base lifetime to the end
+            services.Add(serviceDescriptor.WithServiceKey(baseLifetimeServiceKey));
+
+            // Insert houston lifetime first
+            services[i] = serviceDescriptor.WithImplementationFactory((provider, _) =>
+            {
+                var vostokHostLifetime = provider.GetRequiredKeyedService<IHostLifetime>(vostokLifetimeServiceKey);
+                return ActivatorUtilities.CreateInstance<HoustonHostLifetime>(provider, vostokHostLifetime);
             });
 
             break;
@@ -51,8 +48,8 @@ internal static class VostokHostLifetimeDecorationHelper
         return $"{descriptor.ServiceType.Name}+{uniqueId}{DecoratedServiceKeySuffix}";
     }
 
-    private static ServiceDescriptor WithImplementationFactory(this ServiceDescriptor descriptor, Func<IServiceProvider, object> implementationFactory) =>
-        new(descriptor.ServiceType, implementationFactory, descriptor.Lifetime);
+    private static ServiceDescriptor WithImplementationFactory(this ServiceDescriptor descriptor, Func<IServiceProvider, object?, object> implementationFactory) =>
+        new(descriptor.ServiceType, descriptor.ServiceKey, implementationFactory, descriptor.Lifetime);
 
     private static ServiceDescriptor WithServiceKey(this ServiceDescriptor descriptor, string serviceKey) =>
         descriptor switch
