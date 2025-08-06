@@ -80,7 +80,8 @@ public static class RequirementsChecker
 
     private static void CheckHostExtensions(IVostokHostConfigurator application, IServiceProvider serviceProvider,
         List<string> errors)
-        => CheckHostExtensionsInternal(() => RequirementDetector.GetRequiredHostExtensions(application), serviceProvider,
+        => CheckHostExtensionsInternal(() => RequirementDetector.GetRequiredHostExtensions(application),
+            serviceProvider,
             errors);
 
     private static void CheckHostExtensionsInternal(

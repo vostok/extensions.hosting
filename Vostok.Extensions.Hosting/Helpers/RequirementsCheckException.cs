@@ -16,7 +16,8 @@ public class RequirementsCheckException : Exception
     {
         var builder = new StringBuilder();
 
-        builder.Append($"Configured hosting environment has failed to satisfy some of the application's ('{applicationType.Name}') requirements:");
+        builder.Append(
+            $"Configured hosting environment has failed to satisfy some of the application's ('{applicationType.Name}') requirements:");
 
         foreach (var error in errors)
         {
