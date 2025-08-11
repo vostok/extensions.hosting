@@ -10,19 +10,21 @@ namespace Vostok.Extensions.Hosting.Helpers;
 [PublicAPI]
 public static class HostConfiguratorLocator
 {
-    public static IVostokHostConfigurator LocateHostConfigurator(Assembly assembly, Type configuratorInterface,
-        string[] args)
+    public static T LocateHostConfigurator<T>(Assembly assembly, string[] args)
+        where T : class, IVostokHostConfigurator
     {
         var configuratorType = SelectEntryPoint(assembly, args).ApplicationType;
+
+        var configuratorInterface = typeof(T);
 
         if (!configuratorType.GetInterfaces().Contains(configuratorInterface))
             throw new HostConfiguratorLocatorException(
                 $"Configurator not implementing required interface: {configuratorInterface.Name}");
 
-        var configuratorInstance = CreateConfiguratorInstance(configuratorType);
+        var configuratorInstance = CreateConfiguratorInstance(configuratorType) as T;
 
-        if (configuratorInstance is IVostokHostConfigurator vostokApplication)
-            return vostokApplication;
+        if (configuratorInstance != null)
+            return configuratorInstance;
 
         throw new HostConfiguratorLocatorException(
             $"Selected configurator '{configuratorType.Name}' is not an {nameof(IVostokHostConfigurator)}");
