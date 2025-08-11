@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -18,6 +19,15 @@ internal sealed class HoustonHostLifetime(IHostLifetime baseHostLifetime, IServi
         //Конфигуратор -- Хьюстон-специфичная штука как будто
         if (hostConfigurator == null)
             throw new InvalidOperationException("There is no registered Vostok host configurator");
+
+        var webApplication = serviceProvider.GetRequiredService<Func<WebApplication>>()();
+
+        hostConfigurator.ConfigureAfterBuild(webApplication);
+        // switch (hostConfigurator)
+        // {
+        //     case IHoustonHostApplicationBuilderConfigurator
+        //     case IHoustonHostBuilderConfigurator configurator 
+        // }
 
         //todo: add ConfigureAfterBuild
 
