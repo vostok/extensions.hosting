@@ -14,6 +14,8 @@ internal sealed class HoustonHostLifetime(IHostLifetime baseHostLifetime, IServi
 
         var hostConfigurator = serviceProvider.GetService<IVostokHostConfigurator>();
 
+        //todo: может стоит переименовать IVostokHostConfigurator в IHoustonConfigurator?
+        //Конфигуратор -- Хьюстон-специфичная штука как будто
         if (hostConfigurator == null)
             throw new InvalidOperationException("There is no registered Vostok host configurator");
 

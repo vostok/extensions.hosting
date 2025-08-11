@@ -8,11 +8,12 @@ using Vostok.Hosting.Abstractions.Requirements;
 namespace Vostok.Extensions.Hosting.Helpers;
 
 /// <summary>
-/// A collection of helper methods to aid in satisfying application requirements when configuring a <see cref="IVostokHostingEnvironment"/>.
+/// A collection of helper methods to aid in satisfying configurator requirements when configuring a <see cref="IVostokHostingEnvironment"/>.
 /// </summary>
 [PublicAPI]
 public static class RequirementsHelper
 {
+    //todo: где именно вызывать?
     public static void EnsurePort(IVostokHostConfigurator application, IServiceBeaconBuilder builder)
     {
         if (RequirementDetector.RequiresPort(application))

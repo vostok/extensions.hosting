@@ -8,7 +8,7 @@ using Vostok.Hosting.Houston.Abstractions.Requirements;
 namespace Vostok.Extensions.Hosting.Helpers;
 
 /// <summary>
-/// Provides helper methods to detect Houston feature requirements of applications.
+/// Provides helper methods to detect Houston feature requirements of configurators.
 /// </summary>
 [PublicAPI]
 public static class HoustonRequirementDetector
@@ -16,15 +16,15 @@ public static class HoustonRequirementDetector
     public static bool RequiresBinariesInfo(IVostokHostConfigurator configurator)
         => RequiresBinariesInfoInternal(() => RequirementDetector.GetRequiredHostExtensions(configurator));
 
-    public static bool RequiresAssets(IVostokHostConfigurator application)
-        => RequiresAssetsInternal(() => RequirementDetector.GetRequiredHostExtensions(application));
+    public static bool RequiresAssets(IVostokHostConfigurator configurator)
+        => RequiresAssetsInternal(() => RequirementDetector.GetRequiredHostExtensions(configurator));
 
-    public static Type? GetRequiredStateType(IVostokHostConfigurator application)
-        => GetRequiredStateTypeInternal(application.GetType(),
-            () => RequirementDetector.GetRequiredHostExtensions(application));
+    public static Type? GetRequiredStateType(IVostokHostConfigurator configurator)
+        => GetRequiredStateTypeInternal(configurator.GetType(),
+            () => RequirementDetector.GetRequiredHostExtensions(configurator));
 
-    public static IEnumerable<string> GetRequiredAssetNames(IVostokHostConfigurator application)
-        => GetRequiredAssetNamesInternal(() => RequirementDetector.GetRequiredHostExtensions(application));
+    public static IEnumerable<string> GetRequiredAssetNames(IVostokHostConfigurator configurator)
+        => GetRequiredAssetNamesInternal(() => RequirementDetector.GetRequiredHostExtensions(configurator));
 
     private static bool RequiresBinariesInfoInternal(Func<IEnumerable<RequiresHostExtension>> getRequiredExtensions)
         => getRequiredExtensions().Any(r => r is RequiresHoustonBinariesInfo);
@@ -32,7 +32,7 @@ public static class HoustonRequirementDetector
     private static bool RequiresAssetsInternal(Func<IEnumerable<RequiresHostExtension>> getRequiredExtensions)
         => getRequiredExtensions().Any(r => r is RequiresHoustonAssets);
 
-    private static Type? GetRequiredStateTypeInternal(Type applicationType,
+    private static Type? GetRequiredStateTypeInternal(Type configuratorType,
         Func<IEnumerable<RequiresHostExtension>> getRequiredExtensions)
     {
         var stateTypes = getRequiredExtensions()
@@ -43,7 +43,7 @@ public static class HoustonRequirementDetector
 
         if (stateTypes.Count > 1)
             throw new ArgumentException(
-                $"Application of type '{applicationType.Name}' requires more than one state type: {string.Join(", ", stateTypes)}.");
+                $"Configurator of type '{configuratorType.Name}' requires more than one state type: {string.Join(", ", stateTypes)}.");
 
         return stateTypes.FirstOrDefault();
     }
@@ -57,5 +57,4 @@ public static class HoustonRequirementDetector
             .Select(e => e!.Name)
             .Distinct();
     }
-        
 }

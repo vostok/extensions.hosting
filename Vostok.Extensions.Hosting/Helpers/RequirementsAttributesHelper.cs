@@ -6,23 +6,23 @@ namespace Vostok.Extensions.Hosting.Helpers;
 
 internal static class RequirementAttributesHelper
 {
-    public static IEnumerable<TRequirement> GetAttributes<TRequirement>(IVostokHostConfigurator application)
+    public static IEnumerable<TRequirement> GetAttributes<TRequirement>(IVostokHostConfigurator configurator)
         where TRequirement : Attribute
-        => GetAttributes<TRequirement>(application.GetType());
+        => GetAttributes<TRequirement>(configurator.GetType());
 
-    public static IEnumerable<TRequirement> GetAttributes<TRequirement>(Type applicationType)
+    public static IEnumerable<TRequirement> GetAttributes<TRequirement>(Type configuratorType)
         where TRequirement : Attribute
-        => GetDirectAttributes<TRequirement>(applicationType)
-            .Concat(GetStaticAttributes<TRequirement>(applicationType));
+        => GetDirectAttributes<TRequirement>(configuratorType)
+            .Concat(GetStaticAttributes<TRequirement>(configuratorType));
 
-    private static IEnumerable<TRequirement> GetDirectAttributes<TRequirement>(Type applicationType)
+    private static IEnumerable<TRequirement> GetDirectAttributes<TRequirement>(Type configuratorType)
         where TRequirement : Attribute
-        => applicationType?.GetCustomAttributes<TRequirement>(true) ?? Enumerable.Empty<TRequirement>();
+        => configuratorType?.GetCustomAttributes<TRequirement>(true) ?? Enumerable.Empty<TRequirement>();
 
-    private static IEnumerable<TRequirement> GetStaticAttributes<TRequirement>(Type applicationType)
+    private static IEnumerable<TRequirement> GetStaticAttributes<TRequirement>(Type configuratorType)
         where TRequirement : Attribute
     {
-        var property = applicationType.GetProperty("AdditionalRequirements",
+        var property = configuratorType.GetProperty("AdditionalRequirements",
             BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy,
             null, typeof(IEnumerable<Attribute>), Array.Empty<Type>(), null);
 

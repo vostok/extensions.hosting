@@ -3,21 +3,20 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 using Vostok.Extensions.Hosting.Abstractions;
-using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Houston.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Helpers;
 
 /// <summary>
-/// A helper that allows to check whether given instance of <see cref="IVostokHostingEnvironment"/> satisfies all of the application's Houston requirements expressed via attributes.
+/// A helper that allows to check whether given instance of <see cref="IServiceProvider"/> satisfies all of the configurator's Houston requirements expressed via attributes.
 /// </summary>
 [PublicAPI]
 public static class HoustonRequirementsChecker
 {
     /// <summary>
-    /// Checks whether given <paramref name="environment"/> satisfies all Houston requirements imposed by <paramref name="application"/>.
+    /// Checks whether given <paramref name="serviceProvider"/> satisfies all Houston requirements imposed by <paramref name="configurator"/>.
     /// </summary>
-    /// <exception cref="RequirementsCheckException">Some of application's requirements were not satisfied.</exception>
+    /// <exception cref="RequirementsCheckException">Some of configurator's requirements were not satisfied.</exception>
     public static void Check(
         IVostokHostConfigurator configurator,
         IServiceProvider serviceProvider)
@@ -27,7 +26,7 @@ public static class HoustonRequirementsChecker
     }
 
     /// <summary>
-    /// Checks whether given <paramref name="environment"/> satisfies all Houston requirements imposed by <paramref name="application"/>.
+    /// Checks whether given <paramref name="serviceProvider"/> satisfies all Houston requirements imposed by <paramref name="configurator"/>.
     /// </summary>
     /// <returns><c>true</c> if all requirements are met, <c>false</c> otherwise (with at least one element in <paramref name="errors"/>).</returns>
     public static bool TryCheck(
@@ -65,7 +64,7 @@ public static class HoustonRequirementsChecker
             var availableStr = available.Any() ? string.Join(", ", available) : "none";
 
             errors.Add(
-                $"Application requires an asset with name '{assetName}', which has not been provided by the host.\n" +
+                $"Configurator requires an asset with name '{assetName}', which has not been provided by the host.\n" +
                 $"Available assets: {availableStr}.\n" +
                 (error.InnerException?.Message ?? error.Message));
         }

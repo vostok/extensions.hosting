@@ -11,8 +11,8 @@ namespace Vostok.Extensions.Hosting.Helpers;
 [PublicAPI]
 public static class RequirementDetector
 {
-    public static bool RequiresPort(IVostokHostConfigurator application)
-        => RequirementAttributesHelper.GetAttributes<RequiresPort>(application).Any();
+    public static bool RequiresPort(IVostokHostConfigurator configurator)
+        => RequirementAttributesHelper.GetAttributes<RequiresPort>(configurator).Any();
 
     public static IEnumerable<RequiresHostExtension> GetRequiredHostExtensions(IVostokHostConfigurator configurator)
         => RequirementAttributesHelper.GetAttributes<RequiresHostExtension>(configurator);

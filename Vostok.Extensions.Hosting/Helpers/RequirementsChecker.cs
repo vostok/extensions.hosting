@@ -3,20 +3,19 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 using Vostok.Extensions.Hosting.Abstractions;
-using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Helpers;
 
 /// <summary>
-/// A helper that allows to check whether given instance of <see cref="IVostokHostingEnvironment"/> satisfies all of the application's requirements expressed via attributes.
+/// A helper that allows to check whether given instance of <see cref="IServiceProvider"/> satisfies all of the configurator's requirements expressed via attributes.
 /// </summary>
 [PublicAPI]
 public static class RequirementsChecker
 {
     /// <summary>
-    /// Checks whether given <paramref name="environment"/> satisfies all requirements imposed by <paramref name="application"/>.
+    /// Checks whether given <paramref name="serviceProvider"/> satisfies all requirements imposed by <paramref name="configurator"/>.
     /// </summary>
     /// <exception cref="RequirementsCheckException">Some of application's requirements were not satisfied.</exception>
     public static void Check(
@@ -28,7 +27,7 @@ public static class RequirementsChecker
     }
 
     /// <summary>
-    /// Checks whether given <paramref name="environment"/> satisfies all requirements imposed by <paramref name="application"/>.
+    /// Checks whether given <paramref name="serviceProvider"/> satisfies all requirements imposed by <paramref name="configurator"/>.
     /// </summary>
     /// <returns><c>true</c> if all requirements are met, <c>false</c> otherwise (with at least one element in <paramref name="errors"/>).</returns>
     public static bool TryCheck(
@@ -71,16 +70,16 @@ public static class RequirementsChecker
 
         if (url?.Port == null)
             errors.Add(
-                "Application requires a port, which is not provided by host (see 'SetPort' extension when configuring hosting environment).");
+                "Configurator requires a port, which is not provided by host (see 'SetPort' extension when configuring hosting environment).");
     }
 
     #endregion
 
     #region CheckHostExtensions
 
-    private static void CheckHostExtensions(IVostokHostConfigurator application, IServiceProvider serviceProvider,
+    private static void CheckHostExtensions(IVostokHostConfigurator configurator, IServiceProvider serviceProvider,
         List<string> errors)
-        => CheckHostExtensionsInternal(() => RequirementDetector.GetRequiredHostExtensions(application),
+        => CheckHostExtensionsInternal(() => RequirementDetector.GetRequiredHostExtensions(configurator),
             serviceProvider,
             errors);
 
@@ -93,14 +92,14 @@ public static class RequirementsChecker
         {
             if (serviceProvider.GetService(requiredExtension.Type) == null)
                 errors.Add(
-                    $"Application requires a service of type '{requiredExtension.Type}', which is not registered by host");
+                    $"Configurator requires a service of type '{requiredExtension.Type}', which is not registered by host");
         }
 
         foreach (var requiredExtension in getRequiredHostExtensions().Where(h => h.Key != null))
         {
             if (serviceProvider.GetKeyedService(requiredExtension.Type, requiredExtension.Key!) == null)
                 errors.Add(
-                    $"Application requires a service of type '{requiredExtension.Type}' with key '{requiredExtension.Key}', which is not registered by host");
+                    $"Configurator requires a service of type '{requiredExtension.Type}' with key '{requiredExtension.Key}', which is not registered by host");
         }
     }
 
