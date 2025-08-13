@@ -23,11 +23,13 @@ internal static class VostokHostLifetimeDecorationHelper
             services.Add(serviceDescriptor.WithServiceKey(serviceKey));
 
             // Replace decorator
-            services[i] = serviceDescriptor.WithImplementationFactory((provider, _) =>
+            services[i] = serviceDescriptor.WithImplementationFactory(provider =>
             {
                 var baseHostLifetime = provider.GetRequiredKeyedService<IHostLifetime>(serviceKey);
                 return ActivatorUtilities.CreateInstance<VostokHostLifetime>(provider, baseHostLifetime);
             });
+
+            break;
         }
     }
 
@@ -38,8 +40,8 @@ internal static class VostokHostLifetimeDecorationHelper
     }
 
     private static ServiceDescriptor WithImplementationFactory(this ServiceDescriptor descriptor,
-        Func<IServiceProvider, object?, object> implementationFactory) =>
-        new(descriptor.ServiceType, descriptor.ServiceKey, implementationFactory, descriptor.Lifetime);
+        Func<IServiceProvider, object> implementationFactory) =>
+        new(descriptor.ServiceType, implementationFactory, descriptor.Lifetime);
 
     private static ServiceDescriptor WithServiceKey(this ServiceDescriptor descriptor, string serviceKey) =>
         descriptor switch
