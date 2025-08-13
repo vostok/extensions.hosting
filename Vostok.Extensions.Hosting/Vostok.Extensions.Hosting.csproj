@@ -57,23 +57,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Kontur"/>
         <InternalsVisibleTo Include="Vostok.Extensions.AspNetCore"/>
         <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston"/>
         <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston2"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="Microsoft.AspNetCore">
-            <HintPath>..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.6\Microsoft.AspNetCore.dll</HintPath>
-        </Reference>
-        <Reference Include="Vostok.Hosting.Houston.Abstractions">
-            <HintPath>..\..\vostok.hosting.houston.abstractions\Vostok.Hosting.Houston.Abstractions\bin\Release\net8.0\Vostok.Hosting.Houston.Abstractions.dll</HintPath>
-        </Reference>
     </ItemGroup>
 
 </Project>
