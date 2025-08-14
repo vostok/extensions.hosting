@@ -10,5 +10,8 @@ namespace Vostok.Extensions.Hosting;
 [PublicAPI]
 public interface IVostokBuilder
 {
+    /// <summary>
+    /// The host <see cref="IServiceCollection"/> where Vostok components are configured.
+    /// </summary>
     IServiceCollection Services { get; }
 }

@@ -14,6 +14,12 @@ namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 [PublicAPI]
 public static class ServiceBeaconBuilderExtensions
 {
+    /// <summary>
+    /// Adds provided <see cref="ReplicaInfoSetup"/> for replica customization.
+    /// </summary>
+    /// <param name="builder">The <see cref="IServiceBeaconBuilder"/>.</param>
+    /// <param name="configure">The <see cref="ReplicaInfoSetup"/>.</param>
+    /// <returns></returns>
     public static IServiceBeaconBuilder CustomizeReplicaInfo(
         this IServiceBeaconBuilder builder,
         ReplicaInfoSetup configure) =>
@@ -73,6 +79,12 @@ public static class ServiceBeaconBuilderExtensions
         return builder;
     }
 
+    /// <summary>
+    /// Sets provided <see cref="IServiceDiscoveryEventsSender"/>.
+    /// </summary>
+    /// <param name="builder">The <see cref="IServiceBeaconBuilder"/>.</param>
+    /// <param name="eventsSender">The <see cref="IServiceDiscoveryEventsSender"/>.</param>
+    /// <returns></returns>
     public static IServiceBeaconBuilder SetEventSender(
         this IServiceBeaconBuilder builder,
         IServiceDiscoveryEventsSender eventsSender) =>

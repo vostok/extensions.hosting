@@ -11,7 +11,7 @@ namespace Vostok.Extensions.Hosting.Components.Datacenters;
 // Need for use in Options Pattern without specifying a lot of boilerplate (options factories, helper options, etc).
 
 /// <summary>
-/// Represents <see cref="Datacenters"/> options.
+/// Options for configuring <see cref="Datacenters"/>.
 /// </summary>
 [PublicAPI]
 public sealed class DatacentersOptions

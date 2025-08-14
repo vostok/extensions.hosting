@@ -11,12 +11,20 @@ using Vostok.Extensions.Hosting.Components.ServiceDiscovery.ZooKeeperClient;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ZooKeeper.Client;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Extensions.Hosting.Components.ServiceDiscovery;
 
 [PublicAPI]
 public static class VostokBuilderServiceDiscoveryExtensions
 {
+    /// <summary>
+    /// Registers and configures services for <see cref="IServiceBeacon"/>.
+    /// </summary>
+    /// <param name="vostok">The <see cref="IVostokBuilder"/>.</param>
+    /// <param name="configure">Delegate to configure <see cref="IServiceBeaconBuilder"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one <see cref="IServiceBeacon"/> configured.</remarks>
     public static IVostokBuilder WithServiceBeacon(this IVostokBuilder vostok, Action<IServiceBeaconBuilder> configure)
     {
         if (!vostok.CheckComponentAlreadyAdded("ServiceBeacon"))
@@ -40,6 +48,13 @@ public static class VostokBuilderServiceDiscoveryExtensions
         return vostok;
     }
 
+    /// <summary>
+    /// Registers and configures services for <see cref="IServiceLocator"/>.
+    /// </summary>
+    /// <param name="vostok">The <see cref="IVostokBuilder"/>.</param>
+    /// <param name="configure">Delegate to configure <see cref="ServiceLocatorSettings"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one <see cref="IServiceLocator"/> configured.</remarks>
     public static IVostokBuilder WithServiceLocator(
         this IVostokBuilder vostok,
         Action<ServiceLocatorSettings>? configure = null)
@@ -53,6 +68,13 @@ public static class VostokBuilderServiceDiscoveryExtensions
         return vostok;
     }
 
+    /// <summary>
+    /// Registers and configures services for <see cref="IZooKeeperClient"/>.
+    /// </summary>
+    /// <param name="vostok">The <see cref="IVostokBuilder"/>.</param>
+    /// <param name="configure">Delegate to configure <see cref="IZooKeeperClientBuilder"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one <see cref="IZooKeeperClient"/> configured.</remarks>
     public static IVostokBuilder WithZooKeeperClient(
         this IVostokBuilder vostok,
         Action<IZooKeeperClientBuilder> configure)
