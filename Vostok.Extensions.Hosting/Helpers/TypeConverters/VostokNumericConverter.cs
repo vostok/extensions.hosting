@@ -3,6 +3,7 @@ using System.ComponentModel.Design.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
+using Vostok.Commons.Helpers;
 using Vostok.Configuration.Primitives;
 
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
@@ -25,7 +26,8 @@ public class VostokNumericConverter<T> : TypeConverter
         {
             text = text.Trim();
 
-            return NumericTypeParser.TryParse(text);
+            if (NumericTypeParser<T>.TryParse(text, out var number))
+                return number;
         }
 
         return base.ConvertFrom(context, culture, value);
@@ -33,10 +35,10 @@ public class VostokNumericConverter<T> : TypeConverter
 
     public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
-        if (destinationType == typeof(InstanceDescriptor) && value is DataSize)
+        if (destinationType == typeof(InstanceDescriptor) && value is T)
         {
             return new InstanceDescriptor(
-                typeof(DataSize).GetMethod(nameof(DataSize.Parse), [typeof(string)]),
+                typeof(T).GetMethod(nameof(NumericTypeParser<T>.TryParse), [typeof(string)]),
                 new object?[] { value.ToString() }
             );
         }
