@@ -10,7 +10,9 @@ internal static class VostokTypeConverterHelper
     {
         // todo: Type descriptors
 
-        // TypeDescriptor.AddAttributes(typeof(string), new TypeConverterAttribute(typeof(VostokStringConverter)));
+        TypeDescriptor.AddAttributes(typeof(string), new TypeConverterAttribute(typeof(VostokStringConverter)));
+        TypeDescriptor.AddAttributes(typeof(bool), new TypeConverterAttribute(typeof(VostokBoolConverter)));
+        TypeDescriptor.AddAttributes(typeof(string), new TypeConverterAttribute(typeof(VostokCharConverter)));
         // TypeDescriptor.AddAttributes(typeof(decimal), new TypeConverterAttribute(typeof(VostokDecimalConverter)));
         // TypeDescriptor.AddAttributes(typeof(double), new TypeConverterAttribute(typeof(VostokDoubleConverter)));
         // TypeDescriptor.AddAttributes(typeof(float), new TypeConverterAttribute(typeof(VostokFloatConverter)));
