@@ -14,7 +14,7 @@ internal static class VostokTypeConverterHelper
 
         TypeDescriptor.AddAttributes(typeof(string), new TypeConverterAttribute(typeof(VostokStringConverter)));
         TypeDescriptor.AddAttributes(typeof(bool), new TypeConverterAttribute(typeof(BooleanConverter)));
-        TypeDescriptor.AddAttributes(typeof(string), new TypeConverterAttribute(typeof(CharConverter)));
+        TypeDescriptor.AddAttributes(typeof(char), new TypeConverterAttribute(typeof(CharConverter)));
         TypeDescriptor.AddAttributes(typeof(decimal),
             new TypeConverterAttribute(typeof(VostokNumericConverter<decimal>)));
         TypeDescriptor.AddAttributes(typeof(double),

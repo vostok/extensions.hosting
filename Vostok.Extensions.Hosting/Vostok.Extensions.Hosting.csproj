@@ -30,7 +30,6 @@
         <ModuleReference Include="vostok.clusterclient.topology.sd"/>
         <ModuleReference Include="vostok.clusterconfig.client"/>
         <ModuleReference Include="vostok.commons.helpers"/>
-        <ModuleReference Include="vostok.configuration"/>
         <ModuleReference Include="vostok.configuration.sources.json"/>
         <ModuleReference Include="vostok.configuration.sources.xml"/>
         <ModuleReference Include="vostok.configuration.sources.yaml"/>
