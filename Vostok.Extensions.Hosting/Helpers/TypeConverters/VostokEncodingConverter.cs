@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
-public class VostokEncodingConverter : TypeConverter
+internal class VostokEncodingConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {

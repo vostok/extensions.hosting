@@ -7,7 +7,7 @@ using System.Net;
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
 // ReSharper disable once InconsistentNaming
-public class VostokIPAddressConverter : TypeConverter
+internal class VostokIPAddressConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {

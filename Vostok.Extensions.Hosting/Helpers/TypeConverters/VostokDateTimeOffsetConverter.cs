@@ -5,7 +5,7 @@ using Vostok.Configuration.Parsers;
 
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
-public class VostokDateTimeOffsetConverter : DateTimeOffsetConverter
+internal class VostokDateTimeOffsetConverter : DateTimeOffsetConverter
 {
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {

@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
-public class VostokUriConverter : UriTypeConverter
+internal class VostokUriConverter : UriTypeConverter
 {
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {

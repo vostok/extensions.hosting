@@ -7,7 +7,7 @@ using Vostok.Configuration.Primitives;
 
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
-public class VostokDataRateConverter : TypeConverter
+internal class VostokDataRateConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {

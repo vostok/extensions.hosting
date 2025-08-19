@@ -5,7 +5,7 @@ using Vostok.Commons.Helpers;
 
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
-public class VostokNumericConverter<T> : TypeConverter
+internal class VostokNumericConverter<T> : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {

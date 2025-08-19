@@ -9,7 +9,7 @@ using Vostok.Configuration.Parsers;
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
 // ReSharper disable once InconsistentNaming
-public class VostokIPEndPointConverter : TypeConverter
+internal class VostokIPEndPointConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
