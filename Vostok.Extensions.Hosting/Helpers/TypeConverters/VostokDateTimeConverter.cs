@@ -11,10 +11,12 @@ public class VostokDateTimeConverter : DateTimeConverter
     {
         if (value is string stringValue)
         {
-            var res = DateTimeOffsetParser.TryParse(stringValue, out var dt);
-            return res ? dt.DateTime : default;;
+            if (DateTimeParser.TryParse(stringValue, out var dateTime))
+                return dateTime;
+
+            // note (d.stukov, 19.08.2025): should not throw here (rely on corresponding converter)
         }
-        
+
         return base.ConvertFrom(context, culture, value);
     }
 }

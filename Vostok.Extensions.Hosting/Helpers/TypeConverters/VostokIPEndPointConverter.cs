@@ -4,8 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 
+using Vostok.Configuration.Parsers;
+
 namespace Vostok.Extensions.Hosting.Helpers.TypeConverters;
 
+// ReSharper disable once InconsistentNaming
 public class VostokIPEndPointConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
@@ -24,8 +27,12 @@ public class VostokIPEndPointConverter : TypeConverter
         {
             text = text.Trim();
 
-            if (TryParse(text, out var timeSpan))
-                return timeSpan;
+            // vostok logic
+            if (IPEndPointParser.TryParse(text, out var ipEndPoint))
+                return ipEndPoint;
+
+            // dotnet logic (should throw when can't parse)
+            return IPEndPoint.Parse(text);
         }
 
         return base.ConvertFrom(context, culture, value);
@@ -42,35 +49,5 @@ public class VostokIPEndPointConverter : TypeConverter
         }
 
         return base.ConvertTo(context, culture, value, destinationType);
-    }
-    
-    // from Vostok.Configuration.Parsers.IPEndPointParser
-    private static bool TryParse(string input, out IPEndPoint result)
-    {
-        result = null;
-        IPAddress ipRes;
-
-        var sepPos = input.LastIndexOf(':');
-        if (sepPos == -1 || input.EndsWith("]") || !input.Contains(".") && !input.Contains("]:"))
-        {
-            input = input.Trim('[', ']');
-            if (IPAddress.TryParse(input, out ipRes))
-            {
-                result = new IPEndPoint(ipRes, 0);
-                return true;
-            }
-
-            return false;
-        }
-
-        var ip = input.Substring(0, sepPos).Trim('[', ']');
-        var port = input.Substring(sepPos + 1, input.Length - sepPos - 1);
-        if (IPAddress.TryParse(ip, out ipRes) && int.TryParse(port, out var portRes))
-        {
-            result = new IPEndPoint(ipRes, portRes);
-            return true;
-        }
-
-        return false;
     }
 }

@@ -24,8 +24,7 @@ public class VostokEncodingConverter : TypeConverter
         {
             text = text.Trim();
 
-            if (TryParse(text, out var encoding))
-                return encoding;
+            return Encoding.GetEncoding(text);
         }
 
         return base.ConvertFrom(context, culture, value);
@@ -42,19 +41,5 @@ public class VostokEncodingConverter : TypeConverter
         }
 
         return base.ConvertTo(context, culture, value, destinationType);
-    }
-
-    private static bool TryParse(string input, out Encoding value)
-    {
-        try
-        {
-            value = Encoding.GetEncoding(input);
-        }
-        catch
-        {
-            value = null;
-        }
-
-        return value != null;
     }
 }

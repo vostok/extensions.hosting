@@ -13,6 +13,8 @@ internal sealed class VostokTimeSpanConverter : TimeSpanConverter
         {
             if (TimeSpanParser.TryParse(stringValue, out var timeSpan))
                 return timeSpan;
+
+            // note (d.stukov, 19.08.2025): should not throw here (rely on corresponding converter)
         }
 
         return base.ConvertFrom(context, culture, value);

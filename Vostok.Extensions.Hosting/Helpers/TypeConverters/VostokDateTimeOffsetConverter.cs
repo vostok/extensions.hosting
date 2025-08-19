@@ -13,6 +13,8 @@ public class VostokDateTimeOffsetConverter : DateTimeOffsetConverter
         {
             if (DateTimeOffsetParser.TryParse(stringValue, out var dateTimeOffset))
                 return dateTimeOffset;
+
+            // note (d.stukov, 19.08.2025): should not throw here (rely on corresponding converter)
         }
 
         return base.ConvertFrom(context, culture, value);
