@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\vostok.devtools\library-common-props\Test-Project-new.props" />
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageReference Update="NUnit" Version="4.4.0" />
+        <PackageReference Update="NUnit3TestAdapter" Version="5.1.0" />
+        <PackageReference Include="FluentAssertions" Version="7.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Vostok.Extensions.Hosting\Vostok.Extensions.Hosting.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Vostok.Logging.Console">
+        <HintPath>..\..\vostok.logging.console\Vostok.Logging.Console\bin\Release\net8.0\Vostok.Logging.Console.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
