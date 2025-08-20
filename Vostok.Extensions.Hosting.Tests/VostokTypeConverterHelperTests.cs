@@ -441,6 +441,9 @@ internal sealed class VostokTypeConverterHelperTests
 
             logger.LogInformation($"Old value: {oldValue}, New value: {newValue}");
 
+            if (!oldValue.Equals(newValue))
+                throw new Exception($"{oldValue} and {newValue} must be equivalent");
+
             var expected = expectedValueProvider();
             if (!expected.Equals(newValue))
                 throw new Exception($"Expected: {expected}, Actual: {newValue}");
