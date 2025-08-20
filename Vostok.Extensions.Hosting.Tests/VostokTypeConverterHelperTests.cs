@@ -104,9 +104,9 @@ internal sealed class VostokTypeConverterHelperTests
         ShouldBeParsed<double>("1.23E-4", 0.000123);
         ShouldBeParsed<double>("1.2.3.4.5", 12345);
         ShouldBeParsed<double>("1,2,3,4,5", 12345);
-        ShouldBeParsed<float>("NaN", float.NaN);
-        ShouldBeParsed<float>("Infinity", float.PositiveInfinity);
-        ShouldBeParsed<float>("-Infinity", float.NegativeInfinity);
+        ShouldBeParsed<double>("NaN", double.NaN);
+        ShouldBeParsed<double>("Infinity", double.PositiveInfinity);
+        ShouldBeParsed<double>("-Infinity", double.NegativeInfinity);
 
         ShouldNotBeParsed<double>("bububu");
         ShouldNotBeParsed<double>("one");
