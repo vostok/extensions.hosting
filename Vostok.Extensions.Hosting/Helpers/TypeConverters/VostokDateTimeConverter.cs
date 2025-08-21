@@ -14,6 +14,10 @@ internal class VostokDateTimeConverter : DateTimeConverter
             if (DateTimeParser.TryParse(stringValue, out var dateTime))
                 return dateTime;
 
+            // note (ponomaryovigor): Base class interprets empty string as DateTime.MinValue. We don't want such behaviour.
+            if (string.IsNullOrWhiteSpace(stringValue))
+                throw new FormatException("Value is null or whitespace.");
+
             // note (d.stukov, 19.08.2025): should not throw here (rely on corresponding converter)
         }
 
