@@ -37,8 +37,8 @@ internal static class VostokBuilderCoreExtensions
     public static bool CheckComponentAlreadyAdded(this IVostokBuilder vostok, string componentName)
     {
         if (vostok.Services
-                .SingleOrDefault(sd => sd.ServiceType == typeof(RegisteredVostokComponents))?
-                .ImplementationInstance is not RegisteredVostokComponents registeredComponents)
+                  .SingleOrDefault(sd => sd.ServiceType == typeof(RegisteredVostokComponents))?
+                  .ImplementationInstance is not RegisteredVostokComponents registeredComponents)
         {
             registeredComponents = new RegisteredVostokComponents([]);
             vostok.Services.TryAddSingleton(registeredComponents);
