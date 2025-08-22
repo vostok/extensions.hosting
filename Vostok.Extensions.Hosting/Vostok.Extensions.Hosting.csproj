@@ -62,7 +62,7 @@
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Kontur" />
     <InternalsVisibleTo Include="Vostok.Extensions.AspNetCore" />
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston" />
-    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston2" />
+    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston.Utilities" />
 
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Tests" />
   </ItemGroup>
