@@ -5,6 +5,9 @@ using Vostok.Metrics.System.Process;
 
 namespace Vostok.Extensions.Hosting.Components.SystemMetrics;
 
+/// <summary>
+/// Options for configuring Vostok system metrics.
+/// </summary>
 [PublicAPI]
 public sealed class SystemMetricsOptions
 {

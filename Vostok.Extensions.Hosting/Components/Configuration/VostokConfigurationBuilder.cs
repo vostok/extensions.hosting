@@ -8,16 +8,16 @@ internal sealed class VostokConfigurationBuilder(IServiceCollection services) : 
 {
     public IServiceCollection Services { get; } = services;
 
-    public IVostokConfigurationBuilder SetupSourceFor<T>(params string[]? scope)
+    public IVostokConfigurationBuilder SetupSourceFor<TSettings>(params string[]? scopes)
     {
         Services.Configure<VostokConfigurationMiscellaneousOptions>(options =>
             options.Customizations.Add((provider, source) =>
             {
-                source = scope is null || scope.Length == 0
+                source = scopes is null || scopes.Length == 0
                     ? source
-                    : source.ScopeTo(scope);
+                    : source.ScopeTo(scopes);
 
-                provider.SetupSourceFor<T>(source);
+                provider.SetupSourceFor<TSettings>(source);
             }));
 
         return this;

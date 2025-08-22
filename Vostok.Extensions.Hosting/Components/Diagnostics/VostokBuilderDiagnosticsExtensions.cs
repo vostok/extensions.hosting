@@ -14,6 +14,13 @@ namespace Vostok.Extensions.Hosting.Components.Diagnostics;
 [PublicAPI]
 public static class VostokBuilderDiagnosticsExtensions
 {
+    /// <summary>
+    /// Registers and configures services for Vostok diagnostics.
+    /// </summary>
+    /// <param name="vostok">The <see cref="IVostokBuilder"/>.</param>
+    /// <param name="configure">Delegate to configure <see cref="IVostokDiagnosticsBuilder"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one diagnostics components configured.</remarks>
     public static IVostokBuilder WithDiagnostics(
         this IVostokBuilder vostok,
         Action<IVostokDiagnosticsBuilder>? configure = null)

@@ -11,6 +11,13 @@ namespace Vostok.Extensions.Hosting.Components.ApplicationIdentity;
 [PublicAPI]
 public static class VostokBuilderApplicationIdentityExtensions
 {
+    /// <summary>
+    /// Registers and configures services for <see cref="IVostokApplicationIdentity"/>.
+    /// </summary>
+    /// <param name="vostok">The Vostok components builder.</param>
+    /// <param name="configure">Delegate to configure <see cref="ApplicationIdentityOptions"/>.</param>
+    /// <returns></returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one <see cref="IVostokApplicationIdentity"/> configured.</remarks>
     public static IVostokBuilder WithApplicationIdentity(
         this IVostokBuilder vostok,
         Action<ApplicationIdentityOptions>? configure = null)

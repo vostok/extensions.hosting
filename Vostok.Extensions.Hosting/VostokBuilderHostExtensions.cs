@@ -11,7 +11,7 @@ public static class VostokBuilderHostExtensions
     /// <summary>
     /// Configures <see cref="IHostApplicationBuilder"/> to host Vostok components.
     /// </summary>
-    /// <param name="hostApplicationBuilder">The host application builder.</param>
+    /// <param name="hostApplicationBuilder">The <see cref="IHostApplicationBuilder"/>.</param>
     /// <returns><see cref="IVostokBuilder"/> to configure Vostok components.</returns>
     /// <remarks>
     /// Calling this method multiple times on the same <see cref="IHostApplicationBuilder"/> instance will result in one <see cref="IVostokBuilder"/> configured.
@@ -30,7 +30,7 @@ public static class VostokBuilderHostExtensions
     /// <summary>
     /// Configures <see cref="IHostBuilder"/> to host Vostok components.
     /// </summary>
-    /// <param name="hostBuilder">The host builder.</param>
+    /// <param name="hostBuilder">The <see cref="IHostBuilder"/>.</param>
     /// <param name="configure">Delegate to configure Vostok components.</param>
     /// <returns><see cref="IHostBuilder"/> for chain method calls.</returns>
     /// <remarks>

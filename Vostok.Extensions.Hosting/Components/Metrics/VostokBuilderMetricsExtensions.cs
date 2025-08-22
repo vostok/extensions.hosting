@@ -12,6 +12,13 @@ namespace Vostok.Extensions.Hosting.Components.Metrics;
 [PublicAPI]
 public static class VostokBuilderMetricsExtensions
 {
+    /// <summary>
+    /// Registers and configures services for Vostok metrics components.
+    /// </summary>
+    /// <param name="vostok">The <see cref="IVostokBuilder"/>.</param>
+    /// <param name="configure">Delegate to configure <see cref="IVostokMetricsBuilder"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one metrics components configured.</remarks>
     public static IVostokBuilder WithMetrics(
         this IVostokBuilder vostok,
         Action<IVostokMetricsBuilder>? configure = null)

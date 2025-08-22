@@ -13,6 +13,13 @@ namespace Vostok.Extensions.Hosting.Components.Logging;
 [PublicAPI]
 public static class VostokBuilderLoggingExtensions
 {
+    /// <summary>
+    /// Registers and configures services for Vostok logging components.
+    /// </summary>
+    /// <param name="vostok">The <see cref="IVostokBuilder"/>.</param>
+    /// <param name="configure">Delegate to configure <see cref="IVostokLogBuilder"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one logging components configured.</remarks>
     public static IVostokBuilder WithLogging(this IVostokBuilder vostok, Action<IVostokLogBuilder> configure)
     {
         if (!vostok.CheckComponentAlreadyAdded("Logging"))
