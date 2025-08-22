@@ -1,66 +1,66 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props"/>
+  <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
 
-    <PropertyGroup>
-        <TargetFrameworks>net8.0</TargetFrameworks>
-        <Configurations>Debug;Release</Configurations>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Disposable\ActionDisposable.cs" Link="Commons\ActionDisposable.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Observable\CachingObservable.cs" Link="Commons\CachingObservable.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.collections\Vostok.Commons.Collections\CircularBuffer.cs" Link="Commons\CircularBuffer.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.collections\Vostok.Commons.Collections\ConcurrentBoundedQueue.cs" Link="Commons\ConcurrentBoundedQueue.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\EnvironmentInfo.cs" Link="Commons\EnvironmentInfo.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\RuntimeDetector.cs" Link="Commons\RuntimeDetector.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\AssemblyCommitHashExtractor.cs" Link="Commons\AssemblyCommitHashExtractor.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\AssemblyBuildTimeExtractor.cs" Link="Commons\AssemblyBuildTimeExtractor.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\AssemblyTitleParser.cs" Link="Commons\AssemblyTitleParser.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.time\Vostok.Commons.Time\TimeBudget.cs" Link="Commons\TimeBudget.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.time\Vostok.Commons.Time\TimeSpanFormatting.cs" Link="Commons\TimeSpanFormatting.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolState.cs" Link="Commons\ThreadPoolState.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolUtility.cs" Link="Commons\ThreadPoolUtility.cs"/>
-        <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs" Link="Commons\FreeTcpPortFinder.cs"/>
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Disposable\ActionDisposable.cs" Link="Commons\ActionDisposable.cs" />
+    <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Observable\CachingObservable.cs" Link="Commons\CachingObservable.cs" />
+    <Compile Include="$(CementDir)vostok.commons.collections\Vostok.Commons.Collections\CircularBuffer.cs" Link="Commons\CircularBuffer.cs" />
+    <Compile Include="$(CementDir)vostok.commons.collections\Vostok.Commons.Collections\ConcurrentBoundedQueue.cs" Link="Commons\ConcurrentBoundedQueue.cs" />
+    <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\EnvironmentInfo.cs" Link="Commons\EnvironmentInfo.cs" />
+    <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\RuntimeDetector.cs" Link="Commons\RuntimeDetector.cs" />
+    <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\AssemblyCommitHashExtractor.cs" Link="Commons\AssemblyCommitHashExtractor.cs" />
+    <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\AssemblyBuildTimeExtractor.cs" Link="Commons\AssemblyBuildTimeExtractor.cs" />
+    <Compile Include="$(CementDir)vostok.commons.environment\Vostok.Commons.Environment\AssemblyTitleParser.cs" Link="Commons\AssemblyTitleParser.cs" />
+    <Compile Include="$(CementDir)vostok.commons.time\Vostok.Commons.Time\TimeBudget.cs" Link="Commons\TimeBudget.cs" />
+    <Compile Include="$(CementDir)vostok.commons.time\Vostok.Commons.Time\TimeSpanFormatting.cs" Link="Commons\TimeSpanFormatting.cs" />
+    <Compile Include="$(CementDir)vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolState.cs" Link="Commons\ThreadPoolState.cs" />
+    <Compile Include="$(CementDir)vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolUtility.cs" Link="Commons\ThreadPoolUtility.cs" />
+    <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs" Link="Commons\FreeTcpPortFinder.cs" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ModuleReference Include="vostok.hosting.abstractions"/>
-        <ModuleReference Include="vostok.clusterclient.tracing"/>
-        <ModuleReference Include="vostok.clusterclient.topology.cc"/>
-        <ModuleReference Include="vostok.clusterclient.topology.sd"/>
-        <ModuleReference Include="vostok.clusterconfig.client"/>
-        <ModuleReference Include="vostok.configuration.sources.json"/>
-        <ModuleReference Include="vostok.configuration.sources.xml"/>
-        <ModuleReference Include="vostok.configuration.sources.yaml"/>
-        <ModuleReference Include="vostok.configuration.sources.cc"/>
-        <ModuleReference Include="vostok.configuration.microsoft"/>
-        <ModuleReference Include="vostok.configuration.logging"/>
-        <ModuleReference Include="vostok.logging.tracing"/>
-        <ModuleReference Include="vostok.logging.console"/>
-        <ModuleReference Include="vostok.logging.file"/>
-        <ModuleReference Include="vostok.logging.microsoft"/>
-        <ModuleReference Include="vostok.metrics.system"/>
-        <ModuleReference Include="vostok.metrics.hercules"/>
-        <ModuleReference Include="vostok.tracing.diagnostics"/>
-        <ModuleReference Include="vostok.tracing.extensions"/>
-        <ModuleReference Include="vostok.hercules.client"/>
-        <ModuleReference Include="vostok.servicediscovery.telemetry"/>
-        <ModuleReference Include="vostok.servicediscovery"/>
-        <ModuleReference Include="vostok.zookeeper.client"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ModuleReference Include="vostok.hosting.abstractions" />
+    <ModuleReference Include="vostok.clusterclient.tracing" />
+    <ModuleReference Include="vostok.clusterclient.topology.cc" />
+    <ModuleReference Include="vostok.clusterclient.topology.sd" />
+    <ModuleReference Include="vostok.clusterconfig.client" />
+    <ModuleReference Include="vostok.configuration.sources.json" />
+    <ModuleReference Include="vostok.configuration.sources.xml" />
+    <ModuleReference Include="vostok.configuration.sources.yaml" />
+    <ModuleReference Include="vostok.configuration.sources.cc" />
+    <ModuleReference Include="vostok.configuration.microsoft" />
+    <ModuleReference Include="vostok.configuration.logging" />
+    <ModuleReference Include="vostok.logging.tracing" />
+    <ModuleReference Include="vostok.logging.console" />
+    <ModuleReference Include="vostok.logging.file" />
+    <ModuleReference Include="vostok.logging.microsoft" />
+    <ModuleReference Include="vostok.metrics.system" />
+    <ModuleReference Include="vostok.metrics.hercules" />
+    <ModuleReference Include="vostok.tracing.diagnostics" />
+    <ModuleReference Include="vostok.tracing.extensions" />
+    <ModuleReference Include="vostok.hercules.client" />
+    <ModuleReference Include="vostok.servicediscovery.telemetry" />
+    <ModuleReference Include="vostok.servicediscovery" />
+    <ModuleReference Include="vostok.zookeeper.client" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.7"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.7"/>
-        <PackageReference Include="Microsoft.Extensions.Telemetry" Version="9.7.0"/>
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Telemetry" Version="9.7.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Kontur"/>
-        <InternalsVisibleTo Include="Vostok.Extensions.AspNetCore"/>
-        <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston"/>
-        <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston2"/>
-    </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Kontur" />
+    <InternalsVisibleTo Include="Vostok.Extensions.AspNetCore" />
+    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston" />
+    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston2" />
+  </ItemGroup>
 
 </Project>
