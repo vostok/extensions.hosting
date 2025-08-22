@@ -21,6 +21,7 @@
     <Compile Include="$(CementDir)vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolState.cs" Link="Commons\ThreadPoolState.cs" />
     <Compile Include="$(CementDir)vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolUtility.cs" Link="Commons\ThreadPoolUtility.cs" />
     <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Network\FreeTcpPortFinder.cs" Link="Commons\FreeTcpPortFinder.cs" />
+    <Compile Include="$(CementDir)vostok.configuration\Vostok.Configuration\Parsers\IPEndPointParser.cs" Link="Commons\IPEndPointParser.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
     <ModuleReference Include="vostok.clusterclient.topology.cc" />
     <ModuleReference Include="vostok.clusterclient.topology.sd" />
     <ModuleReference Include="vostok.clusterconfig.client" />
+    <ModuleReference Include="vostok.commons.helpers" />
     <ModuleReference Include="vostok.configuration.sources.json" />
     <ModuleReference Include="vostok.configuration.sources.xml" />
     <ModuleReference Include="vostok.configuration.sources.yaml" />
@@ -61,6 +63,8 @@
     <InternalsVisibleTo Include="Vostok.Extensions.AspNetCore" />
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston" />
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston2" />
+
+    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Tests" />
   </ItemGroup>
 
 </Project>
