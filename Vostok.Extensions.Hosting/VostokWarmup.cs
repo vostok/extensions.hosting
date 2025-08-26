@@ -42,8 +42,13 @@ internal sealed class VostokWarmup(
     /// </summary>
     public delegate void CustomWarmupAction(IServiceProvider provider);
 
+    public bool IsWarmedUp { get; private set; }
+
     public async Task WarmupVostokAsync()
     {
+        if (IsWarmedUp)
+            return;
+
         // note: Order is important to prevent cyclic dependencies.
         ConfigureThreadPool();
         WarmupConfiguration();
@@ -66,6 +71,8 @@ internal sealed class VostokWarmup(
         LogApplicationLimits();
         LogApplicationReplication();
         LogThreadPoolSettings();
+
+        IsWarmedUp = true;
     }
 
     private void ConfigureThreadPool()
