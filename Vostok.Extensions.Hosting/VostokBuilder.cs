@@ -20,6 +20,7 @@ internal static class VostokBuilderCoreExtensions
     public static void AddCoreServices(IVostokBuilder vostok)
     {
         vostok.Services.TryAddSingleton<VostokWarmup>();
+        vostok.Services.AddHostedService<VostokWarmupCheckHostedService>();
         vostok.Services.DecorateVostokHostLifetime();
 
         vostok.WithApplicationIdentity();
