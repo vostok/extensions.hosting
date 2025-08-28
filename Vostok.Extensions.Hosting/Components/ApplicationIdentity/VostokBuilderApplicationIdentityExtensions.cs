@@ -22,7 +22,7 @@ public static class VostokBuilderApplicationIdentityExtensions
         this IVostokBuilder vostok,
         Action<ApplicationIdentityOptions>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("ApplicationIdentity"))
+        if (!vostok.CheckAndMarkComponentAdded("ApplicationIdentity"))
             vostok.Services.AddApplicationIdentity();
 
         if (configure is not null)

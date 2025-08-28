@@ -21,7 +21,7 @@ public static class VostokBuilderHostExtensions
         ArgumentNullException.ThrowIfNull(hostApplicationBuilder);
 
         var vostok = new VostokBuilder(hostApplicationBuilder.Services);
-        if (!vostok.CheckComponentAlreadyAdded("CoreServices"))
+        if (!vostok.CheckAndMarkComponentAdded("CoreServices"))
             VostokBuilderCoreExtensions.AddCoreServices(vostok);
 
         return vostok;
@@ -49,7 +49,7 @@ public static class VostokBuilderHostExtensions
         return hostBuilder.ConfigureServices((context, services) =>
         {
             var vostok = new VostokBuilder(services);
-            if (!vostok.CheckComponentAlreadyAdded("CoreServices"))
+            if (!vostok.CheckAndMarkComponentAdded("CoreServices"))
                 VostokBuilderCoreExtensions.AddCoreServices(vostok);
 
             configure?.Invoke(context, vostok);

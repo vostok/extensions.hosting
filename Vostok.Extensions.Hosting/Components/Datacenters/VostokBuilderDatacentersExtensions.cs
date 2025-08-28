@@ -12,7 +12,7 @@ public static class VostokBuilderDatacentersExtensions
         this IVostokBuilder vostok,
         Action<DatacentersOptions>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("Datacenters"))
+        if (!vostok.CheckAndMarkComponentAdded("Datacenters"))
             vostok.Services.AddDatacenters();
 
         if (configure is not null)

@@ -43,7 +43,7 @@ public static class VostokBuilderWebComponentsExtensions
         this IVostokBuilder vostok,
         Action<IVostokWebComponentsBuilder>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded(WebComponentsKey))
+        if (!vostok.CheckAndMarkComponentAdded(WebComponentsKey))
             vostok.Services.AddWebComponents();
 
         var webComponentsBuilder = new VostokWebComponentsBuilder(vostok.Services);

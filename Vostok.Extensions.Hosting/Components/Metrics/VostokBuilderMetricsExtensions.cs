@@ -23,7 +23,7 @@ public static class VostokBuilderMetricsExtensions
         this IVostokBuilder vostok,
         Action<IVostokMetricsBuilder>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("Metrics"))
+        if (!vostok.CheckAndMarkComponentAdded("Metrics"))
             vostok.Services.AddMetrics();
 
         var metricsBuilder = new VostokMetricsBuilder(vostok.Services);

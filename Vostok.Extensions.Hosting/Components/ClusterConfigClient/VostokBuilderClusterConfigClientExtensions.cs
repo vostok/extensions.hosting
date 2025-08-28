@@ -16,7 +16,7 @@ public static class VostokBuilderClusterConfigClientExtensions
         this IVostokBuilder vostok,
         Action<ClusterConfigClientSettings>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("ClusterConfigClient"))
+        if (!vostok.CheckAndMarkComponentAdded("ClusterConfigClient"))
             vostok.Services.AddClusterConfigClient();
 
         if (configure is not null)

@@ -27,7 +27,7 @@ public static class VostokBuilderServiceDiscoveryExtensions
     /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one <see cref="IServiceBeacon"/> configured.</remarks>
     public static IVostokBuilder WithServiceBeacon(this IVostokBuilder vostok, Action<IServiceBeaconBuilder> configure)
     {
-        if (!vostok.CheckComponentAlreadyAdded("ServiceBeacon"))
+        if (!vostok.CheckAndMarkComponentAdded("ServiceBeacon"))
             vostok.Services.AddServiceBeacon();
 
         var serviceBeaconBuilder = new ServiceBeaconBuilder(vostok.Services);
@@ -59,7 +59,7 @@ public static class VostokBuilderServiceDiscoveryExtensions
         this IVostokBuilder vostok,
         Action<ServiceLocatorSettings>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("ServiceLocator"))
+        if (!vostok.CheckAndMarkComponentAdded("ServiceLocator"))
             vostok.Services.AddServiceLocator();
 
         if (configure is not null)
@@ -79,7 +79,7 @@ public static class VostokBuilderServiceDiscoveryExtensions
         this IVostokBuilder vostok,
         Action<IZooKeeperClientBuilder> configure)
     {
-        if (!vostok.CheckComponentAlreadyAdded("ZooKeeperClient"))
+        if (!vostok.CheckAndMarkComponentAdded("ZooKeeperClient"))
             vostok.Services.AddZooKeeperClient();
 
         var zooKeeperClientBuilder = new ZooKeeperClientBuilder(vostok.Services);

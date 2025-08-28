@@ -27,6 +27,7 @@ public static class ApplicationBuilderVostokMiddlewaresExtensions
     /// <summary>
     /// Adds Vostok middlewares to the specified <see cref="IApplicationBuilder"/>.
     /// </summary>
+    /// <remarks><see cref="VostokBuilderWebComponentsExtensions.WithWebComponents"/> should be called previously to use Vostok middlewares.</remarks>
     public static IApplicationBuilder UseVostokMiddlewares(this IApplicationBuilder applicationBuilder)
     {
         CheckWebComponentsRegistered(applicationBuilder);
@@ -77,10 +78,11 @@ public static class ApplicationBuilderVostokMiddlewaresExtensions
 
     private static void CheckWebComponentsRegistered(IApplicationBuilder applicationBuilder)
     {
-        var vostokComponents = applicationBuilder.ApplicationServices
-                                                 .GetService<VostokBuilderCoreExtensions.RegisteredVostokComponents>();
+        var webComponentsAdded =
+            applicationBuilder.ApplicationServices
+                              .CheckVostokComponentAdded(VostokBuilderWebComponentsExtensions.WebComponentsKey);
 
-        if (vostokComponents?.Components.Contains(VostokBuilderWebComponentsExtensions.WebComponentsKey) is false)
+        if (!webComponentsAdded)
             throw new InvalidOperationException($"`{nameof(VostokBuilderWebComponentsExtensions.WithWebComponents)}()` extension should be called on `{nameof(IVostokBuilder)}` before using Vostok middlewares.");
     }
 }
