@@ -21,6 +21,8 @@ namespace Vostok.Extensions.AspNetCore;
 [PublicAPI]
 public static class VostokBuilderWebComponentsExtensions
 {
+    internal const string WebComponentsKey = "WebComponents";
+
     /// <summary>
     /// Registers and configures services for Vostok web components:
     /// <list type="bullet">
@@ -41,7 +43,7 @@ public static class VostokBuilderWebComponentsExtensions
         this IVostokBuilder vostok,
         Action<IVostokWebComponentsBuilder>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("WebComponents"))
+        if (!vostok.CheckComponentAlreadyAdded(WebComponentsKey))
             vostok.Services.AddWebComponents();
 
         var webComponentsBuilder = new VostokWebComponentsBuilder(vostok.Services);

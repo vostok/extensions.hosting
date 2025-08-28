@@ -14,6 +14,7 @@ using Vostok.Extensions.AspNetCore.Middlewares.Logging;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
 using Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
+using Vostok.Extensions.Hosting;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore;
@@ -28,6 +29,8 @@ public static class ApplicationBuilderVostokMiddlewaresExtensions
     /// </summary>
     public static IApplicationBuilder UseVostokMiddlewares(this IApplicationBuilder applicationBuilder)
     {
+        CheckWebComponentsRegistered(applicationBuilder);
+
         var options = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresOptions>>().Value;
         options.MiddlewaresAdded = true;
 
@@ -70,5 +73,14 @@ public static class ApplicationBuilderVostokMiddlewaresExtensions
             return;
 
         applicationBuilder.UsePathBase(urlPath);
+    }
+
+    private static void CheckWebComponentsRegistered(IApplicationBuilder applicationBuilder)
+    {
+        var vostokComponents = applicationBuilder.ApplicationServices
+                                                 .GetService<VostokBuilderCoreExtensions.RegisteredVostokComponents>();
+
+        if (vostokComponents?.Components.Contains(VostokBuilderWebComponentsExtensions.WebComponentsKey) is false)
+            throw new InvalidOperationException($"`{nameof(VostokBuilderWebComponentsExtensions.WithWebComponents)}()` extension should be called on `{nameof(IVostokBuilder)}` before using Vostok middlewares.");
     }
 }

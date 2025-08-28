@@ -48,5 +48,5 @@ internal static class VostokBuilderCoreExtensions
         return !registeredComponents.Components.Add(componentName);
     }
 
-    private sealed record RegisteredVostokComponents(HashSet<string> Components);
+    internal sealed record RegisteredVostokComponents(HashSet<string> Components);
 }
