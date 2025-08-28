@@ -25,7 +25,7 @@ public static class VostokBuilderDiagnosticsExtensions
         this IVostokBuilder vostok,
         Action<IVostokDiagnosticsBuilder>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("Diagnostics"))
+        if (!vostok.CheckAndMarkComponentAdded("Diagnostics"))
         {
             vostok.Services.AddDiagnosticInfo();
             vostok.Services.AddHealthTracker();

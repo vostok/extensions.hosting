@@ -35,7 +35,7 @@ internal static class VostokBuilderCoreExtensions
         VostokTypeConverterHelper.AddVostokTypeConverters();
     }
 
-    public static bool CheckComponentAlreadyAdded(this IVostokBuilder vostok, string componentName)
+    public static bool CheckAndMarkComponentAdded(this IVostokBuilder vostok, string componentName)
     {
         if (vostok.Services
                   .SingleOrDefault(sd => sd.ServiceType == typeof(RegisteredVostokComponents))?
@@ -46,6 +46,12 @@ internal static class VostokBuilderCoreExtensions
         }
 
         return !registeredComponents.Components.Add(componentName);
+    }
+
+    internal static bool CheckVostokComponentAdded(this IServiceProvider provider, string componentName)
+    {
+        var registeredComponents = provider.GetService<RegisteredVostokComponents>();
+        return registeredComponents?.Components.Contains(componentName) is true;
     }
 
     private sealed record RegisteredVostokComponents(HashSet<string> Components);

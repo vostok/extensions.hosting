@@ -14,7 +14,7 @@ public static class VostokBuilderApplicationLimitsExtensions
         this IVostokBuilder vostok,
         Action<ApplicationLimitsOptions>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("ApplicationLimits"))
+        if (!vostok.CheckAndMarkComponentAdded("ApplicationLimits"))
             vostok.Services.AddApplicationLimits();
 
         if (configure is not null)

@@ -19,7 +19,7 @@ public static class VostokBuilderConfigurationExtensions
         this IVostokBuilder vostok,
         Action<IVostokConfigurationBuilder>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("VostokConfiguration"))
+        if (!vostok.CheckAndMarkComponentAdded("VostokConfiguration"))
             vostok.Services.AddVostokConfiguration();
 
         var configurationBuilder = new VostokConfigurationBuilder(vostok.Services);

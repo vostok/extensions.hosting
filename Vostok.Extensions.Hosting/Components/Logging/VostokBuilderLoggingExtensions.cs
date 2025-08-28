@@ -22,7 +22,7 @@ public static class VostokBuilderLoggingExtensions
     /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one logging components configured.</remarks>
     public static IVostokBuilder WithLogging(this IVostokBuilder vostok, Action<IVostokLogBuilder> configure)
     {
-        if (!vostok.CheckComponentAlreadyAdded("Logging"))
+        if (!vostok.CheckAndMarkComponentAdded("Logging"))
             vostok.Services.AddLogging();
 
         var vostokLogBuilder = new VostokLogBuilder(vostok.Services);

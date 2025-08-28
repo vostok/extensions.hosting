@@ -14,21 +14,24 @@ using Vostok.Extensions.AspNetCore.Middlewares.Logging;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Extensions.AspNetCore.Middlewares.Throttling;
 using Vostok.Extensions.AspNetCore.Middlewares.UnhandledException;
+using Vostok.Extensions.Hosting;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore;
 
-/// <summary>
-/// <para>Adds Vostok middlewares to the specified application builder.</para>
-/// </summary>
 [PublicAPI]
-public static class VostokMiddlewaresApplicationBuilderExtensions
+public static class ApplicationBuilderVostokMiddlewaresExtensions
 {
     private const string Slash = "/";
 
-    /// <inheritdoc cref="VostokMiddlewaresApplicationBuilderExtensions"/>
+    /// <summary>
+    /// Adds Vostok middlewares to the specified <see cref="IApplicationBuilder"/>.
+    /// </summary>
+    /// <remarks><see cref="VostokBuilderWebComponentsExtensions.WithWebComponents"/> should be called previously to use Vostok middlewares.</remarks>
     public static IApplicationBuilder UseVostokMiddlewares(this IApplicationBuilder applicationBuilder)
     {
+        CheckWebComponentsRegistered(applicationBuilder);
+
         var options = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresOptions>>().Value;
         options.MiddlewaresAdded = true;
 
@@ -71,5 +74,15 @@ public static class VostokMiddlewaresApplicationBuilderExtensions
             return;
 
         applicationBuilder.UsePathBase(urlPath);
+    }
+
+    private static void CheckWebComponentsRegistered(IApplicationBuilder applicationBuilder)
+    {
+        var webComponentsAdded =
+            applicationBuilder.ApplicationServices
+                              .CheckVostokComponentAdded(VostokBuilderWebComponentsExtensions.WebComponentsKey);
+
+        if (!webComponentsAdded)
+            throw new InvalidOperationException($"`{nameof(VostokBuilderWebComponentsExtensions.WithWebComponents)}()` extension should be called on `{nameof(IVostokBuilder)}` before using Vostok middlewares.");
     }
 }

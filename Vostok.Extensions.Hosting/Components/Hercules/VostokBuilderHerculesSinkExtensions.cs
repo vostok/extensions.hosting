@@ -23,7 +23,7 @@ public static class VostokBuilderHerculesSinkExtensions
         this IVostokBuilder vostok,
         Action<IHerculesSinkBuilder>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("HerculesSink"))
+        if (!vostok.CheckAndMarkComponentAdded("HerculesSink"))
             vostok.Services.AddHerculesSink();
 
         var sinkBuilder = new HerculesSinkBuilder(vostok.Services);

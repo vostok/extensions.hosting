@@ -16,13 +16,13 @@ public static class VostokBuilderApplicationIdentityExtensions
     /// </summary>
     /// <param name="vostok">The Vostok components builder.</param>
     /// <param name="configure">Delegate to configure <see cref="ApplicationIdentityOptions"/>.</param>
-    /// <returns></returns>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
     /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one <see cref="IVostokApplicationIdentity"/> configured.</remarks>
     public static IVostokBuilder WithApplicationIdentity(
         this IVostokBuilder vostok,
         Action<ApplicationIdentityOptions>? configure = null)
     {
-        if (!vostok.CheckComponentAlreadyAdded("ApplicationIdentity"))
+        if (!vostok.CheckAndMarkComponentAdded("ApplicationIdentity"))
             vostok.Services.AddApplicationIdentity();
 
         if (configure is not null)

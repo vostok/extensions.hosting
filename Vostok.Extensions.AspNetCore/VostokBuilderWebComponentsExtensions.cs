@@ -13,30 +13,47 @@ using Vostok.Extensions.AspNetCore.HostedServices;
 using Vostok.Extensions.AspNetCore.Middlewares.PingApi;
 using Vostok.Extensions.AspNetCore.OpenTelemetry;
 using Vostok.Extensions.AspNetCore.Throttling;
+using Vostok.Extensions.Hosting;
 using Vostok.Extensions.Hosting.Components.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore;
 
-/// <summary>
-/// Register Vostok web components and their configuration in DI container:
-/// <list type="bullet">
-///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
-///     <item>Register Vostok middlewares</item>
-///     <item>Enable AspNetCore tracing instrumentation</item>
-///     <item>Enable HealthChecks</item>
-///     <item>Setup reasonable Kestrel defaults</item>
-///     <item>Setup request tracking defaults</item>
-///     <item>Setup throttling defaults</item>
-/// </list>
-/// <para>Use returning <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
-/// </summary>
 [PublicAPI]
-public static class VostokWebComponentsServiceCollectionExtensions
+public static class VostokBuilderWebComponentsExtensions
 {
-    /// <inheritdoc cref="VostokWebComponentsServiceCollectionExtensions"/>
-    public static IVostokWebComponentsBuilder AddVostokWebComponents(this IServiceCollection services)
+    internal const string WebComponentsKey = "WebComponents";
+
+    /// <summary>
+    /// Registers and configures services for Vostok web components:
+    /// <list type="bullet">
+    ///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
+    ///     <item>Register Vostok middlewares</item>
+    ///     <item>Enable AspNetCore tracing instrumentation</item>
+    ///     <item>Enable HealthChecks</item>
+    ///     <item>Setup reasonable Kestrel defaults</item>
+    ///     <item>Setup request tracking defaults</item>
+    ///     <item>Setup throttling defaults</item>
+    /// </list>
+    /// <param name="vostok">The Vostok components builder.</param>
+    /// <param name="configure">Delegate to configure Vostok web components via <see cref="IVostokWebComponentsBuilder"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one Vostok web components configured.</remarks>
+    /// </summary>
+    public static IVostokBuilder WithWebComponents(
+        this IVostokBuilder vostok,
+        Action<IVostokWebComponentsBuilder>? configure = null)
     {
-        // todo: idempotency
+        if (!vostok.CheckAndMarkComponentAdded(WebComponentsKey))
+            vostok.Services.AddWebComponents();
+
+        var webComponentsBuilder = new VostokWebComponentsBuilder(vostok.Services);
+        configure?.Invoke(webComponentsBuilder);
+
+        return vostok;
+    }
+
+    private static void AddWebComponents(this IServiceCollection services)
+    {
         services.ConfigureKestrelDefaults();
         services.ConfigureAspNetCoreTelemetry();
         services.AddRequestTrackingDefaults();
@@ -56,8 +73,6 @@ public static class VostokWebComponentsServiceCollectionExtensions
                     if (healthTracker is not null)
                         options.HealthCheck = () => healthTracker.CurrentReport.Status is HealthStatus.Healthy;
                 });
-
-        return new VostokWebComponentsBuilder(services);
     }
 
     private static void ConfigureKestrelDefaults(this IServiceCollection services) =>
