@@ -18,15 +18,14 @@ using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Extensions.AspNetCore;
 
-/// <summary>
-/// <para>Adds Vostok middlewares to the specified application builder.</para>
-/// </summary>
 [PublicAPI]
-public static class VostokMiddlewaresApplicationBuilderExtensions
+public static class ApplicationBuilderVostokMiddlewaresExtensions
 {
     private const string Slash = "/";
 
-    /// <inheritdoc cref="VostokMiddlewaresApplicationBuilderExtensions"/>
+    /// <summary>
+    /// Adds Vostok middlewares to the specified <see cref="IApplicationBuilder"/>.
+    /// </summary>
     public static IApplicationBuilder UseVostokMiddlewares(this IApplicationBuilder applicationBuilder)
     {
         var options = applicationBuilder.ApplicationServices.GetRequiredService<IOptions<VostokMiddlewaresOptions>>().Value;

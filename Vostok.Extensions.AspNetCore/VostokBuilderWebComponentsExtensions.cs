@@ -18,23 +18,25 @@ using Vostok.Extensions.Hosting.Components.Diagnostics;
 
 namespace Vostok.Extensions.AspNetCore;
 
-/// <summary>
-/// Register Vostok web components and their configuration in DI container:
-/// <list type="bullet">
-///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
-///     <item>Register Vostok middlewares</item>
-///     <item>Enable AspNetCore tracing instrumentation</item>
-///     <item>Enable HealthChecks</item>
-///     <item>Setup reasonable Kestrel defaults</item>
-///     <item>Setup request tracking defaults</item>
-///     <item>Setup throttling defaults</item>
-/// </list>
-/// <para>Use provided <see cref="IVostokWebComponentsBuilder"/> to configure components.</para>
-/// </summary>
 [PublicAPI]
 public static class VostokBuilderWebComponentsExtensions
 {
-    /// <inheritdoc cref="VostokBuilderWebComponentsExtensions"/>
+    /// <summary>
+    /// Registers and configures services for Vostok web components:
+    /// <list type="bullet">
+    ///     <item>Register address from ServiceBeacon to listen and warmup ping api</item>
+    ///     <item>Register Vostok middlewares</item>
+    ///     <item>Enable AspNetCore tracing instrumentation</item>
+    ///     <item>Enable HealthChecks</item>
+    ///     <item>Setup reasonable Kestrel defaults</item>
+    ///     <item>Setup request tracking defaults</item>
+    ///     <item>Setup throttling defaults</item>
+    /// </list>
+    /// <param name="vostok">The Vostok components builder.</param>
+    /// <param name="configure">Delegate to configure Vostok web components via <see cref="IVostokWebComponentsBuilder"/>.</param>
+    /// <returns><see cref="IVostokBuilder"/> for chain method calls.</returns>
+    /// <remarks>Calling this method multiple times on the same <see cref="IVostokBuilder"/> instance will result in one Vostok web components configured.</remarks>
+    /// </summary>
     public static IVostokBuilder WithWebComponents(
         this IVostokBuilder vostok,
         Action<IVostokWebComponentsBuilder>? configure = null)
