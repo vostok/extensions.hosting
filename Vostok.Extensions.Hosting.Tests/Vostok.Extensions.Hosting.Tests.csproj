@@ -2,7 +2,7 @@
   <Import Project="..\..\vostok.devtools\library-common-props\Test-Project-new.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
