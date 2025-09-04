@@ -12,7 +12,7 @@ internal static class VostokApplicationIdentityExtensions
 
         result.Append(identity.Project);
 
-        if (identity.Subproject != null)
+        if (!string.IsNullOrWhiteSpace(identity.Subproject))
         {
             result.Append('.');
             result.Append(identity.Subproject);

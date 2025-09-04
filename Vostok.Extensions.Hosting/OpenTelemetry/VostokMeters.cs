@@ -26,7 +26,7 @@ public sealed class VostokMeters
     public VostokMeters(IVostokApplicationIdentity identity, IMeterFactory meterFactory)
     {
         ProjectTags = [new(WellKnownApplicationIdentityProperties.Project, identity.Project)];
-        SubprojectTags = identity.Subproject is null
+        SubprojectTags = string.IsNullOrWhiteSpace(identity.Subproject)
             ? ProjectTags
             : [..ProjectTags, new(WellKnownApplicationIdentityProperties.Subproject, identity.Subproject)];
         EnvironmentTags = [..SubprojectTags, new(WellKnownApplicationIdentityProperties.Environment, identity.Environment)];

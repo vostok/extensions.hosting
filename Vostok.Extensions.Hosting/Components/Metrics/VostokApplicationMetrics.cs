@@ -18,7 +18,7 @@ internal sealed class VostokApplicationMetrics : IVostokApplicationMetrics
         Root = root;
         Project = Root.WithTag(WellKnownApplicationIdentityProperties.Project, identity.Project);
 
-        Subproject = identity.Subproject == null
+        Subproject = string.IsNullOrWhiteSpace(identity.Subproject)
             ? Project
             : Project.WithTag(WellKnownApplicationIdentityProperties.Subproject, identity.Subproject);
 
