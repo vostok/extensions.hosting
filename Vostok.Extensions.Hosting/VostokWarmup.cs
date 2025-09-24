@@ -35,12 +35,18 @@ namespace Vostok.Extensions.Hosting;
 internal sealed class VostokWarmup(
     IServiceProvider provider,
     IEnumerable<VostokWarmup.CustomWarmupAction> customStartupActions,
+    IEnumerable<VostokWarmup.CustomWarmupAsyncAction> customStartupAsyncActions,
     ILogger<VostokWarmup> logger)
 {
     /// <summary>
     /// Allows to add additional warmup action that will be called in <see cref="VostokWarmup"/>.
     /// </summary>
     public delegate void CustomWarmupAction(IServiceProvider provider);
+
+    /// <summary>
+    /// Allows to add additional warmup async action that will be called in <see cref="VostokWarmup"/>.
+    /// </summary>
+    public delegate Task CustomWarmupAsyncAction(IServiceProvider provider);
 
     public bool IsWarmedUp { get; private set; }
 
@@ -63,6 +69,9 @@ internal sealed class VostokWarmup(
 
         foreach (var startupAction in customStartupActions)
             startupAction(provider);
+
+        foreach (var startupAsyncAction in customStartupAsyncActions)
+            await startupAsyncAction(provider);
 
         LogEnvironmentInfo();
         LogDotnetEnvironmentVariables();
