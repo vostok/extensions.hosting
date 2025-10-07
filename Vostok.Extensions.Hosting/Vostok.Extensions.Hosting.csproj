@@ -6,6 +6,10 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <VersionPrefix>1.0.1</VersionPrefix>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Disposable\ActionDisposable.cs" Link="Commons\ActionDisposable.cs" />
     <Compile Include="$(CementDir)vostok.commons.helpers\Vostok.Commons.Helpers\Observable\CachingObservable.cs" Link="Commons\CachingObservable.cs" />

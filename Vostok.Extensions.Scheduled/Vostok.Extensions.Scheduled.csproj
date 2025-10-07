@@ -6,6 +6,10 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <VersionPrefix>1.0.1</VersionPrefix>
+  </PropertyGroup>
+
   <ItemGroup>
     <ModuleReference Include="vostok.applications.scheduled" />
   </ItemGroup>
