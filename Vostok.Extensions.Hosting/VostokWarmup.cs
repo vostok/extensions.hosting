@@ -58,20 +58,20 @@ internal sealed class VostokWarmup(
         // note: Order is important to prevent cyclic dependencies.
         ConfigureThreadPool();
         WarmupConfiguration();
-        await WarmupClusterConfigClientAsync();
+        await WarmupClusterConfigClientAsync().ConfigureAwait(false);
         WarmupVostokLog();
         WarmupDatacenters();
         WarmupVostokTracer();
         WarmupVostokMetricsContext();
         WarmupHerculesSink();
-        await WarmupServiceDiscoveryAsync();
+        await WarmupServiceDiscoveryAsync().ConfigureAwait(false);
         ConfigureFlowingContext();
 
         foreach (var startupAction in customStartupActions)
             startupAction(provider);
 
         foreach (var startupAsyncAction in customStartupAsyncActions)
-            await startupAsyncAction(provider);
+            await startupAsyncAction(provider).ConfigureAwait(false);
 
         LogEnvironmentInfo();
         LogDotnetEnvironmentVariables();
@@ -164,7 +164,7 @@ internal sealed class VostokWarmup(
         if (zooKeeperClient is ZooKeeperClient actualClient)
         {
             logger.LogInformation("Warming up ZooKeeper connection..");
-            await actualClient.ExistsAsync("/");
+            await actualClient.ExistsAsync("/").ConfigureAwait(false);
         }
 
         _ = provider.GetService<IServiceBeacon>();
@@ -179,7 +179,7 @@ internal sealed class VostokWarmup(
         if (clusterConfigClient is null)
             return;
 
-        await clusterConfigClient.GetAsync(Guid.NewGuid().ToString());
+        await clusterConfigClient.GetAsync(Guid.NewGuid().ToString()).ConfigureAwait(false);
         ClusterConfigDeferredConfigurationSource.ActivateAllProviders(clusterConfigClient);
 
         if (clusterConfigClient is ClusterConfigClient actualClient)
