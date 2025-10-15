@@ -6,8 +6,8 @@ internal sealed class VostokHostLifetime(IHostLifetime baseHostLifetime, VostokW
 {
     public async Task WaitForStartAsync(CancellationToken cancellationToken)
     {
-        await baseHostLifetime.WaitForStartAsync(cancellationToken);
-        await warmup.WarmupVostokAsync();
+        await baseHostLifetime.WaitForStartAsync(cancellationToken).ConfigureAwait(false);
+        await warmup.WarmupVostokAsync().ConfigureAwait(false);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) =>
