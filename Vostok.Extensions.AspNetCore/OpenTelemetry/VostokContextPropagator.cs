@@ -58,7 +58,7 @@ internal sealed class VostokContextPropagator : TextMapPropagator
             if (traceContext is null)
                 return context;
 
-            return CreatePropagationContext<T>(context, traceContext.TraceId, traceContext.SpanId);
+            return CreatePropagationContext(context, traceContext.TraceId, traceContext.SpanId);
         }
         
         var traceIdString = getter(carrier, XKonturTraceId)?.FirstOrDefault();
@@ -69,20 +69,21 @@ internal sealed class VostokContextPropagator : TextMapPropagator
             var spanId = spanIdFromPrefix ?? Guid.NewGuid();
             
             
-            return CreatePropagationContext<T>(context, legacyTraceId, spanId);
+            return CreatePropagationContext(context, legacyTraceId, spanId);
         }
 
 
         return context;
     }
 
-    private static PropagationContext CreatePropagationContext<T>(PropagationContext context, Guid traceId, Guid spanId)
+    private static PropagationContext CreatePropagationContext(PropagationContext context, Guid traceId, Guid spanId)
     {
         var activityTraceId = ActivityTraceId.CreateFromString(traceId.ToString("N"));
         var activitySpanId = ActivitySpanId.CreateFromString(spanId.ToString("N").AsSpan()[..16]);
         return new PropagationContext(
             new ActivityContext(activityTraceId, activitySpanId, ActivityTraceFlags.Recorded, isRemote: true),
-            context.Baggage);
+            context.Baggage
+        );
     }
 
     public override ISet<string> Fields { get; }
