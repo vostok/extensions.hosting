@@ -13,6 +13,8 @@ namespace Vostok.Extensions.AspNetCore.OpenTelemetry;
 internal sealed class VostokContextPropagator : TextMapPropagator
 {
     internal const string ContextGlobalsHeader = "Context-Globals";
+    internal const string XKonturTraceId = "X-Kontur-Trace-Id";
+    internal const string XKonturTraceSpanId = "X-Kontur-Trace-SpanId";
 
     private readonly VostokContextReader _vostokContextReader;
 
@@ -31,7 +33,9 @@ internal sealed class VostokContextPropagator : TextMapPropagator
 
         Fields = new HashSet<string>
         {
-            ContextGlobalsHeader
+            ContextGlobalsHeader,
+            XKonturTraceId,
+            XKonturTraceSpanId,
         };
     }
 
@@ -48,17 +52,36 @@ internal sealed class VostokContextPropagator : TextMapPropagator
             return context;
 
         var globals = getter(carrier, ContextGlobalsHeader)?.FirstOrDefault();
-        if (string.IsNullOrWhiteSpace(globals))
-            return context;
+        if (!string.IsNullOrWhiteSpace(globals))
+        {
+            var traceContext = _vostokContextReader.Read(globals);
+            if (traceContext is null)
+                return context;
 
-        var traceContext = _vostokContextReader.Read(globals);
-        if (traceContext is null)
-            return context;
+            return CreatePropagationContext<T>(context, traceContext.TraceId, traceContext.SpanId);
+        }
+        
+        var traceIdString = getter(carrier, XKonturTraceId)?.FirstOrDefault();
+        if (Guid.TryParse(traceIdString, out var legacyTraceId))
+        {
+            var spanIdString = getter(carrier, XKonturTraceSpanId)?.FirstOrDefault();
+            var spanIdFromPrefix = LegacyTraceIdHelper.ParseSpanIdPrefix(spanIdString);
+            var spanId = spanIdFromPrefix ?? Guid.NewGuid();
+            
+            
+            return CreatePropagationContext<T>(context, legacyTraceId, spanId);
+        }
 
-        var traceId = ActivityTraceId.CreateFromString(traceContext.TraceId.ToString("N"));
-        var spanId = ActivitySpanId.CreateFromString(traceContext.SpanId.ToString("N").AsSpan()[..16]);
+
+        return context;
+    }
+
+    private static PropagationContext CreatePropagationContext<T>(PropagationContext context, Guid traceId, Guid spanId)
+    {
+        var activityTraceId = ActivityTraceId.CreateFromString(traceId.ToString("N"));
+        var activitySpanId = ActivitySpanId.CreateFromString(spanId.ToString("N").AsSpan()[..16]);
         return new PropagationContext(
-            new ActivityContext(traceId, spanId, ActivityTraceFlags.Recorded, isRemote: true),
+            new ActivityContext(activityTraceId, activitySpanId, ActivityTraceFlags.Recorded, isRemote: true),
             context.Baggage);
     }
 
