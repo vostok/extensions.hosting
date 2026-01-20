@@ -19,7 +19,7 @@ internal static class ConfigurationConverter
             var root = rootNode;
             foreach (var segment in segments)
             {
-                var existedChildren = root.Children.FirstOrDefault(c => c.Name == segment);
+                var existedChildren = root.Children.FirstOrDefault(c => string.Equals(c.Name, segment, StringComparison.OrdinalIgnoreCase));
                 if (existedChildren == null)
                 {
                     var child = new Node { Name = segment };
