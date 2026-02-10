@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Vostok.Extensions.Hosting.Tests.ProcessRunner;
 
@@ -18,10 +18,16 @@ public static class ProcessLauncher
         var typeName = type.FullName;
         var methodName = ((MethodCallExpression)method.Body).Method.Name;
 
+        var executableName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "Vostok.Extensions.Hosting.Tests.ProcessRunner.exe"
+            : "Vostok.Extensions.Hosting.Tests.ProcessRunner";
+
+        var executablePath = Path.Combine(
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
+            executableName);
+
         return Launch(
-            Path.Combine(
-                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
-                "Vostok.Extensions.Hosting.Tests.ProcessRunner.exe"),
+            executablePath,
             string.Concat(new[] {assemblyPath, typeName, methodName}.Concat(args ?? []).Select(x => $@"""{x}"" ")),
             timeoutMilliseconds,
             environmentVariables ?? new Dictionary<string, string>());
@@ -35,7 +41,6 @@ public static class ProcessLauncher
     {
         var processStartInfo = new ProcessStartInfo
         {
-            Verb = "runas",
             UseShellExecute = false,
             FileName = fileName,
             Arguments = arguments,
@@ -48,48 +53,31 @@ public static class ProcessLauncher
             processStartInfo.EnvironmentVariables[kv.Key] = kv.Value;
         }
 
-        var output = new StringBuilder();
-        var error = new StringBuilder();
-        var outputComplete = new ManualResetEvent(false);
-        var errorComplete = new ManualResetEvent(false);
+        using var process = Process.Start(processStartInfo);
 
-        var process = new Process
-        {
-            StartInfo = processStartInfo,
-            EnableRaisingEvents = true
-        };
-        process.OutputDataReceived += (_, e) =>
-        {
-            if (e.Data == null)
-                outputComplete.Set();
-            else
-                output.AppendLine(e.Data);
-        };
-        process.ErrorDataReceived += (_, e) =>
-        {
-            if (e.Data == null)
-                errorComplete.Set();
-            else
-                error.AppendLine(e.Data);
-        };
+        if (process == null)
+            throw new InvalidOperationException("Failed to start process");
 
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
+        var outputTask = process.StandardOutput.ReadToEndAsync();
+        var errorTask = process.StandardError.ReadToEndAsync();
 
         var isExited = process.WaitForExit(timeoutMilliseconds);
 
         if (!isExited)
+        {
             process.Kill(entireProcessTree: true);
+            // В Linux kill асинхронный, нужно подождать перед получением ExitCode
+            process.WaitForExit(5000);
+        }
 
         // Ждем завершения чтения вывода, чтобы ничего не потерять (т.к. он асинхронный) 
-        WaitHandle.WaitAll([outputComplete, errorComplete], 5000);
+        Task.WaitAll([outputTask, errorTask], 5000);
 
         return new ProcessResult
         {
             ExitCode = process.ExitCode,
-            StandardOutput = output.ToString(),
-            StandardError = error.ToString(),
+            StandardOutput = outputTask.Result,
+            StandardError = errorTask.Result,
             IsTimedOut = !isExited
         };
     }
