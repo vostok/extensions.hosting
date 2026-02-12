@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VersionPrefix>1.0.12</VersionPrefix>
+    <VersionPrefix>1.0.13</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -69,6 +69,7 @@
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Houston.Utilities" />
 
     <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Tests" />
+    <InternalsVisibleTo Include="Vostok.Extensions.Hosting.Kontur.Tests" />
   </ItemGroup>
 
 </Project>
