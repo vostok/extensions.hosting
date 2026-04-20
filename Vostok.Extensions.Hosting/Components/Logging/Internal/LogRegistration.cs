@@ -25,26 +25,4 @@ internal sealed class LogRegistration(string logName, Func<IServiceProvider, ILo
     }
 
     public static string GetNextName() => $"Log-{Interlocked.Increment(ref unnamedLogsCounter)}";
-
-    public readonly struct Key : IEquatable<Key>
-    {
-        private readonly string? _name;
-
-        public static Key For(string name) => new(name);
-
-        private Key(string? name = null) => _name = name;
-
-        public bool Equals(Key other)
-        {
-            if (_name is null || other._name is null)
-                return true;
-            return _name == other._name;
-        }
-
-        public override bool Equals(object? obj) =>
-            obj is Key other && Equals(other);
-
-        public override int GetHashCode() =>
-            _name is null ? 0 : _name.GetHashCode();
-    }
 }

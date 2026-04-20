@@ -88,7 +88,7 @@ internal static class ServiceBeaconFactory
     {
         try
         {
-            if (provider.GetKeyedService<LogRegistration>(LogRegistration.Key.For(FileLogFactory.LogName)) is null)
+            if (provider.GetKeyedService<LogRegistration>(FileLogFactory.LogName) is null)
                 return null; // File log disabled
 
             var fileLogSettings = provider.GetRequiredService<IOptions<FileLogSettings>>().Value;
