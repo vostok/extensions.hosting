@@ -29,8 +29,14 @@
     <Reference Include="Vostok.Configuration">
       <HintPath>..\..\vostok.configuration\Vostok.Configuration\bin\Release\net8.0\Vostok.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Logging.Abstractions">
+      <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\net8.0\Vostok.Logging.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Logging.Console">
       <HintPath>..\..\vostok.logging.console\Vostok.Logging.Console\bin\Release\net8.0\Vostok.Logging.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging.File">
+      <HintPath>..\..\vostok.logging.file\Vostok.Logging.File\bin\Release\net8.0\Vostok.Logging.File.dll</HintPath>
     </Reference>
   </ItemGroup>
 

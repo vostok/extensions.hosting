@@ -7,6 +7,9 @@ namespace Vostok.Extensions.Hosting.Components.Logging.Internal;
 
 internal sealed class LogRegistration(string logName, Func<IServiceProvider, ILog> implementationFactory)
 {
+    // used for tests
+    internal string LogName => logName;
+
     private static int unnamedLogsCounter;
 
     public ILog Create(IServiceProvider provider)
