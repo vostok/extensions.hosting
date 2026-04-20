@@ -44,7 +44,7 @@ internal static class VostokLogFactory
 
     public static ILog CreateVostokLogImplementation(IServiceProvider provider)
     {
-        var logRegistrations = provider.GetKeyedServices<LogRegistration>(LogRegistration.Key.All);
+        var logRegistrations = provider.GetKeyedServices<LogRegistration>(KeyedService.AnyKey);
         var baseLogs = logRegistrations.Select(r => r.Create(provider)).ToArray();
 
         var vostokLog = baseLogs switch

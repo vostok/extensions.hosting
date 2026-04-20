@@ -30,7 +30,6 @@ internal sealed class LogRegistration(string logName, Func<IServiceProvider, ILo
     {
         private readonly string? _name;
 
-        public static readonly Key All = new();
         public static Key For(string name) => new(name);
 
         private Key(string? name = null) => _name = name;

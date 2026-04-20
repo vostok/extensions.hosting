@@ -36,7 +36,7 @@ internal sealed class VostokLogBuilder(IServiceCollection services) : IVostokLog
 
     public IVostokLogBuilder ClearLogs()
     {
-        Services.RemoveAllKeyed<LogRegistration>(LogRegistration.Key.All);
+        Services.RemoveAllKeyed<LogRegistration>(KeyedService.AnyKey);
         return this;
     }
 }
