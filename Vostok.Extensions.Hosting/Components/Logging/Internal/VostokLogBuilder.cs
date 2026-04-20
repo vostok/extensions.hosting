@@ -12,9 +12,8 @@ internal sealed class VostokLogBuilder(IServiceCollection services) : IVostokLog
     public ILogConfigurator AddLog(Func<IServiceProvider, ILog> implementationFactory, string? logName = null)
     {
         logName ??= LogRegistration.GetNextName();
-        var key = LogRegistration.Key.For(logName);
 
-        Services.TryAddKeyedSingleton(key, new LogRegistration(logName, implementationFactory));
+        Services.TryAddKeyedSingleton(logName, new LogRegistration(logName, implementationFactory));
 
         return new LogConfigurator(Services, logName);
     }
@@ -30,13 +29,19 @@ internal sealed class VostokLogBuilder(IServiceCollection services) : IVostokLog
 
     public IVostokLogBuilder DisableLog(string name)
     {
-        Services.RemoveAllKeyed<LogRegistration>(LogRegistration.Key.For(name));
+        Services.RemoveAllKeyed<LogRegistration>(name);
         return this;
     }
 
     public IVostokLogBuilder ClearLogs()
     {
-        Services.RemoveAllKeyed<LogRegistration>(LogRegistration.Key.All);
+        var logsToRemove = Services
+            .Where(d => d.ServiceType == typeof(LogRegistration))
+            .ToList();
+
+        foreach (var descriptor in logsToRemove)
+            Services.Remove(descriptor);
+
         return this;
     }
 }

@@ -44,7 +44,7 @@ internal static class VostokLogFactory
 
     public static ILog CreateVostokLogImplementation(IServiceProvider provider)
     {
-        var logRegistrations = provider.GetKeyedServices<LogRegistration>(LogRegistration.Key.All);
+        var logRegistrations = GetAllLogRegistrations(provider);
         var baseLogs = logRegistrations.Select(r => r.Create(provider)).ToArray();
 
         var vostokLog = baseLogs switch
@@ -60,4 +60,7 @@ internal static class VostokLogFactory
         vostokLog = vostokLog.WithTracingProperties(provider.GetRequiredService<ITracer>());
         return new InternalDisposableVostokLog(vostokLog);
     }
+
+    internal static IEnumerable<LogRegistration> GetAllLogRegistrations(IServiceProvider provider)
+        => provider.GetKeyedServices<LogRegistration>(KeyedService.AnyKey);
 }
