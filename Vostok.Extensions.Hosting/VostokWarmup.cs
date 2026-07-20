@@ -111,7 +111,7 @@ internal sealed class VostokWarmup(
         var configurationProvider = provider.GetService<IConfigurationProvider>();
 
         if (configurationProvider is ConfigurationProvider actualProvider)
-            ConfigurationProvider.TrySetDefault(actualProvider, true);
+            ConfigurationProvider.TrySetDefault(actualProvider);
     }
 
     private void WarmupVostokLog()
