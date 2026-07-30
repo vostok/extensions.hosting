@@ -15,7 +15,8 @@ internal static class ConfigurationConverter
             if (pair.Value == null)
                 continue;
 
-            var segments = pair.Key.Split(":", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var segments = pair.Key.Split(ConfigurationPath.KeyDelimiter,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             var root = rootNode;
             foreach (var segment in segments)
             {
