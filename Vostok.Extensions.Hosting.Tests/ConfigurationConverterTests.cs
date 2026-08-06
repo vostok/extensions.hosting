@@ -80,6 +80,18 @@ internal sealed class ConfigurationConverterTests
         };
 
         ShouldBeSameAfterConvertation(all);
+
+        var dict5 = new Check
+        {
+            DictValue = new Dictionary<string, string>
+            {
+                { "00", "value1" },
+                { "01", "value2" }
+            }
+        };
+
+        check = () => ShouldBeSameAfterConvertation(dict5);
+        check.Should().Throw<Exception>(because: "will be parsed as array, but 00 and etc is ok in .net itself");
     }
 
     private class Check
