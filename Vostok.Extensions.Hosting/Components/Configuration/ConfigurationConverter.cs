@@ -1,3 +1,5 @@
+using System.Buffers;
+
 using Microsoft.Extensions.Configuration;
 
 using Vostok.Configuration.Abstractions.SettingsTree;
@@ -38,7 +40,7 @@ internal static class ConfigurationConverter
 
         var settingsNode = rootNode.Convert();
         return settingsNode;
-    }   
+    }
     
     private sealed class Node
     {
@@ -51,22 +53,53 @@ internal static class ConfigurationConverter
             if (Value != null)
                 return new ValueNode(Name, Value);
 
-            if (Children.Count > 0)
-            {
-                if (int.TryParse(Children.First().Name, out _))
-                {
-                    return new ArrayNode(Name, Children.Select(c => c.Convert()).OrderBy(x =>
-                    {
-                        if (int.TryParse(x.Name, out var index))
-                            return index;
+            if (Children.Count == 0)
+                return new ObjectNode(Name);
 
-                        return 0;
-                    }).ToList());
-                }
-                return new ObjectNode(Name, Children.Select(c => c.Convert()));
+            if (IsSequentialArray())
+            {
+                var sortedChildren = Children
+                    .OrderBy(c => int.Parse(c.Name!))
+                    .Select(c => c.Convert())
+                    .ToList();
+
+                return new ArrayNode(Name, sortedChildren);
             }
-            
-            return new ObjectNode(Name);
+
+            return new ObjectNode(Name, Children.Select(c => c.Convert()));
+        }
+
+        private bool IsSequentialArray()
+        {
+            var count = Children.Count;
+
+            bool[]? arrayFromPool = null;
+            var visited = count <= 256 ? stackalloc bool[count] : arrayFromPool = ArrayPool<bool>.Shared.Rent(count);
+
+            visited[..count].Clear();
+
+            try
+            {
+                foreach (var child in Children)
+                {
+                    if (!int.TryParse(child.Name, out var index) || index < 0 || index >= count)
+                        return false;
+
+                    if (visited[index])
+                        return false;
+
+                    visited[index] = true;
+                }
+
+                return true;
+            }
+            finally
+            {
+                if (arrayFromPool != null)
+                {
+                    ArrayPool<bool>.Shared.Return(arrayFromPool);
+                }
+            }
         }
     }
 }
