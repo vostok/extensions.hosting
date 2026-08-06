@@ -76,8 +76,7 @@ internal static class ConfigurationConverter
             bool[]? arrayFromPool = null;
             var visited = count <= 256 ? stackalloc bool[count] : arrayFromPool = ArrayPool<bool>.Shared.Rent(count);
 
-            if (arrayFromPool != null)
-                visited[..count].Clear();
+            visited[..count].Clear();
 
             try
             {
